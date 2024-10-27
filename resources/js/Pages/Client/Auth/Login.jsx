@@ -1,0 +1,121 @@
+import { Link } from "@inertiajs/react";
+import React, { useState, CSSProperties } from "react";
+import ButtonSpinner from "../../../Components/Spinners/ButtonSpinner";
+
+function Login() {
+    const [isLoading, setIsLoading] = useState(false);
+    const [color, setColor] = useState("#3498db");
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        // Simulate a login request
+        // setTimeout(() => {
+        //     setIsLoading(false); // Stop loading after 2 seconds
+        // }, 2000);
+    };
+
+    return (
+        <section className="bg-gray-50">
+            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+                <a
+                    href="#"
+                    className="flex items-center mb-6 text-2xl font-semibold text-gray-900"
+                >
+                    Mondeo
+                </a>
+                <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
+                    <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+                        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+                            Se connecter
+                        </h1>
+                        <form
+                            className="space-y-4 md:space-y-6"
+                            action="#"
+                            onSubmit={handleLogin}
+                        >
+                            <div>
+                                <label
+                                    htmlFor="email"
+                                    className="block mb-2 text-sm font-medium text-gray-900"
+                                >
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                    placeholder="name@company.com"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="password"
+                                    className="block mb-2 text-sm font-medium text-gray-900"
+                                >
+                                    Mot de passe
+                                </label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    placeholder="••••••••"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                    required
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-start">
+                                    <div className="flex items-center h-5">
+                                        <input
+                                            id="remember"
+                                            aria-describedby="remember"
+                                            type="checkbox"
+                                            className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="ml-3 text-sm">
+                                        <label
+                                            htmlFor="remember"
+                                            className="text-gray-500"
+                                        >
+                                            Se rappeler de moi
+                                        </label>
+                                    </div>
+                                </div>
+                                <a
+                                    href="#"
+                                    className="text-sm font-medium text-primary-600 hover:underline"
+                                >
+                                    Mot de passe oublié?
+                                </a>
+                            </div>
+                            <button
+                                disabled={isLoading}
+                                type="submit"
+                                className="w-full justify-center text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+                            >
+                                {isLoading ? <ButtonSpinner /> : "Se connecter"}
+                            </button>
+
+                            <p className="text-sm font-light text-gray-500">
+                                Vous n'avez pas encore de compte?{" "}
+                                <Link
+                                    className="font-medium text-primary-600 hover:underline"
+                                    href="client/signup"
+                                >
+                                    Créer un
+                                </Link>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+export default Login;
