@@ -2,6 +2,7 @@
 <?php
 
 use Symfony\Component\Console\Input\ArgvInput;
+use App\Http\Middleware\HandleInertiaRequests;
 
 define('LARAVEL_START', microtime(true));
 
