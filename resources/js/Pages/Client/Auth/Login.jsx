@@ -1,19 +1,21 @@
 import { Link } from "@inertiajs/react";
 import React, { useState, CSSProperties } from "react";
 import ButtonSpinner from "../../../Components/Spinners/ButtonSpinner";
+import { Head, useForm } from "@inertiajs/react";
 
 function Login() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [color, setColor] = useState("#3498db");
+    const [isLoading] = useState(false);
+    const { data, setData, errors, post } = useForm({
+        email: "johndoe@example.com",
+        password: "secret",
+        remember: true,
+    });
 
-    const handleLogin = (e) => {
+    function handleSubmit(e) {
         e.preventDefault();
-        setIsLoading(true);
-        // Simulate a login request
-        // setTimeout(() => {
-        //     setIsLoading(false); // Stop loading after 2 seconds
-        // }, 2000);
-    };
+
+        post(route("client.login.action"));
+    }
 
     return (
         <section className="bg-gray-50">
@@ -32,7 +34,7 @@ function Login() {
                         <form
                             className="space-y-4 md:space-y-6"
                             action="#"
-                            onSubmit={handleLogin}
+                            onSubmit={handleSubmit}
                         >
                             <div>
                                 <label
@@ -45,6 +47,11 @@ function Login() {
                                     type="email"
                                     name="email"
                                     id="email"
+                                    error={errors.email}
+                                    value={data.email}
+                                    onChange={(e) =>
+                                        setData("email", e.target.value)
+                                    }
                                     className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                     placeholder="name@company.com"
                                     required
@@ -62,6 +69,11 @@ function Login() {
                                     name="password"
                                     id="password"
                                     placeholder="••••••••"
+                                    error={errors.password}
+                                    value={data.password}
+                                    onChange={(e) =>
+                                        setData("password", e.target.value)
+                                    }
                                     className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                     required
                                 />
@@ -72,6 +84,13 @@ function Login() {
                                         <input
                                             id="remember"
                                             aria-describedby="remember"
+                                            checked={data.remember}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "remember",
+                                                    e.target.checked
+                                                )
+                                            }
                                             type="checkbox"
                                             className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300"
                                             required
