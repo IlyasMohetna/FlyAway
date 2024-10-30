@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('config_region', function (Blueprint $table) {
+        Schema::create('config__region', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->bigInteger('country');

@@ -11,8 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('config_city', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
@@ -23,8 +21,6 @@ return new class extends Migration
             $table->foreign('region_id')->references('id')->on('config__region');
             $table->string('wikiData', 25);
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
