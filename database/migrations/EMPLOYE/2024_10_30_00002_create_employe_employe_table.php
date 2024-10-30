@@ -11,19 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('employe_employe', function (Blueprint $table) {
+        Schema::create('employe__employe', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignId('user_id')->foreign()->references('id')->on('users');
             $table->string('firstname', 50);
             $table->string('lastname', 50);
-            $table->bigInteger('post_id');
-            $table->foreign('post_id')->references('id')->on('employe__post');
+            $table->foreignId('post_id')->foreign()->references('id')->on('employe__post');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -31,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('employe_employe');
+        Schema::dropIfExists('employe__employe');
     }
 };

@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('client_fidelity_transaction_type', function (Blueprint $table) {
+        Schema::create('client__client_preference', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
+            $table->foreignId('client_id')->foreign()->references('id')->on('client__client');
+            $table->foreignId('preference_type_id')->foreign()->references('id')->on('client__preferences_type');            
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('client_fidelity_transaction_type');
+        Schema::dropIfExists('client__client_preference');
     }
 };

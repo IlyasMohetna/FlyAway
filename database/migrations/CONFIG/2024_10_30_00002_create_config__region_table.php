@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('client_preferences_type', function (Blueprint $table) {
+        Schema::create('config__region', function (Blueprint $table) {
             $table->id();
-            $table->string('nom', 50);
+            $table->string('name');
+            $table->foreignId('country_id')->foreign()->references('id')->on('config__country');
         });
 
         Schema::enableForeignKeyConstraints();
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('client_preferences_type');
+        Schema::dropIfExists('config__region');
     }
 };

@@ -11,18 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('client_fidelity', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('client_id');
-            $table->foreign('client_id')->references('id')->on('client__client');
             $table->integer('point');
             $table->string('subject');
-            $table->enum('transaction_type_id', [""])->nullable();
+            $table->foreignId('client_id')->foreign()->references('id')->on('client__client');
+            $table->foreignId('transaction_type_id')->foreign()->references('id')->on('client__fidelity_transaction_type');            
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
