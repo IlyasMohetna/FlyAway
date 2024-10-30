@@ -1,24 +1,17 @@
 <?php
 
-namespace App\Models\EMPLOYE;
+namespace App\Models\CLIENT;
 
 use App\Models\CONFIG\City;
-use App\Models\EMPLOYE\Post;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Employe extends Model
+class Client extends Model
 {
-    protected $table = 'employe__employe';
+    protected $table = 'client__client';
 
     public function city(): HasOne
     {
         return $this->hasOne(City::class, 'city_id');
     }
-
-    public function post(): HasOne
-    {
-        return $this->hasOne(Post::class, 'post_id');
-    }
-
 }
