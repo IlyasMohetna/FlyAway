@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('bus__companies', function (Blueprint $table) {
             $table->id();
             $table->string('nom', 50);
             $table->string('logo');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
