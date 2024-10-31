@@ -13,14 +13,10 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('bus', function (Blueprint $table) {
+        Schema::create('bus__companies', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('departure_city');
-            $table->bigInteger('arrival_city');
-            $table->bigInteger('departure_time');
-            $table->bigInteger('arrival_time');
-            $table->bigInteger('bus_company_id');
-            $table->foreign('bus_company_id')->references('id')->on('bus_companies');
+            $table->string('nom', 50);
+            $table->string('logo');
         });
 
         Schema::enableForeignKeyConstraints();
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bus');
+        Schema::dropIfExists('bus__companies');
     }
 };
