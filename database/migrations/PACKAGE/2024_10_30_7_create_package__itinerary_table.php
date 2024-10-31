@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('package__itinerary', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('titre');
-            $table->bigInteger('jour');
-            $table->bigInteger('description');
-            $table->bigInteger('id_forfait');
-            $table->foreign('id_forfait')->references('id')->on('forfait_voyage');
+            $table->string('titre');
+            $table->int('jour');
+            $table->foreignId('package_id')->foreign()->references('id')->on('package__package');
         });
     }
 

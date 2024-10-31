@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('package__itinerary_step', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('title');
-            $table->bigInteger('description');
-            $table->bigInteger('day');
-            $table->bigInteger('rank');
-            $table->bigInteger('id_itinerary');
-            $table->foreign('id_itinerary')->references('id')->on('itinerary');
+            $table->string('title');
+            $table->longText('description');
+            $table->integer('day');
+            $table->integer('rank');
+            $table->foreignId('id_itinerary')->foreign()->references('id')->on('package__itinerary');
         });
     }
 
