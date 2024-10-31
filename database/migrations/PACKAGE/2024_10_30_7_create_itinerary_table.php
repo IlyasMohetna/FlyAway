@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('forfait_option_hebergement', function (Blueprint $table) {
+        Schema::create('itinerary', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('titre');
+            $table->bigInteger('jour');
+            $table->bigInteger('description');
             $table->bigInteger('id_forfait');
             $table->foreign('id_forfait')->references('id')->on('forfait_voyage');
-            $table->id();
-            $table->foreign('id_mode_hebergement')->references('id')->on('forfait_mode_hebergement');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('forfait_option_hebergement');
+        Schema::dropIfExists('itinerary');
     }
 };

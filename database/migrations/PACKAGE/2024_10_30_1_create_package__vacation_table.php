@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('type_forfait', function (Blueprint $table) {
+        Schema::create('package__vacation', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('nom');
+            $table->string('nom');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('type_forfait');
+        Schema::dropIfExists('package__vacation');
     }
 };
