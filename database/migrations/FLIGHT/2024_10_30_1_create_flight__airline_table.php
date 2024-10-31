@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('flight_seat_type', function (Blueprint $table) {
+        Schema::create('flight__airline', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('name');
+            $table->bigInteger('logo');
         });
     }
 
@@ -22,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('flight_seat_type');
+        Schema::dropIfExists('flight__airline');
     }
 };

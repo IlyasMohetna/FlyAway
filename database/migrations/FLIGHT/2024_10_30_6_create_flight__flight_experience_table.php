@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('flight_airline', function (Blueprint $table) {
+        Schema::create('flight__flight_experience', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('name');
-            $table->bigInteger('logo');
+            $table->foreign('id_flight')->references('id')->on('flight');
+            $table->bigInteger('inflight_experience_id');
+            $table->foreign('inflight_experience_id')->references('id')->on('flight_inflight_experiences');
         });
     }
 
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('flight_airline');
+        Schema::dropIfExists('flight__flight_experience');
     }
 };

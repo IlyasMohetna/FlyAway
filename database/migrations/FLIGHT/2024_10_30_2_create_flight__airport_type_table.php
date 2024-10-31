@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('flight_passenger_type', function (Blueprint $table) {
+        Schema::create('flight__airport_type', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('name');
         });
@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('flight_passenger_type');
+        Schema::dropIfExists('flight__airport_type');
     }
 };
