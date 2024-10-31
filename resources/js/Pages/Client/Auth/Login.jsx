@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react";
-import React, { useState, CSSProperties } from "react";
+import React, { useState } from "react";
 import ButtonSpinner from "../../../Components/Spinners/ButtonSpinner";
 import { Head, useForm } from "@inertiajs/react";
 
@@ -13,7 +13,6 @@ function Login() {
 
     function handleSubmit(e) {
         e.preventDefault();
-
         post(route("client.login.action"));
     }
 
@@ -24,13 +23,21 @@ function Login() {
                     href="#"
                     className="flex items-center mb-6 text-2xl font-semibold text-gray-900"
                 >
-                    Mondeo
+                    FlyAway
                 </a>
                 <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                             Se connecter
                         </h1>
+
+                        {/* Display general error message */}
+                        {errors.general && (
+                            <div className="bg-red-100 text-red-700 p-4 rounded">
+                                {errors.general}
+                            </div>
+                        )}
+
                         <form
                             className="space-y-4 md:space-y-6"
                             action="#"
@@ -47,15 +54,23 @@ function Login() {
                                     type="email"
                                     name="email"
                                     id="email"
-                                    error={errors.email}
                                     value={data.email}
                                     onChange={(e) =>
                                         setData("email", e.target.value)
                                     }
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                    className={`bg-gray-50 border ${
+                                        errors.email
+                                            ? "border-red-500"
+                                            : "border-gray-300"
+                                    } text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
                                     placeholder="name@company.com"
                                     required
                                 />
+                                {errors.email && (
+                                    <p className="mt-2 text-sm text-red-600">
+                                        {errors.email}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <label
@@ -69,14 +84,22 @@ function Login() {
                                     name="password"
                                     id="password"
                                     placeholder="••••••••"
-                                    error={errors.password}
                                     value={data.password}
                                     onChange={(e) =>
                                         setData("password", e.target.value)
                                     }
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                    className={`bg-gray-50 border ${
+                                        errors.password
+                                            ? "border-red-500"
+                                            : "border-gray-300"
+                                    } text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
                                     required
                                 />
+                                {errors.password && (
+                                    <p className="mt-2 text-sm text-red-600">
+                                        {errors.password}
+                                    </p>
+                                )}
                             </div>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-start">
@@ -124,7 +147,7 @@ function Login() {
                                 Vous n'avez pas encore de compte?{" "}
                                 <Link
                                     className="font-medium text-primary-600 hover:underline"
-                                    href="client/signup"
+                                    href={route('client.register.show')}
                                 >
                                     Créer un
                                 </Link>

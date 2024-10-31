@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 
 class AuthController extends Controller
@@ -14,7 +15,24 @@ class AuthController extends Controller
     }
 
     public function login(Request $request){
-        dd($request);
-        return Inertia::render("Client/Auth/Login");
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+ 
+            return redirect()->intended('dashboard');
+        }
+
+        return back()->withErrors([
+            'general' => 'Les informations fournies ne correspondent pas à nos enregistrements.',
+        ])->onlyInput('email');        
+    }
+
+    public function show_register()
+    {
+        return Inertia::render("Client/Auth/Register");
     }
 }
