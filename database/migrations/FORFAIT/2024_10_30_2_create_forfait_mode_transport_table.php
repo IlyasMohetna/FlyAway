@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('forfait_mode_hebergement', function (Blueprint $table) {
+        Schema::create('forfait_mode_transport', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('nom');
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('forfait_mode_hebergement');
+        Schema::dropIfExists('forfait_mode_transport');
     }
 };
