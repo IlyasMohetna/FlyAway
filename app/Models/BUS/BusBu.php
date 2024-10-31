@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class BusBu
+ * Class Bus
  * 
  * @property int $id
  * @property string $plate
@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class BusBu extends Model
+class Bus extends Model
 {
 	protected $table = 'bus__bus';
 	public $timestamps = false;
