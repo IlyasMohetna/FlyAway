@@ -11,9 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('chambre_gallerie', function (Blueprint $table) {
+        Schema::create('lodging__room_gallery', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('nom_fichier');
             $table->bigInteger('type_mime');
@@ -22,8 +20,6 @@ return new class extends Migration
             $table->bigInteger('chambre_id');
             $table->foreign('chambre_id')->references('id')->on('chambre');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chambre_gallerie');
+        Schema::dropIfExists('lodging__room_gallery');
     }
 };

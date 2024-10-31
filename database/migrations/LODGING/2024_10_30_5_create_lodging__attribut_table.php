@@ -11,17 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('hebergement_attribut', function (Blueprint $table) {
+        Schema::create('lodging__attribut', function (Blueprint $table) {
             $table->id();
             $table->foreign('id_hotel')->references('id')->on('hebergement');
+            $table->foreignId('lodging_id')->foreign()->references('id')->on('config__city');
+
             $table->bigInteger('id_attribut_terme');
             $table->foreign('id_attribut_terme')->references('id')->on('attribut_termes');
             $table->bigInteger('actif');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hebergement_attribut');
+        Schema::dropIfExists('lodging__attribut');
     }
 };

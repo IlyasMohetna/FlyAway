@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('attribut_categories', function (Blueprint $table) {
+        Schema::create('lodging__attribut_categories', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('nom');
+            $table->string('name', 50);
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attribut_categories');
+        Schema::dropIfExists('lodging__attribut_categories');
     }
 };
