@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('flight__flight_experience', function (Blueprint $table) {
             $table->id();
-            $table->foreign('id_flight')->references('id')->on('flight');
-            $table->bigInteger('inflight_experience_id');
-            $table->foreign('inflight_experience_id')->references('id')->on('flight_inflight_experiences');
+            $table->foreignId('flight_id')->foreign()->references('id')->on('flight__flight');
+            $table->foreignId('experience_type_id')->foreign()->references('id')->on('flight__experience_types');
         });
     }
 

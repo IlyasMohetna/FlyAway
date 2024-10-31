@@ -13,16 +13,14 @@ return new class extends Migration
     {
         Schema::create('flight__ticket', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('price');
-            $table->bigInteger('flight_id');
-            $table->foreign('flight_id')->references('id')->on('flight');
-            $table->bigInteger('baggage_checkin');
-            $table->bigInteger('baggage_cabin');
-            $table->bigInteger('passenger_type_id');
-            $table->foreign('passenger_type_id')->references('id')->on('flight_passenger_type');
-            $table->bigInteger('seat_type_id');
-            $table->foreign('seat_type_id')->references('id')->on('flight_seat_type');
-            $table->bigInteger('ticket_number');
+            $table->decimal('price');
+            $table->string('ticket_number', 50);
+            $table->string('seat_number', 20);
+            $table->integer('baggage_checkin');
+            $table->integer('baggage_cabin');
+            $table->foreignId('flight_id')->foreign()->references('id')->on('flight__flight');
+            $table->foreignId('passenger_type_id')->foreign()->references('id')->on('flight__passenger_type');
+            $table->foreignId('seat_type_id')->foreign()->references('id')->on('flight__seat_type');
         });
     }
 

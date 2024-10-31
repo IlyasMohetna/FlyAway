@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('name', 100);
             $table->decimal('latitude');
             $table->decimal('longitude');
-            $table->foreignId('city_id')->constrained('config__city');
-            $table->foreignId('type_id')->constrained('flight__airport_type');
+            $table->foreignId('city_id')->foreign()->references('id')->on('config__city');
+            $table->foreignId('type_id')->foreign()->references('id')->on('flight__airport_type');
         });
     }
 
