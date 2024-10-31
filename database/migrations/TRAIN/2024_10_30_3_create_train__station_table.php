@@ -11,17 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('car_agency', function (Blueprint $table) {
+        Schema::create('train__station', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('name');
-            $table->bigInteger('adresse');
+            $table->bigInteger('address');
             $table->bigInteger('city_id');
             $table->foreign('city_id')->references('id')->on('config__city');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('car_agency');
+        Schema::dropIfExists('train__station');
     }
 };

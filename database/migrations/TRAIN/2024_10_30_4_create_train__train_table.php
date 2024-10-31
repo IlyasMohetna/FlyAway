@@ -11,9 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('train', function (Blueprint $table) {
+        Schema::create('train__train', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('departure_station');
             $table->foreign('departure_station')->references('id')->on('train_station');
@@ -24,8 +22,6 @@ return new class extends Migration
             $table->bigInteger('train_company_id');
             $table->foreign('train_company_id')->references('id')->on('train_companies');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('train');
+        Schema::dropIfExists('train__train');
     }
 };

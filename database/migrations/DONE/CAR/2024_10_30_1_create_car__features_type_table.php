@@ -11,16 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('car_gallerie', function (Blueprint $table) {
+        Schema::create('car__features_type', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_car');
-            $table->foreign('id_car')->references('id')->on('cars');
-            $table->bigInteger('store_path');
+            $table->string('name', 50);
+            $table->string('icon', 50);
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('car_gallerie');
+        Schema::dropIfExists('car__features_type');
     }
 };

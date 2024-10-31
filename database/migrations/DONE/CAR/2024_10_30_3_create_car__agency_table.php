@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('reservation_bus', function (Blueprint $table) {
+        Schema::create('car__agency', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_ticket');
-            $table->foreign('id_ticket')->references('id')->on('bus_ticket');
-            $table->bigInteger('id_client');
+            $table->string('name');
+            $table->string('address_1');
+            $table->string('address_2')->nullable();
+            $table->foreignId('city_id')->foreign()->references('id')->on('config__city');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reservation_bus');
+        Schema::dropIfExists('car__agency');
     }
 };
