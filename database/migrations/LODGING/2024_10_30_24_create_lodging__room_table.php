@@ -13,21 +13,16 @@ return new class extends Migration
     {
         Schema::create('lodging__room', function (Blueprint $table) {
             $table->id();
-            $table->string('nom_chambre');
-            $table->bigInteger('hebergement_id');
-            $table->foreignId('lodging_id')->foreign()->references('id')->on('categorie_chambre_equipement');
-
-            $table->foreign('hebergement_id')->references('id')->on('hebergement');
-            $table->bigInteger('type_id');
-            $table->bigInteger('max_adult');
+            $table->string('room_reference', 50);
             $table->bigInteger('numero_chambre');
-            $table->bigInteger('max_enfant');
-            $table->bigInteger('description');
-            $table->bigInteger('surface');
-            $table->bigInteger('situation_id');
-            $table->foreign('situation_id')->references('id')->on('situation_chambre');
-            $table->bigInteger('prix');
-            $table->bigInteger('nombre_lit');
+            $table->foreignId('lodging_id')->foreign()->references('id')->on('lodging__lodging');
+            $table->integer('max_adult');
+            $table->integer('max_enfant');
+            $table->longText('description');
+            $table->decimal('surface');
+            $table->foreignId('status_id')->foreign()->references('id')->on('lodging__room_status');
+            $table->decimal('prix');
+            $table->integer('nombre_lit');
         });
     }
 
