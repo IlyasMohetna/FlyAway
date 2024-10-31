@@ -13,12 +13,9 @@ return new class extends Migration
     {
         Schema::create('lodging__attribut', function (Blueprint $table) {
             $table->id();
-            $table->foreign('id_hotel')->references('id')->on('hebergement');
-            $table->foreignId('lodging_id')->foreign()->references('id')->on('config__city');
-
-            $table->bigInteger('id_attribut_terme');
-            $table->foreign('id_attribut_terme')->references('id')->on('attribut_termes');
-            $table->bigInteger('actif');
+            $table->foreignId('lodging_id')->foreign()->references('id')->on('lodging__lodging');
+            $table->foreignId('attribut_term_id')->foreign()->references('id')->on('lodging__attribut_terms');
+            $table->boolean('actif')->default(0);
         });
     }
 

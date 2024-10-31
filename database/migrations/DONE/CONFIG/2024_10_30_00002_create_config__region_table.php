@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('config__region', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->foreignId('country_id')->foreign()->references('id')->on('config__country');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

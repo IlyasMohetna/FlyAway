@@ -25,8 +25,6 @@ return new class extends Migration
             $table->string('currency_name', 50);
             $table->string('currency_symbol', 5);
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
