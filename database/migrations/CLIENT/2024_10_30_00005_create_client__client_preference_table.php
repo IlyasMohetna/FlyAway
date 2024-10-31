@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('client__client_preference', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->foreign()->references('id')->on('client__client');
-            $table->foreignId('preference_type_id')->foreign()->references('id')->on('client__preferences_type');            
+            $table->foreignId('preference_type_id')->foreign()->references('id')->on('client__preferences_type');   
+            $table->timestamps();
+            $table->softDeletes();         
         });
     }
 

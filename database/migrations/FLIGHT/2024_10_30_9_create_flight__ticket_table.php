@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreignId('flight_id')->foreign()->references('id')->on('flight__flight');
             $table->foreignId('passenger_type_id')->foreign()->references('id')->on('flight__passenger_types');
             $table->foreignId('seat_type_id')->foreign()->references('id')->on('flight__seat_types');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

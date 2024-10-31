@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('transportation_mode_id')->foreign()->references('id')->on('package__transportation_modes');
             $table->foreignId('package_id')->foreign()->references('id')->on('package__package');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

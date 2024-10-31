@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('lodging_mode_id')->foreign()->references('id')->on('lodging__lodging');
             $table->foreignId('package_id')->foreign()->references('id')->on('package__package');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

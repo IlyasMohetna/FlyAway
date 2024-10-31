@@ -19,6 +19,8 @@ return new class extends Migration
             $table->integer('number_of_doors');
             $table->string('photo');
             $table->foreignId('bus_company_id')->foreign()->references('id')->on('bus__companies');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

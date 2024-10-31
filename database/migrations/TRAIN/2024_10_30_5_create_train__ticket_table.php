@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('seat_number', 20);
             $table->foreignId('train_id')->foreign()->references('id')->on('train__train');
             $table->foreignId('seat_type_id')->foreign()->references('id')->on('train__seat_types');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

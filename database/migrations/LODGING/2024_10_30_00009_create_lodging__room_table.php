@@ -23,6 +23,8 @@ return new class extends Migration
             $table->foreignId('status_id')->foreign()->references('id')->on('lodging__room_status');
             $table->decimal('prix');
             $table->integer('nombre_lit');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

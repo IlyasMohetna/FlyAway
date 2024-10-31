@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('daily_price');
             $table->string('feautre_image');
             $table->longText('description');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

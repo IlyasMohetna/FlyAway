@@ -16,6 +16,8 @@ return new class extends Migration
             $table->decimal('price');
             $table->foreignId('bus_line_id')->foreign()->references('id')->on('bus__line');
             $table->foreignId('passenger_type_id')->foreign()->references('id')->on('bus__passenger_type');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('lodging_id')->foreign()->references('id')->on('lodging__lodging');
             $table->foreignId('attribut_term_id')->foreign()->references('id')->on('lodging__attribut_terms');
             $table->boolean('actif')->default(0);
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

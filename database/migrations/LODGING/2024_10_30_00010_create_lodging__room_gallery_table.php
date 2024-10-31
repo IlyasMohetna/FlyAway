@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('mime_type');
             $table->integer('size');
             $table->string('storage_driver');
-            $table->foreignId('room_id')->references('id')->on('lodging__room');            
+            $table->foreignId('room_id')->references('id')->on('lodging__room');    
+            $table->timestamps();
+            $table->softDeletes();        
         });
     }
 

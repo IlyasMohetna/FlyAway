@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('titre');
             $table->integer('jour');
             $table->foreignId('package_id')->foreign()->references('id')->on('package__package');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

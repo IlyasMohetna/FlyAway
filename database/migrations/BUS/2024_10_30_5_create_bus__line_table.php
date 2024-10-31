@@ -18,6 +18,8 @@ return new class extends Migration
             $table->dateTime('departure_time');
             $table->dateTime('arrival_time');
             $table->foreignId('bus_id')->foreign()->references('id')->on('bus__bus');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -20,6 +20,8 @@ return new class extends Migration
             $table->longText('description');
             $table->foreignId('package_type_id')->foreign()->references('id')->on('package__package_type');
             $table->foreignId('destination_id')->foreign()->references('id')->on('config__city');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

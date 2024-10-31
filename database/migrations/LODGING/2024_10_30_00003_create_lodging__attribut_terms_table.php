@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('attribut_categorie_id')->foreign()->references('id')->on('lodging__attribut_categories');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->dateTime('departure_time');
             $table->dateTime('arrival_time');
             $table->foreignId('train_company_id')->foreign()->references('id')->on('train__companies');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

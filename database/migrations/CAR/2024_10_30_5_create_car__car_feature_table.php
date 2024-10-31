@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_car_feature_type')->foreign()->references('id')->on('car__features_type');
             $table->foreignId('id_car')->foreign()->references('id')->on('car__car');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

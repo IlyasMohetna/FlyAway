@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('nom');
             $table->foreignId('equipement_categorie_id')->foreign()->references('id')->on('lodging__equipement_categories');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

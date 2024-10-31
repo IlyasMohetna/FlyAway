@@ -19,6 +19,8 @@ return new class extends Migration
             $table->decimal('longitude');
             $table->foreignId('region_id')->foreign()->references('id')->on('config__region');
             $table->string('wikiData', 25);
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

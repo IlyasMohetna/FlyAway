@@ -19,6 +19,8 @@ return new class extends Migration
             $table->decimal('longitude');
             $table->foreignId('city_id')->foreign()->references('id')->on('config__city');
             $table->foreignId('type_id')->foreign()->references('id')->on('flight__airport_type');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

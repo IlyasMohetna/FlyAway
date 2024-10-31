@@ -25,6 +25,8 @@ return new class extends Migration
             $table->time('check_in');
             $table->time('check_out');
             $table->foreignId('lodging_type_id')->foreign()->references('id')->on('lodging__type');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

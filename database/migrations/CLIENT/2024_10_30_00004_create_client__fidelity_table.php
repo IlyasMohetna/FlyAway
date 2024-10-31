@@ -16,7 +16,9 @@ return new class extends Migration
             $table->integer('point');
             $table->string('subject');
             $table->foreignId('client_id')->foreign()->references('id')->on('client__client');
-            $table->foreignId('transaction_type_id')->foreign()->references('id')->on('client__fidelity_transaction_type');            
+            $table->foreignId('transaction_type_id')->foreign()->references('id')->on('client__fidelity_transaction_type');  
+            $table->timestamps();
+            $table->softDeletes();          
         });
     }
 

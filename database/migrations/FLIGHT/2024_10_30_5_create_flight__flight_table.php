@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreignId('departure_airport')->foreign()->references('id')->on('flight__airport');
             $table->foreignId('arrival_airport')->foreign()->references('id')->on('flight__airport');
             $table->foreignId('airline_id')->foreign()->references('id')->on('flight__airline');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

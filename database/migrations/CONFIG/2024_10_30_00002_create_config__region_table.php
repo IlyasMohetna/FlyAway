@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('country_id')->foreign()->references('id')->on('config__country');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

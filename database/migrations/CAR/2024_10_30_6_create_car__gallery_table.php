@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('size');
             $table->string('storage_driver');
             $table->foreignId('car_id')->references('id')->on('car__car');    
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

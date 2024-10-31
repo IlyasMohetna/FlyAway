@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('bus__passenger_type', function (Blueprint $table) {
             $table->id();
             $table->string('nom', 50);
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

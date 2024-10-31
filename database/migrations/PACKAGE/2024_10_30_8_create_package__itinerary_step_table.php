@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('day');
             $table->integer('rank');
             $table->foreignId('id_itinerary')->foreign()->references('id')->on('package__itinerary');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

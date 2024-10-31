@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_client')->foreign()->references('id')->on('client__client');
             $table->foreignId('package_id')->foreign()->references('id')->on('package__package');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
