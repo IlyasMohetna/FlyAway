@@ -14,14 +14,10 @@ return new class extends Migration
         Schema::create('train__ticket', function (Blueprint $table) {
             $table->id();
             $table->decimal('price');
-            $table->bigInteger('train_id');
-            $table->foreign('train_id')->references('id')->on('train');
-            $table->foreignId('passenger_type_id')->foreign()->references('id')->on('train__passenger');
-            $table->bigInteger('seat_type_id');
-            $table->foreign('seat_type_id')->references('id')->on('train_seat_types');
-            $table->bigInteger('ticket_number');
-            $table->bigInteger('seat_number');
-            $table->bigInteger('id_client');
+            $table->string('ticket_number', 50);
+            $table->string('seat_number', 20);
+            $table->foreignId('train_id')->foreign()->references('id')->on('train__train');
+            $table->foreignId('seat_type_id')->foreign()->references('id')->on('train__seat_types');
         });
     }
 
