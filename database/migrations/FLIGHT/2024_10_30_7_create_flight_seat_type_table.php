@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('flight_inflight_experiences', function (Blueprint $table) {
+        Schema::create('flight_seat_type', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('name');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('flight_inflight_experiences');
+        Schema::dropIfExists('flight_seat_type');
     }
 };

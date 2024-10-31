@@ -11,8 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('flight_tickets', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('price');
@@ -26,8 +24,6 @@ return new class extends Migration
             $table->foreign('seat_type_id')->references('id')->on('flight_seat_type');
             $table->bigInteger('ticket_number');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

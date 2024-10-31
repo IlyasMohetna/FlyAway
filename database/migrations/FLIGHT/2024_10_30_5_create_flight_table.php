@@ -11,8 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('flight', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('description');
@@ -25,8 +23,6 @@ return new class extends Migration
             $table->bigInteger('departure_time');
             $table->bigInteger('arrival_time');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

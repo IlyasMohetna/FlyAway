@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('flight_inflight_experience', function (Blueprint $table) {
             $table->id();
             $table->foreign('id_flight')->references('id')->on('flight');
             $table->bigInteger('inflight_experience_id');
             $table->foreign('inflight_experience_id')->references('id')->on('flight_inflight_experiences');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

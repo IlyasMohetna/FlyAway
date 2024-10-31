@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('flight_airline', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('name');
             $table->bigInteger('logo');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
