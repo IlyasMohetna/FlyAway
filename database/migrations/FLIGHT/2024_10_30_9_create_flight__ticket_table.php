@@ -19,8 +19,8 @@ return new class extends Migration
             $table->integer('baggage_checkin');
             $table->integer('baggage_cabin');
             $table->foreignId('flight_id')->foreign()->references('id')->on('flight__flight');
-            $table->foreignId('passenger_type_id')->foreign()->references('id')->on('flight__passenger_type');
-            $table->foreignId('seat_type_id')->foreign()->references('id')->on('flight__seat_type');
+            $table->foreignId('passenger_type_id')->foreign()->references('id')->on('flight__passenger_types');
+            $table->foreignId('seat_type_id')->foreign()->references('id')->on('flight__seat_types');
         });
     }
 

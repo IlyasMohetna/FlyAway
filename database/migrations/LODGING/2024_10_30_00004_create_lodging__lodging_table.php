@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('address_2')->nullable();
             $table->foreignId('linked_city_id')->foreign()->references('id')->on('config__city');
             $table->foreignId('real_city_id')->foreign()->references('id')->on('config__city');
-            $table->bigInteger('email', 120);
-            $table->bigInteger('phone', 15);
+            $table->string('email', 120);
+            $table->string('phone', 15);
             $table->time('check_in');
             $table->time('check_out');
             $table->foreignId('lodging_type_id')->foreign()->references('id')->on('lodging__type');

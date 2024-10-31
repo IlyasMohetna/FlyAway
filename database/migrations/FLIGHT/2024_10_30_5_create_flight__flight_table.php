@@ -16,8 +16,8 @@ return new class extends Migration
             $table->longText('description');
             $table->dateTime('departure_time');
             $table->dateTime('arrival_time');
-            $table->foreingId('departure_airport')->foreign()->references('id')->on('flight__airport');
-            $table->foreingId('arrival_airport')->foreign()->references('id')->on('flight__airport');
+            $table->foreignId('departure_airport')->foreign()->references('id')->on('flight__airport');
+            $table->foreignId('arrival_airport')->foreign()->references('id')->on('flight__airport');
             $table->foreignId('airline_id')->foreign()->references('id')->on('flight__airline');
         });
     }

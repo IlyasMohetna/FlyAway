@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('package__itinerary', function (Blueprint $table) {
             $table->id();
             $table->string('titre');
-            $table->int('jour');
+            $table->integer('jour');
             $table->foreignId('package_id')->foreign()->references('id')->on('package__package');
         });
     }
