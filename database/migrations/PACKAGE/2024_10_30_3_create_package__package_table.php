@@ -13,15 +13,13 @@ return new class extends Migration
     {
         Schema::create('package__package', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_type_forfait');
-            $table->foreign('id_type_forfait')->references('id')->on('type_forfait');
-            $table->bigInteger('id_destination');
-            $table->foreign('id_destination')->references('id')->on('config__city');
-            $table->bigInteger('montant_ht');
-            $table->bigInteger('montant_ttc');
-            $table->bigInteger('duree');
-            $table->bigInteger('titre');
-            $table->bigInteger('description');
+            $table->string('titre', 120);
+            $table->decimal('amount_ht');
+            $table->decimal('amount_ttc');
+            $table->integer('duree');
+            $table->longText('description');
+            $table->foreignId('package_type_id')->foreign()->references('id')->on('package__package_type');
+            $table->foreignId('destination_id')->foreign()->references('id')->on('config__city');
         });
     }
 

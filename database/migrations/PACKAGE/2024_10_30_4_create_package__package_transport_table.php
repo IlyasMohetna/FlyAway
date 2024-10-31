@@ -12,10 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('package__package_transport', function (Blueprint $table) {
-            $table->bigInteger('id_forfait');
-            $table->foreign('id_forfait')->references('id')->on('forfait_voyage');
             $table->id();
-            $table->foreign('id_mode_transport')->references('id')->on('forfait_mode_transport');
+            $table->foreignId('transportation_mode_id')->foreign()->references('id')->on('package__transportation_modes');
+            $table->foreignId('package_id')->foreign()->references('id')->on('package__package');
         });
     }
 
