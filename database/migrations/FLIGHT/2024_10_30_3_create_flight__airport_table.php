@@ -13,14 +13,12 @@ return new class extends Migration
     {
         Schema::create('flight__airport', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('iata_code');
-            $table->bigInteger('name');
-            $table->bigInteger('latitude');
-            $table->bigInteger('longitude');
-            $table->bigInteger('region_id');
-            $table->foreign('region_id')->references('id')->on('config__region');
-            $table->bigInteger('type_id');
-            $table->foreign('type_id')->references('id')->on('airport_type');
+            $table->string('iata_code', 20);
+            $table->string('name', 100);
+            $table->decimal('latitude');
+            $table->decimal('longitude');
+            $table->foreignId('city_id')->constrained('config__city');
+            $table->foreignId('type_id')->constrained('flight__airport_type');
         });
     }
 
