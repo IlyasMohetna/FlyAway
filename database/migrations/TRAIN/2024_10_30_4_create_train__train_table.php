@@ -13,14 +13,11 @@ return new class extends Migration
     {
         Schema::create('train__train', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('departure_station');
-            $table->foreign('departure_station')->references('id')->on('train_station');
-            $table->bigInteger('arrival_station');
-            $table->foreign('arrival_station')->references('id')->on('train_station');
-            $table->bigInteger('departure_date');
-            $table->bigInteger('arrival_date');
-            $table->bigInteger('train_company_id');
-            $table->foreign('train_company_id')->references('id')->on('train_companies');
+            $table->foreignId('departure_station')->foreign()->references('id')->on('train__station');
+            $table->foreignId('arrival_station')->foreign()->references('id')->on('train__station');
+            $table->dateTime('departure_time');
+            $table->dateTime('arrival_time');
+            $table->foreignId('train_company_id')->foreign()->references('id')->on('train__companies');
         });
     }
 

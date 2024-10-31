@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('train__station', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('name');
-            $table->bigInteger('address');
-            $table->bigInteger('city_id');
-            $table->foreign('city_id')->references('id')->on('config__city');
+            $table->string('name');
+            $table->string('address_1');
+            $table->string('address_2')->nullable();
+            $table->foreignId('city_id')->foreign()->references('id')->on('config__city');
         });
     }
 
