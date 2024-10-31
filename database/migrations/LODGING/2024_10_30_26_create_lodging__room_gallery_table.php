@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('lodging__room_gallery', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('nom_fichier');
-            $table->bigInteger('type_mime');
-            $table->bigInteger('taille');
-            $table->bigInteger('driver_stockage');
-            $table->bigInteger('chambre_id');
-            $table->foreign('chambre_id')->references('id')->on('chambre');
+            $table->string('file_name');
+            $table->string('mime_type');
+            $table->integer('size');
+            $table->string('storage_driver');
+            $table->foreignId('room_id')->references('id')->on('lodging__room');            
         });
     }
 
