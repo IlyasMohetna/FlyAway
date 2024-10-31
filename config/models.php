@@ -99,15 +99,13 @@ return [
         |
         */
 
-        'timestamps' => true,
-
-        // 'timestamps' => [
-        //     'enabled' => true,
-        //     'fields' => [
-        //         'CREATED_AT' => 'created_at',
-        //         'UPDATED_AT' => 'updated_at',
-        //     ]
-        // ],
+        'timestamps' => [
+            'enabled' => true,
+            'fields' => [
+                'CREATED_AT' => 'created_at',
+                'UPDATED_AT' => 'updated_at',
+            ]
+        ],
 
         /*
         |--------------------------------------------------------------------------
