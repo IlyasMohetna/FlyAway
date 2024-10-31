@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('package__client_package', function (Blueprint $table) {
             $table->id();
-            $table->foreign('id_client')->references('id')->on('client__client');
-            $table->bigInteger('id_forfait');
-            $table->foreign('id_forfait')->references('id')->on('forfait_voyage');
+            $table->foreignId('id_client')->foreign()->references('id')->on('client__client');
+            $table->foreignId('package_id')->foreign()->references('id')->on('package__package');
         });
     }
 
