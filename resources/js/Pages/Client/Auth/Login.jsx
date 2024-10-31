@@ -31,7 +31,6 @@ function Login() {
                             Se connecter
                         </h1>
 
-                        {/* Display general error message */}
                         {errors.general && (
                             <div className="bg-red-100 text-red-700 p-4 rounded">
                                 {errors.general}
