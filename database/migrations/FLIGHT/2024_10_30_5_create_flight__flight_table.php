@@ -13,15 +13,12 @@ return new class extends Migration
     {
         Schema::create('flight__flight', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('description');
-            $table->bigInteger('from_airport');
-            $table->foreign('from_airport')->references('id')->on('airport');
-            $table->bigInteger('to_airport');
-            $table->foreign('to_airport')->references('id')->on('airport');
-            $table->bigInteger('airline_id');
-            $table->foreign('airline_id')->references('id')->on('flight_airline');
-            $table->bigInteger('departure_time');
-            $table->bigInteger('arrival_time');
+            $table->longText('description');
+            $table->foreingId('departure_airport')->references('id')->on('flight__airport');
+            $table->foreingId('arrival_airport')->references('id')->on('flight__airport');
+            $table->foreignId('airline_id')->references('id')->on('flight__airline');
+            $table->dateTime('departure_time');
+            $table->dateTime('arrival_time');
         });
     }
 
