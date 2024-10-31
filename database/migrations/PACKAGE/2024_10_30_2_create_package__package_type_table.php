@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('itinerary', function (Blueprint $table) {
+        Schema::create('package__transportation_modes', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('titre');
-            $table->bigInteger('jour');
-            $table->bigInteger('description');
-            $table->bigInteger('id_forfait');
-            $table->foreign('id_forfait')->references('id')->on('forfait_voyage');
+            $table->bigInteger('nom');
         });
     }
 
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('itinerary');
+        Schema::dropIfExists('package__transportation_modes');
     }
 };

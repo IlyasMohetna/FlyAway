@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('forfait_voyage', function (Blueprint $table) {
+        Schema::create('package__package', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('id_type_forfait');
             $table->foreign('id_type_forfait')->references('id')->on('type_forfait');
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('forfait_voyage');
+        Schema::dropIfExists('package__package');
     }
 };

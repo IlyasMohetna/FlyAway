@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('forfait_mode_transport', function (Blueprint $table) {
+        Schema::create('package__package_lodging', function (Blueprint $table) {
+            $table->bigInteger('id_forfait');
+            $table->foreign('id_forfait')->references('id')->on('forfait_voyage');
             $table->id();
-            $table->bigInteger('nom');
+            $table->foreign('id_mode_hebergement')->references('id')->on('forfait_mode_hebergement');
         });
     }
 
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('forfait_mode_transport');
+        Schema::dropIfExists('package__package_lodging');
     }
 };

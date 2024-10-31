@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('itinerary_step', function (Blueprint $table) {
+        Schema::create('package__itinerary_step', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('title');
             $table->bigInteger('description');
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('itinerary_step');
+        Schema::dropIfExists('package__itinerary_step');
     }
 };
