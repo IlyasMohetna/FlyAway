@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('employe__employe', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->foreign()->references('id')->on('users');
-            $table->string('firstname', 50);
-            $table->string('lastname', 50);
             $table->foreignId('post_id')->foreign()->references('id')->on('employe__post');
             $table->timestamps();
             $table->softDeletes();

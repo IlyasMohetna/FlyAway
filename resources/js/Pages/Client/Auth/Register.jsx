@@ -2,6 +2,7 @@ import { Link } from "@inertiajs/react";
 import React, { useState } from "react";
 import ButtonSpinner from "../../../Components/Spinners/ButtonSpinner";
 import { Head, useForm } from "@inertiajs/react";
+import InputLabeled from "../../../Components/Form/Pack/InputLabeled";
 
 function Register() {
     return (
@@ -11,104 +12,91 @@ function Register() {
                     Crée votre compte FlyAway
                 </h2>
                 <p className="mt-2 text-center text-sm leading-5 text-gray-500 max-w">
-                  <Link 
-                    className="font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:underline transition ease-in-out duration-150"
-                    href={route('client.login.show')}>
-                      Connecter vous
-                  </Link>
+                    <Link
+                        className="font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:underline transition ease-in-out duration-150"
+                        href={route("client.login.show")}
+                    >
+                        Connecter vous
+                    </Link>
                 </p>
             </div>
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    <form method="POST" action="#">
-                        <div>
- 
-                        </div>
-                        <div className="mt-6">
-                            <label
-                                htmlFor="username"
-                                className="block text-sm font-medium leading-5 text-gray-700"
-                            >
-                                Username
-                            </label>
-                            <div className="mt-1 flex rounded-md shadow-sm">
-                                <span className="inline-flex h-10 items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
-                                    iworkedon.com/
-                                </span>
-                                <input
-                                    id="username"
-                                    name="username"
-                                    placeholder="john"
+                    <form method="POST" action="#" autocomplete="off">
+                        <div className="mb-4 md:flex md:justify-around">
+                            <div className="mb-4 md:mr-2 md:mb-0">
+                                <InputLabeled
+                                    label="Prénom"
+                                    id="firstname"
+                                    name="firstname"
                                     type="text"
-                                    required=""
-                                    className="flex-1  border border-gray-300 form-input pl-3 block w-full rounded-none rounded-r-md transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                    required
+                                />
+                            </div>
+                            <div className="md:ml-2">
+                                <InputLabeled
+                                    label="Nom"
+                                    id="lastname"
+                                    name="lastname"
+                                    type="text"
+                                    required
                                 />
                             </div>
                         </div>
                         <div className="mt-6">
-                            <label
-                                htmlFor="email"
-                                className="block text-sm font-medium leading-5 text-gray-700"
-                            >
-                                Email address
-                            </label>
-                            <div className="mt-1 relative rounded-md shadow-sm">
-                                <input
-                                    id="email"
-                                    name="email"
-                                    placeholder="user@example.com"
-                                    type="email"
-                                    required=""
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                                />
-                                <div className="hidden absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <svg
-                                        className="h-5 w-5 text-red-500"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                </div>
-                            </div>
+                            <InputLabeled
+                                label="Email Address"
+                                id="email"
+                                name="email"
+                                placeholder="user@example.com"
+                                type="email"
+                                required
+                            />
                         </div>
                         <div className="mt-6">
-                            <label
-                                htmlFor="password"
-                                className="block text-sm font-medium leading-5 text-gray-700"
-                            >
-                                Password
-                            </label>
-                            <div className="mt-1 rounded-md shadow-sm">
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    required=""
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                                />
-                            </div>
+                            <InputLabeled
+                                label="Numero de Télephone"
+                                id="phone"
+                                name="phone"
+                                type="text"
+                                required
+                            />
                         </div>
                         <div className="mt-6">
-                            <label
-                                htmlFor="password_confirmation"
-                                className="block text-sm font-medium leading-5 text-gray-700"
-                            >
-                                Confirm Password
-                            </label>
-                            <div className="mt-1 rounded-md shadow-sm">
-                                <input
-                                    id="password_confirmation"
-                                    name="password_confirmation"
-                                    type="password"
-                                    required=""
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                                />
-                            </div>
+                            <InputLabeled
+                                label="Adresse 1"
+                                id="address_1"
+                                name="address_1"
+                                type="text"
+                                required
+                            />
+                        </div>
+                        <div className="mt-6">
+                            <InputLabeled
+                                label="Adresse 2"
+                                id="address_2"
+                                name="address_2"
+                                type="text"
+                                required
+                            />
+                        </div>
+                        <div className="mt-6">
+                            <InputLabeled
+                                label="Password"
+                                id="password"
+                                name="password"
+                                type="password"
+                                required
+                            />
+                        </div>
+                        <div className="mt-6">
+                            <InputLabeled
+                                label="Confirm Password"
+                                id="password_confirmation"
+                                name="password_confirmation"
+                                type="password"
+                                required
+                            />
                         </div>
                         <div className="mt-6">
                             <span className="block w-full rounded-md shadow-sm">

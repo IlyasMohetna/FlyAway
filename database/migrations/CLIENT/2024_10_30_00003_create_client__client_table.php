@@ -14,9 +14,6 @@ return new class extends Migration
         Schema::create('client__client', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->foreign()->references('id')->on('users');
-            $table->string('firstname', 50);
-            $table->string('lastname', 50);
-            $table->string('email', 120);
             $table->string('phone', 15);
             $table->string('address_1');
             $table->string('address_2');
