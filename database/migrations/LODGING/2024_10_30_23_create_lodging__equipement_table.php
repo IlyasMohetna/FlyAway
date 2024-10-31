@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('lodging__equipement', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
-            $table->foreignId('equipement_categorie_id')->foreign()->references('id')->on('categorie_chambre_equipement');
+            $table->foreignId('equipement_categorie_id')->foreign()->references('id')->on('lodging__equipement_categories');
         });
     }
 
