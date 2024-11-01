@@ -12,3 +12,4 @@ Route::get('/home', function () {
 
 require __DIR__ . '/client/auth.php';
 require __DIR__ . '/client/home.php';
+require __DIR__ . '/config/location.php';

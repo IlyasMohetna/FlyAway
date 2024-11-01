@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('client__client', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->foreign()->references('id')->on('users');
-            $table->string('phone', 15);
+            $table->string('phone', 20);
             $table->string('address_1');
-            $table->string('address_2');
+            $table->string('address_2')->nullable();
             $table->foreignId('city_id')->foreign()->references('id')->on('config__city');
             $table->timestamps();
             $table->softDeletes();
