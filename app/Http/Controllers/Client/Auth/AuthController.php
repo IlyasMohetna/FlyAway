@@ -71,7 +71,9 @@ class AuthController extends Controller
 
             DB::commit();
 
-            return Redirect::route('client.dashboard')->with('success', 'Registration successful!');
+            return Redirect::route('client.dashboard.show')->with([
+                'success' => "Votre compte a été créer avec succès"
+            ]);
 
         } catch (Exception $e) {
             DB::rollBack();

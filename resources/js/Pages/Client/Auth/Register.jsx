@@ -4,7 +4,6 @@ import * as Yup from "yup";
 import ButtonSpinner from "../../../Components/Spinners/ButtonSpinner";
 import InputLabeled from "../../../Components/Form/Pack/InputLabeled";
 import CascadingSelect from "../../../Components/Location/CascadingSelect";
-import { Inertia } from "@inertiajs/inertia";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

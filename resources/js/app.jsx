@@ -14,6 +14,6 @@ createInertiaApp({
     },
     progress: {
         color: "#2363eb",
-        showSpinner: true
+        showSpinner: true,
     },
 });

@@ -1,6 +1,7 @@
 import { Link } from "@inertiajs/react";
 import React, { useState } from "react";
 import ButtonSpinner from "../../../Components/Spinners/ButtonSpinner";
+import DangerMessage from "../../../Components/Error/DangerMessage";
 import { Head, useForm } from "@inertiajs/react";
 
 function Login() {
@@ -32,9 +33,7 @@ function Login() {
                         </h1>
 
                         {errors.general && (
-                            <div className="bg-red-100 text-red-700 p-4 rounded">
-                                {errors.general}
-                            </div>
+                            <DangerMessage text={errors.general} />
                         )}
 
                         <form
@@ -146,7 +145,7 @@ function Login() {
                                 Vous n'avez pas encore de compte?{" "}
                                 <Link
                                     className="font-medium text-primary-600 hover:underline"
-                                    href={route('client.register.show')}
+                                    href={route("client.register.show")}
                                 >
                                     Créer un
                                 </Link>
