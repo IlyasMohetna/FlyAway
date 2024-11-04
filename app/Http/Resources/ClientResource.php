@@ -22,9 +22,9 @@ class ClientResource extends JsonResource
             'phone' => $this->client->phone,
             'address_1' => $this->client->address_1,
             'address_2' => $this->client->address_2,
-            'city' => $this->client->phone,
-            'region' => $this->phone,
-            'region' => $this->phone
+            'city' => $this->client->city->name,
+            'region' => $this->client->city->region->name,
+            'country' => $this->client->city->region->country->name
         ];
     }
 }
