@@ -2,8 +2,9 @@ import { usePage } from "@inertiajs/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
+import UserDashboardLayout from "./Layouts/UserDashboardLayout";
 
-export default function Dashboard() {
+const UserDashboard = () => {
     const { flash } = usePage().props;
     useEffect(() => {
         if (flash.success) {
@@ -17,4 +18,10 @@ export default function Dashboard() {
             <div>index</div>
         </>
     );
-}
+};
+
+UserDashboard.layout = (page) => (
+    <UserDashboardLayout>{page}</UserDashboardLayout>
+);
+
+export default UserDashboard;
