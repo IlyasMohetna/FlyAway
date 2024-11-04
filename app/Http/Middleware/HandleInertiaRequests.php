@@ -34,9 +34,15 @@ class HandleInertiaRequests extends Middleware
 
         if (Auth::check()) {
             $authenticatedUser = Auth::user();
-            if ($authenticatedUser->client) {
+
+            // Check if the 'client' or 'employe' relationship is available and load as needed
+            if ($authenticatedUser->client !== null) {
+                // Load the client relationship if it exists
+                $authenticatedUser->loadMissing('client');
                 $user = new ClientResource($authenticatedUser);
-            } elseif ($authenticatedUser->employe) {
+            } elseif ($authenticatedUser->employe !== null) {
+                // Load the employe relationship if it exists
+                $authenticatedUser->loadMissing('employe');
                 $user = new EmployeResource($authenticatedUser);
             }
         }
