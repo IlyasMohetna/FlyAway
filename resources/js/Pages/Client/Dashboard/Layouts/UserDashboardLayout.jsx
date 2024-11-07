@@ -1,7 +1,10 @@
 // UserDashboardLayout.jsx
+import { usePage } from "@inertiajs/react";
 import React from "react";
 
 const UserDashboardLayout = ({ children }) => {
+    const { auth } = usePage().props;
+
     return (
         <div>
             {/* Mobile sidebar */}
@@ -74,7 +77,10 @@ const UserDashboardLayout = ({ children }) => {
                         </nav>
                     </div>
                     <div className="flex-shrink-0 flex border-t border-indigo-800 p-4">
-                        <UserProfile name="Tom Cook" />
+                        <UserProfile
+                            firstname={auth.user.data.firstname}
+                            lastname={auth.user.data.lastname}
+                        />
                     </div>
                 </div>
                 <div className="flex-shrink-0 w-14" aria-hidden="true"></div>
@@ -87,13 +93,20 @@ const UserDashboardLayout = ({ children }) => {
                     <nav className="mt-5 flex-1 px-2 space-y-1">
                         <SidebarLink
                             href="#"
-                            title="Dashboard"
+                            title="Tableau de bord"
                             icon="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                         />
-                        {/* Add more SidebarLinks here as needed */}
+                        <SidebarLink
+                            href="#"
+                            title="Mes réservations"
+                            icon="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                        />
                     </nav>
                 </div>
-                <UserProfile name="Tom Cook" />
+                <UserProfile
+                    firstname={auth.user.data.firstname}
+                    lastname={auth.user.data.lastname}
+                />
             </div>
 
             <div className="md:pl-64 flex flex-col flex-1">
@@ -129,7 +142,7 @@ const SidebarLink = ({ href, title, icon }) => (
 );
 
 // UserProfile Component
-const UserProfile = ({ name }) => (
+const UserProfile = ({ firstname, lastname }) => (
     <div className="flex items-center p-4">
         <img
             className="inline-block h-9 w-9 rounded-full"
@@ -137,9 +150,11 @@ const UserProfile = ({ name }) => (
             alt=""
         />
         <div className="ml-3">
-            <p className="text-sm font-medium text-white">{name}</p>
+            <p className="text-sm font-medium text-white">
+                {firstname} {lastname}
+            </p>
             <p className="text-xs font-medium text-indigo-200 group-hover:text-white">
-                View profile
+                Mon profile
             </p>
         </div>
     </div>

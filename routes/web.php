@@ -3,14 +3,12 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\HomeController;
 
-Route::get('/home', function () {
-    return Inertia::render('Home');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('index');
 
 
 
 require __DIR__ . '/client/auth.php';
-require __DIR__ . '/client/home.php';
 require __DIR__ . '/client/dashboard.php';
 require __DIR__ . '/config/location.php';
