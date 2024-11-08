@@ -1,4 +1,6 @@
-import React from "react";
+import PrimaryButton from "../Buttons/PrimaryButton";
+import SecondaryButton from "../Buttons/SecondaryButton";
+import { Link } from "@inertiajs/react";
 
 function NavigationBar() {
     return (
@@ -88,12 +90,12 @@ function NavigationBar() {
                         </li>
 
                         <li>
-                            <a
-                                href="contact.html"
-                                className="hover:text-red-500"
-                            >
-                                Contact Us
-                            </a>
+                            <Link href={route("client.login.show")}>
+                                <PrimaryButton label={"Se connecter"} />
+                            </Link>
+                            <Link href={route("client.register.show")}>
+                                <SecondaryButton label={"Créer un compte"} />
+                            </Link>
                         </li>
                     </ul>
                 </div>

@@ -371,8 +371,6 @@ video {
     width: 100%;
     margin-right: auto;
     margin-left: auto;
-    padding-right: 12px;
-    padding-left: 12px;
 }
 @media (min-width: 540px) {
     .container {
@@ -382,8 +380,6 @@ video {
 @media (min-width: 640px) {
     .container {
         max-width: 640px;
-        padding-right: 1rem;
-        padding-left: 1rem;
     }
 }
 @media (min-width: 768px) {
@@ -399,22 +395,16 @@ video {
 @media (min-width: 1024px) {
     .container {
         max-width: 1024px;
-        padding-right: 45px;
-        padding-left: 45px;
     }
 }
 @media (min-width: 1280px) {
     .container {
         max-width: 1280px;
-        padding-right: 5rem;
-        padding-left: 5rem;
     }
 }
 @media (min-width: 1536px) {
     .container {
         max-width: 1536px;
-        padding-right: 13rem;
-        padding-left: 13rem;
     }
 }
 .form-input,
@@ -3721,8 +3711,6 @@ html[dir="rtl"] .tns-visually-hidden {
         width: 100%;
         margin-right: auto;
         margin-left: auto;
-        padding-right: 12px;
-        padding-left: 12px;
     }
     @media (min-width: 540px) {
         .md\:container {
@@ -3732,8 +3720,6 @@ html[dir="rtl"] .tns-visually-hidden {
     @media (min-width: 640px) {
         .md\:container {
             max-width: 640px;
-            padding-right: 1rem;
-            padding-left: 1rem;
         }
     }
     @media (min-width: 768px) {
@@ -3749,22 +3735,16 @@ html[dir="rtl"] .tns-visually-hidden {
     @media (min-width: 1024px) {
         .md\:container {
             max-width: 1024px;
-            padding-right: 45px;
-            padding-left: 45px;
         }
     }
     @media (min-width: 1280px) {
         .md\:container {
             max-width: 1280px;
-            padding-right: 5rem;
-            padding-left: 5rem;
         }
     }
     @media (min-width: 1536px) {
         .md\:container {
             max-width: 1536px;
-            padding-right: 13rem;
-            padding-left: 13rem;
         }
     }
 }
