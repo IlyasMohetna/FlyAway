@@ -1,8 +1,10 @@
 import PrimaryButton from "../Buttons/PrimaryButton";
 import SecondaryButton from "../Buttons/SecondaryButton";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 
 function NavigationBar() {
+    const { auth } = usePage().props;
+
     return (
         <nav id="topnav" className="w-full z-10 mt-2 px-4 lg:px-8">
             <div className="container mx-auto flex justify-between items-center h-16 mt-4">
@@ -90,12 +92,24 @@ function NavigationBar() {
                         </li>
 
                         <li>
-                            <Link href={route("client.login.show")}>
-                                <PrimaryButton label={"Se connecter"} />
-                            </Link>
-                            <Link href={route("client.register.show")}>
-                                <SecondaryButton label={"Créer un compte"} />
-                            </Link>
+                            {auth.user?.data ? (
+                                <>
+                                    <Link href={route("client.dashboard.show")}>
+                                        <PrimaryButton label={"Mon compte"} />
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href={route("client.login.show")}>
+                                        <PrimaryButton label={"Se connecter"} />
+                                    </Link>
+                                    <Link href={route("client.register.show")}>
+                                        <SecondaryButton
+                                            label={"Créer un compte"}
+                                        />
+                                    </Link>
+                                </>
+                            )}
                         </li>
                     </ul>
                 </div>
