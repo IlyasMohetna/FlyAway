@@ -18,6 +18,9 @@ const AttributList = ({ categories }) => {
     const [isAddCategorieModalOpen, setIsAddCategorieModalOpen] =
         useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isDeleteCategorieModalOpen, setIsDeleteCategorieModalOpen] =
+        useState(false);
+
     const [loading, setLoading] = useState(false);
     const [selectedAttribut, setSelectedAttribut] = useState(null);
 
@@ -85,6 +88,11 @@ const AttributList = ({ categories }) => {
         setIsDeleteModalOpen(true);
     };
 
+    const openDeleteCategorieModal = (item) => {
+        setSelectedCategory(item);
+        setIsDeleteCategorieModalOpen(true);
+    };
+
     return (
         <>
             <div className="flex container mx-auto p-6">
@@ -124,7 +132,7 @@ const AttributList = ({ categories }) => {
                                         type="button"
                                         className="text-white bg-red-400 hover:bg-red-500 font-medium outline-none rounded-lg text-sm px-5 py-2.5 me-2 mt-1"
                                         onClick={() =>
-                                            openDeleteModal(attribute)
+                                            openDeleteCategorieModal(category)
                                         }
                                     >
                                         <FaRegTrashAlt />
@@ -264,6 +272,20 @@ const AttributList = ({ categories }) => {
                         selectedAttribut.id
                     )}
                     onSuccess={() => fetchAttributes(selectedCategory?.id, 1)}
+                />
+            )}
+
+            {selectedCategory && (
+                <DeleteConfirmModal
+                    open={isDeleteCategorieModalOpen}
+                    setOpen={setIsDeleteCategorieModalOpen}
+                    id={selectedCategory.id}
+                    name={selectedCategory.name}
+                    route={route(
+                        "lodging.attribut_categorie.delete",
+                        selectedCategory.id
+                    )}
+                    onSuccess={() => setSelectedCategory(null)}
                 />
             )}
         </>

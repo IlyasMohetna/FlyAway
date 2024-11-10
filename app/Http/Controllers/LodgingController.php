@@ -170,4 +170,15 @@ class LodgingController extends Controller
             return redirect()->route('lodging.attribut')->with(['error' => 'Une erreur est survenue !']);
         }
     }
+
+    public function attribut_categorie_delete($id)
+    {
+        try {
+            AttributCategory::where('id', $id)->delete();
+            return redirect()->route('lodging.attribut')->with(['success'=> 'Votre demande a été traiter avec succès']);
+        }
+        catch (\Exception $e) {
+            return redirect()->route('lodging.attribut')->with(['error'=> 'Une erreur est survenue !']);
+        }
+    }
 }

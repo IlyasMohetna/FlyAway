@@ -3,7 +3,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useForm } from "@inertiajs/react";
 import InputLabeled from "../../../../../Components/Form/Pack/InputLabeled";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
 
 export default function AddAttributModal({
     open,
@@ -23,13 +22,15 @@ export default function AddAttributModal({
     const [clientErrors, setClientErrors] = useState({});
 
     useEffect(() => {
-        if (!open) {
-            reset();
-            setClientErrors({});
+        if (open) {
+            if (data.category_id !== categoryId) {
+                setData("category_id", categoryId);
+            }
         } else {
-            setData("category_id", categoryId); // Ensure category_id is set when opening
+            reset(); // Reset form on modal close
+            setClientErrors({});
         }
-    }, [open, categoryId, reset, setData]);
+    }, [open]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
