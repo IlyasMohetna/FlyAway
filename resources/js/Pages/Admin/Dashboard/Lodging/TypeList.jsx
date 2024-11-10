@@ -72,15 +72,38 @@ const TypeList = ({ data, total, currentPage, lastPage, sort, search }) => {
     return (
         <>
             <div className="container mx-auto p-6">
-                {/* Header */}
-                <div className="flex relative w-full break-words flex-col card p-6 dark:shadow-dark-md mb-6 py-4 bg-lightinfo dark:bg-darkinfo overflow-hidden rounded-md border-none shadow-none dark:shadow-none">
-                    <h4 className="font-semibold text-xl text-dark dark:text-white mb-3">
-                        Les types de logements
-                    </h4>
+                <div
+                    data-testid="flowbite-card"
+                    className="flex relative w-full break-words flex-col card p-6 dark:shadow-dark-md mb-6 py-4 bg-lightinfo dark:bg-darkinfo overflow-hidden rounded-md border-none shadow-none dark:shadow-none"
+                    style={{ borderRadius: 7 }}
+                >
+                    <div className="flex h-full flex-col justify-start gap-0 p-0">
+                        <div className="items-center grid grid-cols-12 gap-6">
+                            <div className="col-span-9">
+                                <h4 className="font-semibold text-xl text-dark dark:text-white mb-3">
+                                    Les types de logements
+                                </h4>
+                            </div>
+                            <div className="col-span-3 flex justify-center -mb-10">
+                                <img
+                                    alt=""
+                                    loading="lazy"
+                                    width={168}
+                                    height={165}
+                                    decoding="async"
+                                    data-nimg={1}
+                                    className="md:-mb-[31px] -mb-4 "
+                                    src="/assets/img/ChatBc.png"
+                                    style={{ color: "transparent" }}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="pt-4 p-6">
                     <div className="flex justify-between items-center border-b border-ld px-6 py-4">
+                        <div></div>
                         <AddButton action={() => setIsAddModalOpen(true)} />
                     </div>
 
