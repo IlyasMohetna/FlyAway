@@ -1,15 +1,7 @@
 import React from "react";
-import {
-    FaTrain,
-    FaPlane,
-    FaHotel,
-    FaCar,
-    FaShip,
-    FaHiking,
-} from "react-icons/fa";
+import { FaTrain, FaPlane, FaHotel, FaCar, FaBusAlt } from "react-icons/fa";
 import IconOption from "./IconOption";
 import { MdOutlineTravelExplore } from "react-icons/md";
-import { FaBusAlt } from "react-icons/fa";
 
 const SearchTypeIconCards = () => {
     return (

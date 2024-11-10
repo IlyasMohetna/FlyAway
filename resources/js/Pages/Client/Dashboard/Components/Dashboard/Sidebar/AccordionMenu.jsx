@@ -23,7 +23,7 @@ const AccordionMenu = ({ title, icon, isOpen, onToggle, children }) => {
                     isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
                 } overflow-hidden transition-all duration-300 ease-in-out`}
             >
-                <div className="pl-10">{children}</div>
+                <div className="">{children}</div>
             </div>
         </div>
     );

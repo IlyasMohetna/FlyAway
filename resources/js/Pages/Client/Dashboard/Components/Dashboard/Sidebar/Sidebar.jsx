@@ -4,6 +4,8 @@ import { Link } from "@inertiajs/react";
 import { FaHome, FaUser, FaCog, FaAngleDown } from "react-icons/fa";
 import MenuItemStandlone from "./MenuItemStandlone";
 import AccordionMenu from "./AccordionMenu";
+import { MdOutlineTravelExplore } from "react-icons/md";
+import { FaTrain, FaPlane, FaHotel, FaCar, FaBusAlt } from "react-icons/fa";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     const [openMenu, setOpenMenu] = useState(null);
@@ -20,10 +22,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         >
             {/* Sidebar Header */}
             <div className="flex items-center justify-between px-4 py-4 text-white border-b border-gray-700 border-1">
-                <h2>Hi</h2>
+                <h2>FlyAway Admin</h2>
             </div>
 
-            <nav className="p-4 space-y-4">
+            <nav className="p-4 space-y-2">
                 <MenuItemStandlone
                     href="/"
                     title="Accueil"
@@ -33,36 +35,181 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 />
 
                 <AccordionMenu
-                    title={"Account"}
+                    title={"Hébergement"}
                     icon={
-                        <FaHome className="mr-3 text-gray-400 hover:text-white" />
+                        <FaHotel className="mr-3 text-gray-400 hover:text-white" />
                     }
-                    isOpen={openMenu === "account"}
-                    onToggle={() => handleToggle("account")}
+                    isOpen={openMenu === "Hébergement"}
+                    onToggle={() => handleToggle("Hébergement")}
                 >
                     <MenuItemStandlone
                         href="/"
-                        title="Profile"
+                        title="Liste des hébergements"
                         forAccordion={true}
                     />
                     <MenuItemStandlone
                         href="/"
-                        title="Settings"
+                        title="Ajouter un hébergement"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Type d'hébergement"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Equipement de chambre"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Attribut d'hébérgement"
                         forAccordion={true}
                     />
                 </AccordionMenu>
 
                 <AccordionMenu
-                    title={"Me"}
+                    title={"Forfait"}
                     icon={
-                        <FaHome className="mr-3 text-gray-400 hover:text-white" />
+                        <MdOutlineTravelExplore className="mr-3 text-gray-400 hover:text-white" />
                     }
-                    isOpen={openMenu === "settings"}
-                    onToggle={() => handleToggle("settings")}
+                    isOpen={openMenu === "Forfait"}
+                    onToggle={() => handleToggle("Forfait")}
                 >
                     <MenuItemStandlone
                         href="/"
-                        title="Accueil"
+                        title="Liste des forfaits"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Ajouter un forfait"
+                        forAccordion={true}
+                    />
+                </AccordionMenu>
+
+                <AccordionMenu
+                    title={"Bus"}
+                    icon={
+                        <FaBusAlt className="mr-3 text-gray-400 hover:text-white" />
+                    }
+                    isOpen={openMenu === "Bus"}
+                    onToggle={() => handleToggle("Bus")}
+                >
+                    <MenuItemStandlone
+                        href="/"
+                        title="Ligne de bus"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Station de bus"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Type de passagers"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Compagnies de bus"
+                        forAccordion={true}
+                    />
+                </AccordionMenu>
+
+                <AccordionMenu
+                    title={"Train"}
+                    icon={
+                        <FaTrain className="mr-3 text-gray-400 hover:text-white" />
+                    }
+                    isOpen={openMenu === "Train"}
+                    onToggle={() => handleToggle("Train")}
+                >
+                    <MenuItemStandlone
+                        href="/"
+                        title="Ligne de train"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Station de train"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Type de sièges"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Compagnies de train"
+                        forAccordion={true}
+                    />
+                </AccordionMenu>
+
+                <AccordionMenu
+                    title={"Avion"}
+                    icon={
+                        <FaPlane className="mr-3 text-gray-400 hover:text-white" />
+                    }
+                    isOpen={openMenu === "Avion"}
+                    onToggle={() => handleToggle("Avion")}
+                >
+                    <MenuItemStandlone
+                        href="/"
+                        title="Ligne d'avion"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Airoports"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Type d'experiences"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Type de passagers"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Type de sièges"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Compagnies aériennes"
+                        forAccordion={true}
+                    />
+                </AccordionMenu>
+
+                <AccordionMenu
+                    title={"Voiture de location"}
+                    icon={
+                        <FaPlane className="mr-3 text-gray-400 hover:text-white" />
+                    }
+                    isOpen={openMenu === "Voiture de location"}
+                    onToggle={() => handleToggle("Voiture de location")}
+                >
+                    <MenuItemStandlone
+                        href="/"
+                        title="Voitures"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Agence de location"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href="/"
+                        title="Caractéristique de voiture"
                         forAccordion={true}
                     />
                 </AccordionMenu>
