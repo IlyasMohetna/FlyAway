@@ -2,7 +2,6 @@
 import { usePage } from "@inertiajs/react";
 import React, { useState } from "react";
 import Sidebar from "../Components/Dashboard/Sidebar/Sidebar";
-import Navbar from "../Components/Dashboard/Navbar";
 import Header from "../Components/Dashboard/Header/Header";
 
 const UserDashboardLayout = ({ children }) => {
