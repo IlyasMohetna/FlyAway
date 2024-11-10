@@ -1,6 +1,6 @@
 import React from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import InputLabeled from "../../../../../Components/Form/Pack/InputLabeled";
 import { useForm } from "@inertiajs/react";
 import * as Yup from "yup";
@@ -10,11 +10,18 @@ export default function AddTypeLogementModal({ open, setOpen }) {
         name: Yup.string().required("Le nom est requis"),
     });
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
     });
 
     const [clientErrors, setClientErrors] = useState({});
+
+    useEffect(() => {
+        if (!open) {
+            reset();
+            setClientErrors({});
+        }
+    }, [open]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,8 +30,9 @@ export default function AddTypeLogementModal({ open, setOpen }) {
             await validationSchema.validate(data, { abortEarly: false });
             setClientErrors({});
 
-            post(route("lodging.type.store"));
-            setOpen(false);
+            post(route("lodging.type.store"), {
+                onSuccess: () => setOpen(false),
+            });
         } catch (validationErrors) {
             const formattedErrors = {};
             validationErrors.inner.forEach((error) => {
@@ -39,7 +47,7 @@ export default function AddTypeLogementModal({ open, setOpen }) {
             <Dialog
                 as="div"
                 className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 bg-opacity-30"
-                onClose={() => {}}
+                onClose={() => setOpen(false)}
             >
                 <Transition.Child
                     as={Fragment}
@@ -75,15 +83,15 @@ export default function AddTypeLogementModal({ open, setOpen }) {
                                     <div className="w-full mb-3">
                                         <InputLabeled
                                             label="Nom"
-                                            id="nom"
-                                            name="nom"
+                                            id="name"
+                                            name="name"
                                             type="text"
-                                            value={data.nom}
+                                            value={data.name}
                                             onChange={(e) =>
                                                 setData("name", e.target.value)
                                             }
                                             error={
-                                                clientErrors.nom || errors.nom
+                                                clientErrors.name || errors.name
                                             }
                                         />
                                     </div>

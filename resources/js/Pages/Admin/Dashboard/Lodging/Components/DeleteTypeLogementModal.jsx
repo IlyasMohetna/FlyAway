@@ -62,15 +62,15 @@ export default function DeleteTypeLogementModal({
                                 <div className="mt-4 flex justify-end gap-2">
                                     <button
                                         type="button"
-                                        onClick={() => isOpen(false)}
-                                        className="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md px-4 py-2"
+                                        onClick={() => setOpen(false)}
+                                        className="text-gray-700 bg-gray-200 hover:bg-gray-300 outline-none rounded-md px-4 py-2"
                                     >
                                         Annuler
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => handleDelete(id)}
-                                        className="text-white bg-red-500 hover:bg-red-600 rounded-md px-4 py-2"
+                                        className="text-white bg-red-500 hover:bg-red-600 outline-none rounded-md px-4 py-2"
                                         disabled={processing}
                                     >
                                         {processing
