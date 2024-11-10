@@ -158,4 +158,16 @@ class LodgingController extends Controller
         }
     }
 
+    public function attribut_categorie_store(Request $request)
+    {
+        try {
+            AttributCategory::create([
+                'name' => $request->input('name'),
+            ]);
+
+            return redirect()->route('lodging.attribut')->with(['success' => 'Votre demande a été traiter avec succès']);
+        } catch (\Exception $e) {
+            return redirect()->route('lodging.attribut')->with(['error' => 'Une erreur est survenue !']);
+        }
+    }
 }

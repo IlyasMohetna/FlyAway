@@ -6,6 +6,7 @@ import { BeatLoader } from "react-spinners";
 import AddAttributModal from "./Components/AddAttributModal";
 import AddButton from "../../../../Components/Buttons/AddButton";
 import DeleteConfirmModal from "./Components/DeleteConfirmModal";
+import AddAttributCategorieModal from "./Components/AddAttributCategorieModal";
 
 const AttributList = ({ categories }) => {
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -14,6 +15,8 @@ const AttributList = ({ categories }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isAddCategorieModalOpen, setIsAddCategorieModalOpen] =
+        useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedAttribut, setSelectedAttribut] = useState(null);
@@ -85,28 +88,54 @@ const AttributList = ({ categories }) => {
     return (
         <>
             <div className="flex container mx-auto p-6">
-                <div className="w-1/4 p-4 border-r">
-                    <h4 className="font-semibold text-xl mb-4">
-                        Choisir une catégorie
-                    </h4>
-                    <ul className="space-y-2">
+                <div className="w-2/6 p-4 border-r">
+                    <div className="flex">
+                        <div className="w-4/6">
+                            <h4 className="font-semibold text-xl mb-4">
+                                Choisir une catégorie
+                            </h4>
+                        </div>
+                        <div className="w-2/6">
+                            <AddButton
+                                action={() => setIsAddCategorieModalOpen(true)}
+                            />
+                        </div>
+                    </div>
+                    <div className="w-full">
                         {categories.map((category) => (
-                            <li
-                                key={category.id}
-                                className={`cursor-pointer p-2 ${
-                                    selectedCategory?.id === category.id
-                                        ? "bg-blue-500 text-white"
-                                        : "bg-gray-100"
-                                }`}
-                                onClick={() => handleCategoryClick(category)}
-                            >
-                                {category.name}
-                            </li>
+                            <div className="grid grid-cols-6 gap-4 p-2">
+                                <div className="col-span-4">
+                                    <button
+                                        key={category.id}
+                                        className={`cursor-pointer w-full p-2 outline-none rounded-2xl ${
+                                            selectedCategory?.id === category.id
+                                                ? "bg-blue-500 text-white"
+                                                : "bg-gray-100"
+                                        }`}
+                                        onClick={() =>
+                                            handleCategoryClick(category)
+                                        }
+                                    >
+                                        {category.name}
+                                    </button>
+                                </div>
+                                <div className="col-span-2 float-right w-full">
+                                    <button
+                                        type="button"
+                                        className="text-white bg-red-400 hover:bg-red-500 font-medium outline-none rounded-lg text-sm px-5 py-2.5 me-2 mt-1"
+                                        onClick={() =>
+                                            openDeleteModal(attribute)
+                                        }
+                                    >
+                                        <FaRegTrashAlt />
+                                    </button>
+                                </div>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
 
-                <div className="w-3/4 p-4 relative">
+                <div className="w-4/6 p-4 relative">
                     {loading && (
                         <div className="absolute inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-10">
                             <BeatLoader
@@ -217,6 +246,11 @@ const AttributList = ({ categories }) => {
                 setOpen={setIsAddModalOpen}
                 categoryId={selectedCategory?.id}
                 onAddSuccess={() => fetchAttributes(selectedCategory?.id, 1)}
+            />
+
+            <AddAttributCategorieModal
+                open={isAddCategorieModalOpen}
+                setOpen={setIsAddCategorieModalOpen}
             />
 
             {selectedAttribut && (
