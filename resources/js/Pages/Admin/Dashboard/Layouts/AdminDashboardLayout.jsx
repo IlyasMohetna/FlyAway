@@ -1,9 +1,8 @@
-// UserDashboardLayout.jsx
 import React, { useState } from "react";
 import Sidebar from "../Components/Dashboard/Sidebar/Sidebar";
 import Header from "../Components/Dashboard/Header/Header";
 
-const UserDashboardLayout = ({ children }) => {
+const AdminDashboardLayout = ({ children }) => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
     return (
@@ -31,4 +30,4 @@ const UserDashboardLayout = ({ children }) => {
     );
 };
 
-export default UserDashboardLayout;
+export default AdminDashboardLayout;

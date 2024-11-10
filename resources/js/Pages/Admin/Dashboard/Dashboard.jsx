@@ -1,4 +1,4 @@
-import UserDashboardLayout from "./Layouts/UserDashboardLayout";
+import AdminDashboardLayout from "./Layouts/AdminDashboardLayout";
 
 const Dashboard = () => {
     return (
@@ -10,6 +10,6 @@ const Dashboard = () => {
     );
 };
 
-Dashboard.layout = (page) => <UserDashboardLayout children={page} />;
+Dashboard.layout = (page) => <AdminDashboardLayout children={page} />;
 
 export default Dashboard;

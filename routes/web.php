@@ -12,3 +12,7 @@ Route::get('/', [HomeController::class, 'index'])->name('index');
 require __DIR__ . '/client/auth.php';
 require __DIR__ . '/client/dashboard.php';
 require __DIR__ . '/config/location.php';
+
+Route::group(["prefix"=> "admin"], function () {
+    require __DIR__ . '/admin/lodging.php';
+})->middleware('auth');

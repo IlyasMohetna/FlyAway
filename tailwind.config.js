@@ -28,6 +28,7 @@ export default {
                     900: "#1e3a8a",
                     950: "#172554",
                 },
+                lightinfo: "#ebf3fe",
             },
         },
         fontFamily: {
