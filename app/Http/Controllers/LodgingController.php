@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LODGING\Lodging;
-use App\Models\LODGING\LodgingType;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use App\Models\LODGING\Lodging;
+use App\Models\LODGING\Attribut;
+use App\Models\LODGING\LodgingType;
+use App\Models\LODGING\AttributTerm;
+use App\Models\LODGING\AttributCategory;
 
 class LodgingController extends Controller
 {
@@ -88,5 +91,42 @@ class LodgingController extends Controller
         catch (\Exception $e) {
             return redirect()->route('lodging.type')->with(['error'=> 'Une erreur est survenue !']);
         }
+    }
+
+    public function attribut_categories()
+    {
+        $categories  = AttributCategory::all();
+        return Inertia::render('Admin/Dashboard/Lodging/AttributList', ['categories'=> $categories]);
+    }
+
+    public function attribut_by_categorie($id)
+    {
+        $query = AttributTerm::query();
+        $query->where('attribut_categorie_id', $id);
+
+        $sortField = request()->input('sort.created_at', 'id');
+        $sortOrder = request()->input('sort.order', 'desc');
+
+        $query->orderBy($sortField, $sortOrder);
+
+        if (request()->filled('search')) {
+            $query->where('column_name', 'like', '%' . request()->input('search') . '%');
+        }
+
+        $data = $query->paginate(10);
+
+        return response()->json([
+            'props' => [
+                'data' => $data->items(),
+                'total' => $data->total(),
+                'currentPage' => $data->currentPage(),
+                'lastPage' => $data->lastPage(),
+                'sort' => [
+                    'field' => request()->input('sort.field', 'id'),
+                    'order' => request()->input('sort.order', 'asc'),
+                ],
+                'search' => request()->input('search', '')
+            ]
+        ]);
     }
 }

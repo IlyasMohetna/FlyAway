@@ -63,7 +63,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         forAccordion={true}
                     />
                     <MenuItemStandlone
-                        href="/"
+                        href={route("lodging.attribut")}
                         title="Attribut d'hébérgement"
                         forAccordion={true}
                     />
