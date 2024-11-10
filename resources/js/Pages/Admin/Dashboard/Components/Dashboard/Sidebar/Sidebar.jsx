@@ -53,7 +53,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         forAccordion={true}
                     />
                     <MenuItemStandlone
-                        href="/"
+                        href={route("lodging.type")}
                         title="Type d'hébergement"
                         forAccordion={true}
                     />
@@ -192,7 +192,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 <AccordionMenu
                     title={"Voiture de location"}
                     icon={
-                        <FaPlane className="mr-3 text-gray-400 hover:text-white" />
+                        <FaCar className="mr-3 text-gray-400 hover:text-white" />
                     }
                     isOpen={openMenu === "Voiture de location"}
                     onToggle={() => handleToggle("Voiture de location")}

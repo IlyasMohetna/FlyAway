@@ -141,29 +141,20 @@ const LodgingList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                             </p>
                                         </td>
                                         <td className="whitespace-nowrap py-3 px-4">
-                                            <span
-                                                className="h-9 w-9 flex justify-center items-center rounded-full hover:bg-lightprimary hover:text-primary cursor-pointer"
-                                                aria-expanded="false"
-                                                aria-haspopup="menu"
-                                                id=":r8jh:"
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width={22}
-                                                    height={22}
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth={2}
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    className="tabler-icon tabler-icon-dots "
+                                            <div>
+                                                <button
+                                                    type="button"
+                                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                                                 >
-                                                    <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                                    <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                                    <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                                </svg>
-                                            </span>
+                                                    Modifier
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
+                                                >
+                                                    Chambres
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
