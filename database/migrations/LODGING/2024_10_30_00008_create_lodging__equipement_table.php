@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('lodging__equipement', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
+            $table->string('name');
             $table->foreignId('equipement_categorie_id')->foreign()->references('id')->on('lodging__equipement_categories');
             $table->timestamps();
             $table->softDeletes();

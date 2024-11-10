@@ -58,7 +58,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         forAccordion={true}
                     />
                     <MenuItemStandlone
-                        href="/"
+                        href={route("lodging.equipement")}
                         title="Equipement de chambre"
                         forAccordion={true}
                     />

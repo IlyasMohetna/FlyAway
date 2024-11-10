@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LODGING\EquipementCategory;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\LODGING\Lodging;
@@ -9,6 +10,7 @@ use App\Models\LODGING\Attribut;
 use App\Models\LODGING\LodgingType;
 use App\Models\LODGING\AttributTerm;
 use App\Models\LODGING\AttributCategory;
+use App\Models\LODGING\Equipement;
 
 class LodgingController extends Controller
 {
@@ -93,6 +95,8 @@ class LodgingController extends Controller
         }
     }
 
+
+    //----------- Attribut
     public function attribut_categories()
     {
         $categories  = AttributCategory::all();
@@ -179,6 +183,97 @@ class LodgingController extends Controller
         }
         catch (\Exception $e) {
             return redirect()->route('lodging.attribut')->with(['error'=> 'Une erreur est survenue !']);
+        }
+    }
+
+    //---------- Equipement
+    public function equipement_categories()
+    {
+        $categories  = EquipementCategory::all();
+        return Inertia::render('Admin/Dashboard/Lodging/EquipementList', ['categories'=> $categories]);
+    }
+
+    public function equipement_by_categorie($id)
+    {
+        $query = Equipement::query();
+        $query->where('equipement_categorie_id', $id);
+
+        $sortField = request()->input('sort.created_at', 'id');
+        $sortOrder = request()->input('sort.order', 'desc');
+
+        $query->orderBy($sortField, $sortOrder);
+
+        if (request()->filled('search')) {
+            $query->where('column_name', 'like', '%' . request()->input('search') . '%');
+        }
+
+        $data = $query->paginate(10);
+
+        return response()->json([
+            'props' => [
+                'data' => $data->items(),
+                'total' => $data->total(),
+                'currentPage' => $data->currentPage(),
+                'lastPage' => $data->lastPage(),
+                'sort' => [
+                    'field' => request()->input('sort.field', 'id'),
+                    'order' => request()->input('sort.order', 'asc'),
+                ],
+                'search' => request()->input('search', '')
+            ]
+        ]);
+    }
+
+    public function equipement_store(Request $request)
+    {
+        try {
+            Equipement::create([
+                'name' => $request->input('name'),
+                'equipement_categorie_id' => $request->input('category_id')
+            ]);
+
+            return redirect()
+            ->route('lodging.equipement')
+            ->with(['success' => 'Votre demande a été traitée avec succès']);
+
+        } catch (\Exception $e) {
+            dd($e);
+            return redirect()->route('lodging.equipement')->with(['error' => 'Une erreur est survenue !']);
+        }
+    }
+
+    public function equipement_delete($id)
+    {
+        try {
+            Equipement::where('id', $id)->delete();
+            return redirect()->route('lodging.equipement')->with(['success'=> 'Votre demande a été traiter avec succès']);
+        }
+        catch (\Exception $e) {
+            return redirect()->route('lodging.equipement')->with(['error'=> 'Une erreur est survenue !']);
+        }
+    }
+
+    public function equipement_categorie_store(Request $request)
+    {
+        try {
+            EquipementCategory::create([
+                'name' => $request->input('name'),
+            ]);
+
+            return redirect()->route('lodging.equipement')->with(['success' => 'Votre demande a été traiter avec succès']);
+        } catch (\Exception $e) {
+            return redirect()->route('lodging.equipement')->with(['error' => 'Une erreur est survenue !']);
+        }
+    }
+
+    public function equipement_categorie_delete($id)
+    {
+        try {
+            EquipementCategory::where('id', $id)->delete();
+            return redirect()->route('lodging.equipement')->with(['success'=> 'Votre demande a été traiter avec succès']);
+        }
+        catch (\Exception $e) {
+            return redirect()->route('lodging.equipement')->with(['error'=> 'Une erreur est survenue !']);
         }
     }
 }

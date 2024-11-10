@@ -7,11 +7,12 @@ import AddAttributModal from "./Components/AddAttributModal";
 import AddButton from "../../../../Components/Buttons/AddButton";
 import DeleteConfirmModal from "./Components/DeleteConfirmModal";
 import AddAttributCategorieModal from "./Components/AddAttributCategorieModal";
+import AddEquipementCategorieModal from "./Components/AddEquipementCategorieModal";
+import AddEquipementModal from "./Components/AddEquipementModal";
 
-const AttributList = ({ categories }) => {
+const EquipementList = ({ categories }) => {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [attributes, setAttributes] = useState([]);
-    // const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -22,7 +23,7 @@ const AttributList = ({ categories }) => {
         useState(false);
 
     const [loading, setLoading] = useState(false);
-    const [selectedAttribut, setSelectedAttribut] = useState(null);
+    const [selectedEquipement, setSelectedEquipement] = useState(null);
 
     useEffect(() => {
         if (selectedCategory) {
@@ -34,7 +35,7 @@ const AttributList = ({ categories }) => {
         try {
             setLoading(true);
             const response = await axios.get(
-                route("lodging.attribut.data", categoryId),
+                route("lodging.equipement.data", categoryId),
                 {
                     params: { page },
                 }
@@ -84,7 +85,7 @@ const AttributList = ({ categories }) => {
     };
 
     const openDeleteModal = (item) => {
-        setSelectedAttribut(item);
+        setSelectedEquipement(item);
         setIsDeleteModalOpen(true);
     };
 
@@ -157,7 +158,7 @@ const AttributList = ({ categories }) => {
                         <>
                             <div className="flex justify-between items-center mb-4">
                                 <h4 className="text-xl">
-                                    Les attributs de{" "}
+                                    Les equipements de{" "}
                                     <b>{selectedCategory.name}</b> :
                                 </h4>
                                 <AddButton
@@ -249,27 +250,27 @@ const AttributList = ({ categories }) => {
                 </div>
             </div>
 
-            <AddAttributModal
+            <AddEquipementModal
                 open={isAddModalOpen}
                 setOpen={setIsAddModalOpen}
                 categoryId={selectedCategory?.id}
                 onAddSuccess={() => fetchAttributes(selectedCategory?.id, 1)}
             />
 
-            <AddAttributCategorieModal
+            <AddEquipementCategorieModal
                 open={isAddCategorieModalOpen}
                 setOpen={setIsAddCategorieModalOpen}
             />
 
-            {selectedAttribut && (
+            {selectedEquipement && (
                 <DeleteConfirmModal
                     open={isDeleteModalOpen}
                     setOpen={setIsDeleteModalOpen}
-                    id={selectedAttribut.id}
-                    name={selectedAttribut.name}
+                    id={selectedEquipement.id}
+                    name={selectedEquipement.name}
                     route={route(
-                        "lodging.attribut.delete",
-                        selectedAttribut.id
+                        "lodging.equipement.delete",
+                        selectedEquipement.id
                     )}
                     onSuccess={() => fetchAttributes(selectedCategory?.id, 1)}
                 />
@@ -282,7 +283,7 @@ const AttributList = ({ categories }) => {
                     id={selectedCategory.id}
                     name={selectedCategory.name}
                     route={route(
-                        "lodging.attribut_categorie.delete",
+                        "lodging.equipement_categorie.delete",
                         selectedCategory.id
                     )}
                     onSuccess={() => setSelectedCategory(null)}
@@ -292,6 +293,6 @@ const AttributList = ({ categories }) => {
     );
 };
 
-AttributList.layout = (page) => <AdminDashboardLayout children={page} />;
+EquipementList.layout = (page) => <AdminDashboardLayout children={page} />;
 
-export default AttributList;
+export default EquipementList;
