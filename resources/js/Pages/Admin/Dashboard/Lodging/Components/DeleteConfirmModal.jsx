@@ -1,17 +1,28 @@
-import React, { useState, Fragment } from "react";
+import React, { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useForm } from "@inertiajs/react";
 
-export default function DeleteTypeLogementModal({
+export default function DeleteConfirmModal({
     open,
     setOpen,
-    id = null,
-    name = null,
+    id,
+    name,
+    route,
+    onSuccess,
 }) {
     const { delete: destroy, processing } = useForm();
-    const handleDelete = (id) => {
-        destroy(route("lodging.type.delete", { id }), {
-            onSuccess: () => setOpen(false),
+
+    const handleDelete = () => {
+        destroy(route, {
+            onSuccess: () => {
+                setOpen(false);
+                if (onSuccess) {
+                    onSuccess();
+                }
+            },
+            onError: () => {
+                console.error("Failed to delete item.");
+            },
         });
     };
 
@@ -69,7 +80,7 @@ export default function DeleteTypeLogementModal({
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => handleDelete(id)}
+                                        onClick={handleDelete}
                                         className="text-white bg-red-500 hover:bg-red-600 outline-none rounded-md px-4 py-2"
                                         disabled={processing}
                                     >

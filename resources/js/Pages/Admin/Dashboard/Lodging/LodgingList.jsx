@@ -2,204 +2,187 @@ import { useState } from "react";
 import AdminDashboardLayout from "../Layouts/AdminDashboardLayout";
 import { router } from "@inertiajs/react";
 
-const LodgingList = ({ data, total, currentPage, lastPage, sort, search }) => {
-    const [sortField, setSortField] = useState(sort.field);
-    const [sortOrder, setSortOrder] = useState(sort.order);
-    const [searchQuery, setSearchQuery] = useState(search);
+const AttributList = ({ categories }) => {
+    const { props } = usePage();
+    const queryCategoryId = props?.category_id;
 
-    const handleSort = (field) => {
-        const order = sortOrder === "asc" ? "desc" : "asc";
-        setSortField(field);
-        setSortOrder(order);
-        router.get(route("lodging.index"), {
-            sort: { field, order },
-            search: searchQuery,
-            page: currentPage,
-        });
+    const [selectedCategory, setSelectedCategory] = useState(
+        categories.find((category) => category.id === queryCategoryId) || null
+    );
+    const [attributes, setAttributes] = useState([]);
+    const [total, setTotal] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (selectedCategory) {
+            fetchAttributes(selectedCategory.id, currentPage);
+        }
+    }, [selectedCategory, currentPage]);
+
+    const fetchAttributes = async (categoryId, page = 1) => {
+        try {
+            setLoading(true);
+            const response = await axios.get(
+                route("lodging.attribut.data", categoryId),
+                { params: { page } }
+            );
+            const { data, total, currentPage, lastPage } = response.data.props;
+            setAttributes(data);
+            setTotal(total);
+            setCurrentPage(currentPage);
+            setLastPage(lastPage);
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to load attributes. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        router.get(route("lodging.index"), {
-            search: searchQuery,
-            sort: { field: sortField, order: sortOrder },
-        });
+    const handleCategoryClick = (category) => {
+        setSelectedCategory(category);
+        setCurrentPage(1);
     };
 
     const handlePageChange = (page) => {
         if (page > 0 && page <= lastPage) {
-            router.get(route("lodging.index"), {
-                page,
-                sort: { field: sortField, order: sortOrder },
-                search: searchQuery,
-            });
+            setCurrentPage(page);
         }
-    };
-
-    const renderPageNumbers = () => {
-        const pageNumbers = [];
-        for (let i = 1; i <= lastPage; i++) {
-            pageNumbers.push(
-                <button
-                    key={i}
-                    onClick={() => handlePageChange(i)}
-                    className={`px-4 py-2 mx-1 rounded-md transition-colors duration-300 ${
-                        i === currentPage
-                            ? "bg-blue-500 text-white border border-blue-500"
-                            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-                    }`}
-                >
-                    {i}
-                </button>
-            );
-        }
-        return pageNumbers;
     };
 
     return (
-        <div className="container mx-auto p-6">
-            <div
-                data-testid="flowbite-card"
-                className="flex relative w-full break-words flex-col card p-6 dark:shadow-dark-md mb-6 py-4 bg-lightinfo dark:bg-darkinfo overflow-hidden rounded-md border-none shadow-none dark:shadow-none"
-                style={{ borderRadius: 7 }}
-            >
-                <div className="flex h-full flex-col justify-start gap-0 p-0">
-                    <div className="items-center grid grid-cols-12 gap-6">
-                        <div className="col-span-9">
-                            <h4 className="font-semibold text-xl text-dark dark:text-white mb-3">
-                                La liste des logements
-                            </h4>
-                        </div>
-                        <div className="col-span-3 flex justify-center -mb-10">
-                            <img
-                                alt=""
-                                loading="lazy"
-                                width={168}
-                                height={165}
-                                decoding="async"
-                                data-nimg={1}
-                                className="md:-mb-[31px] -mb-4 "
-                                src="/assets/img/ChatBc.png"
-                                style={{ color: "transparent" }}
+        <>
+            <div className="flex container mx-auto p-6">
+                <div className="w-1/4 p-4 border-r">
+                    <h4 className="font-semibold text-xl mb-4">
+                        Choisir une catégorie
+                    </h4>
+                    <ul className="space-y-2">
+                        {categories.map((category) => (
+                            <li
+                                key={category.id}
+                                className={`cursor-pointer p-2 ${
+                                    selectedCategory?.id === category.id
+                                        ? "bg-blue-500 text-white"
+                                        : "bg-gray-100"
+                                }`}
+                                onClick={() => handleCategoryClick(category)}
+                            >
+                                {category.name}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="w-3/4 p-4 relative">
+                    {loading && (
+                        <div className="absolute inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-10">
+                            <BeatLoader
+                                size={15}
+                                color="#ffffff"
+                                loading={loading}
                             />
                         </div>
-                    </div>
+                    )}
+                    {selectedCategory?.id ? (
+                        <>
+                            <div className="flex justify-between items-center mb-4">
+                                <h4 className="text-xl">
+                                    Les attributs de{" "}
+                                    <b>{selectedCategory.name}</b> :
+                                </h4>
+                                <AddButton
+                                    action={() => setIsAddModalOpen(true)}
+                                />
+                            </div>
+
+                            <div className="border rounded-md overflow-hidden">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead>
+                                            <tr>
+                                                <th className="text-left py-3 px-4">
+                                                    Name
+                                                </th>
+                                                <th className="text-left py-3 px-4">
+                                                    Créer le
+                                                </th>
+                                                <th className="text-left text-center py-3 px-4">
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-border">
+                                            {attributes.map((attribute) => (
+                                                <tr key={attribute.id}>
+                                                    <td className="py-3 px-4">
+                                                        {attribute.name}
+                                                    </td>
+                                                    <td className="py-3 px-4">
+                                                        <DateTimeFormat
+                                                            datetime={
+                                                                attribute.created_at
+                                                            }
+                                                        />
+                                                    </td>
+                                                    <td className="py-3 px-4 text-center">
+                                                        <button
+                                                            type="button"
+                                                            className="text-white bg-red-400 hover:bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+                                                        >
+                                                            <FaRegTrashAlt />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="flex gap-2 p-3 items-center float-right mt-6">
+                                    <button
+                                        onClick={() =>
+                                            handlePageChange(currentPage - 1)
+                                        }
+                                        disabled={currentPage === 1}
+                                        className={`px-3 py-1 rounded-md ${
+                                            currentPage === 1
+                                                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                                : "bg-blue-500 text-white hover:bg-blue-600"
+                                        }`}
+                                    >
+                                        Previous
+                                    </button>
+                                    {renderPageNumbers()}
+                                    <button
+                                        onClick={() =>
+                                            handlePageChange(currentPage + 1)
+                                        }
+                                        disabled={currentPage === lastPage}
+                                        className={`px-3 py-1 rounded-md ${
+                                            currentPage === lastPage
+                                                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                                : "bg-blue-500 text-white hover:bg-blue-600"
+                                        }`}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <p>Please select a category to view its attributes.</p>
+                    )}
                 </div>
             </div>
-            <div className="pt-4 p-6">
-                <div className="border rounded-md border-ld overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full">
-                            <thead>
-                                <tr>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Nom</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Type</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Ville</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Region</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Pays</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Action</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border dark:divide-darkborder">
-                                {data.map((item) => (
-                                    <tr key={item.id}>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.name}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.type.name}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.city.name}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.city.region.name}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.city.region.country.name}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <div>
-                                                <button
-                                                    type="button"
-                                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                                >
-                                                    Modifier
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
-                                                >
-                                                    Chambres
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="sm:flex gap-2 p-3 items-center float-right mr-20 mt-6">
-                        <div className="flex items-center gap-2 ">
-                            <button
-                                onClick={() =>
-                                    handlePageChange(currentPage - 1)
-                                }
-                                disabled={currentPage === 1}
-                                className={`px-3 py-1 rounded-md ${
-                                    currentPage === 1
-                                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                        : "bg-blue-500 text-white hover:bg-blue-600"
-                                }`}
-                            >
-                                Précédent
-                            </button>
 
-                            {renderPageNumbers()}
-
-                            <button
-                                onClick={() =>
-                                    handlePageChange(currentPage + 1)
-                                }
-                                disabled={currentPage === lastPage}
-                                className={`px-3 py-1 rounded-md ${
-                                    currentPage === lastPage
-                                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                        : "bg-blue-500 text-white hover:bg-blue-600"
-                                }`}
-                            >
-                                Suivant
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <AddAttributModal
+                open={isAddModalOpen}
+                setOpen={setIsAddModalOpen}
+                categoryId={selectedCategory?.id}
+            />
+        </>
     );
 };
-
-LodgingList.layout = (page) => <AdminDashboardLayout children={page} />;
-
-export default LodgingList;

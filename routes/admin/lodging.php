@@ -15,5 +15,7 @@ Route::group(["prefix"=> "lodging"], function () {
     // Attribut
     Route::get("/attribut", [LodgingController::class, "attribut_categories"])->name("lodging.attribut");
     Route::get("/attribut/{categorie}", [LodgingController::class, "attribut_by_categorie"])->name("lodging.attribut.data");
+    Route::post("/attribut/", [LodgingController::class, "attribut_store"])->name("lodging.attribut.store");
+    Route::delete("/attribut/{id}", [LodgingController::class, "attribut_delete"])->name("lodging.attribut.delete");
 
 });

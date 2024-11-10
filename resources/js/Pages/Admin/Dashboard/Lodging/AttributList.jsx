@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
 import AdminDashboardLayout from "../Layouts/AdminDashboardLayout";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import AddTypeLogementModal from "./Components/AddTypeLogementModal";
-import DeleteItemModal from "./Components/DeleteTypeLogementModal";
 import DateTimeFormat from "../../../../Components/Date/DateTimeFormat";
-import { ClipLoader } from "react-spinners"; // Choose your preferred spinner from react-spinners
-import { BeatLoader } from "react-spinners"; // Import the new loader
+import { BeatLoader } from "react-spinners";
+import AddAttributModal from "./Components/AddAttributModal";
+import AddButton from "../../../../Components/Buttons/AddButton";
+import DeleteConfirmModal from "./Components/DeleteConfirmModal";
 
 const AttributList = ({ categories }) => {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [attributes, setAttributes] = useState([]);
-    const [total, setTotal] = useState(0);
+    // const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [loading, setLoading] = useState(false); // New loading state
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [selectedAttribut, setSelectedAttribut] = useState(null);
 
     useEffect(() => {
         if (selectedCategory) {
@@ -26,7 +26,7 @@ const AttributList = ({ categories }) => {
 
     const fetchAttributes = async (categoryId, page = 1) => {
         try {
-            setLoading(true); // Show loading overlay
+            setLoading(true);
             const response = await axios.get(
                 route("lodging.attribut.data", categoryId),
                 {
@@ -35,24 +35,20 @@ const AttributList = ({ categories }) => {
             );
             const { data, total, currentPage, lastPage } = response.data.props;
             setAttributes(data);
-            setTotal(total);
+            // setTotal(total);
             setCurrentPage(currentPage);
             setLastPage(lastPage);
         } catch (error) {
             console.log(error);
             toast.error("Failed to load attributes. Please try again.");
         } finally {
-            setLoading(false); // Hide loading overlay
+            setLoading(false);
         }
     };
 
     const handleCategoryClick = (category) => {
         setSelectedCategory(category);
-        setCurrentPage(1); // Reset page to 1 when a new category is selected
-    };
-
-    const openAddModal = () => {
-        setIsAddModalOpen(true);
+        setCurrentPage(1);
     };
 
     const handlePageChange = (page) => {
@@ -81,9 +77,13 @@ const AttributList = ({ categories }) => {
         return pageNumbers;
     };
 
+    const openDeleteModal = (item) => {
+        setSelectedAttribut(item);
+        setIsDeleteModalOpen(true);
+    };
+
     return (
         <>
-            <ToastContainer />
             <div className="flex container mx-auto p-6">
                 <div className="w-1/4 p-4 border-r">
                     <h4 className="font-semibold text-xl mb-4">
@@ -119,15 +119,13 @@ const AttributList = ({ categories }) => {
                     {selectedCategory?.id ? (
                         <>
                             <div className="flex justify-between items-center mb-4">
-                                <h4 className="text-xl font-semibold">
-                                    Les attributs de la catégorie :
+                                <h4 className="text-xl">
+                                    Les attributs de{" "}
+                                    <b>{selectedCategory.name}</b> :
                                 </h4>
-                                <button
-                                    type="button"
-                                    className="text-white bg-blue-700 px-4 py-2 rounded-lg"
-                                >
-                                    Add Attribute +
-                                </button>
+                                <AddButton
+                                    action={() => setIsAddModalOpen(true)}
+                                />
                             </div>
 
                             <div className="border rounded-md overflow-hidden">
@@ -163,6 +161,11 @@ const AttributList = ({ categories }) => {
                                                         <button
                                                             type="button"
                                                             className="text-white bg-red-400 hover:bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+                                                            onClick={() =>
+                                                                openDeleteModal(
+                                                                    attribute
+                                                                )
+                                                            }
                                                         >
                                                             <FaRegTrashAlt />
                                                         </button>
@@ -208,6 +211,27 @@ const AttributList = ({ categories }) => {
                     )}
                 </div>
             </div>
+
+            <AddAttributModal
+                open={isAddModalOpen}
+                setOpen={setIsAddModalOpen}
+                categoryId={selectedCategory?.id}
+                onAddSuccess={() => fetchAttributes(selectedCategory?.id, 1)}
+            />
+
+            {selectedAttribut && (
+                <DeleteConfirmModal
+                    open={isDeleteModalOpen}
+                    setOpen={setIsDeleteModalOpen}
+                    id={selectedAttribut.id}
+                    name={selectedAttribut.name}
+                    route={route(
+                        "lodging.attribut.delete",
+                        selectedAttribut.id
+                    )}
+                    onSuccess={() => fetchAttributes(selectedCategory?.id, 1)}
+                />
+            )}
         </>
     );
 };

@@ -129,4 +129,33 @@ class LodgingController extends Controller
             ]
         ]);
     }
+
+    public function attribut_store(Request $request)
+    {
+        try {
+            AttributTerm::create([
+                'name' => $request->input('name'),
+                'attribut_categorie_id' => $request->input('category_id')
+            ]);
+
+            return redirect()
+            ->route('lodging.attribut')
+            ->with(['success' => 'Votre demande a été traitée avec succès']);
+
+        } catch (\Exception $e) {
+            return redirect()->route('lodging.attribut')->with(['error' => 'Une erreur est survenue !']);
+        }
+    }
+
+    public function attribut_delete($id)
+    {
+        try {
+            AttributTerm::where('id', $id)->delete();
+            return redirect()->route('lodging.attribut')->with(['success'=> 'Votre demande a été traiter avec succès']);
+        }
+        catch (\Exception $e) {
+            return redirect()->route('lodging.attribut')->with(['error'=> 'Une erreur est survenue !']);
+        }
+    }
+
 }
