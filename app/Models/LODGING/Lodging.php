@@ -7,7 +7,6 @@ use App\Models\CONFIG\City;
 class Lodging extends Model
 {
 	protected $table = 'lodging__lodging';
-	public $timestamps = false;
 	protected $guarded = [];
 
     public function type()
@@ -18,5 +17,10 @@ class Lodging extends Model
     public function city()
     {
         return $this->belongsTo(City::class,'real_city_id');
+    }
+
+    public function rooms()
+    {
+        return $this->hasMany(LodgingRoom::class,'lodging_id', 'id');
     }
 }

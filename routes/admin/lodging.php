@@ -31,4 +31,7 @@ Route::group(['prefix' => 'lodging', 'middleware' => 'auth'], function () {
 
     Route::get('/create', [LodgingController::class, 'create_show'])->name('lodging.create.show');
     Route::post('/create', [LodgingController::class, 'store'])->name('lodging.store');
+
+    Route::get('{lodging_id}/rooms', [LodgingController::class, 'lodging_rooms_index'])->name('lodging.rooms.index');
+    Route::get('/room/{room_id}', [LodgingController::class, 'room'])->name('lodging.rooms.data');
 });

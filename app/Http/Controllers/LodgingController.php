@@ -7,15 +7,17 @@ use Illuminate\Http\Request;
 use App\Models\LODGING\Lodging;
 use App\Models\LODGING\Equipement;
 use Illuminate\Support\Facades\DB;
+use App\Models\LODGING\LodgingRoom;
 use App\Models\LODGING\LodgingType;
 use App\Models\LODGING\AttributTerm;
 use App\Models\LODGING\LodgingAttribut;
+use Illuminate\Support\Facades\Storage;
 use App\Models\LODGING\AttributCategory;
 use App\Models\LODGING\EquipementCategory;
 
 class LodgingController extends Controller
 {
-    //---------- Equipement
+    //---------- Lodging
     public function create_show()
     {
         $categories = AttributCategory::with(['attribut' => function ($query) {
@@ -63,6 +65,32 @@ class LodgingController extends Controller
             dd($e);
             return redirect()->route('lodging.index')->with(['error' => 'Une erreur est survenue !']);
         }
+    }
+
+    //----------- REooms
+    public function lodging_rooms_index($lodging_id)
+    {
+        $lodging = Lodging::where('id', $lodging_id)->with(['rooms' => function($query){
+            $query->select('id','lodging_id', 'reference', 'number');
+        }])->first();
+
+        return Inertia::render('Admin/Dashboard/Lodging/RoomList', [
+            'lodging' => $lodging
+        ]);
+    }
+
+    public function room($room_id)
+    {
+        $room = LodgingRoom::with('gallery')->findOrFail($room_id);
+
+        $room->gallery = $room->gallery->map(function ($image) {
+            $filename = $image->file_name;
+            $disk = $image->storage_driver;
+            $image->full_url = Storage::disk($disk)->url($filename);
+            return $image;
+        });
+
+        return response()->json($room);
     }
 
     //---------- Lodging types

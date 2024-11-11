@@ -45,6 +45,13 @@ return [
             'throw' => false,
         ],
 
+        'room_gallery' => [
+            'driver' => 'local',
+            'root' => storage_path('app/room_gallery'),
+            'url' => env('APP_URL') . '/storage/room_gallery',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -72,6 +79,7 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        public_path('storage/room_gallery') => storage_path('app/room_gallery'),
     ],
 
 ];

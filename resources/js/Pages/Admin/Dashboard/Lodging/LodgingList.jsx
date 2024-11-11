@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AdminDashboardLayout from "../Layouts/AdminDashboardLayout";
-import { router } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
+import DateTimeFormat from "../../../../Components/Date/DateTimeFormat";
 
 const LodgingList = ({ data, total, currentPage, lastPage, sort, search }) => {
     const [sortField, setSortField] = useState(sort.field);
@@ -108,6 +109,9 @@ const LodgingList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                         <span>Pays</span>
                                     </th>
                                     <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
+                                        <span>Date d'ajout</span>
+                                    </th>
+                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
                                         <span>Action</span>
                                     </th>
                                 </tr>
@@ -141,6 +145,19 @@ const LodgingList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                             </p>
                                         </td>
                                         <td className="whitespace-nowrap py-3 px-4">
+                                            <p className="text-black dark:text-bodytext text-sm">
+                                                {item.created_at ? (
+                                                    <DateTimeFormat
+                                                        datetime={
+                                                            item.created_at
+                                                        }
+                                                    />
+                                                ) : (
+                                                    "-"
+                                                )}
+                                            </p>
+                                        </td>
+                                        <td className="whitespace-nowrap py-3 px-4">
                                             <div>
                                                 <button
                                                     type="button"
@@ -148,12 +165,20 @@ const LodgingList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                                 >
                                                     Modifier
                                                 </button>
-                                                <button
-                                                    type="button"
-                                                    class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
+                                                <Link
+                                                    as="button"
+                                                    href={route(
+                                                        "lodging.rooms.index",
+                                                        { lodging_id: item.id }
+                                                    )}
                                                 >
-                                                    Chambres
-                                                </button>
+                                                    <button
+                                                        type="button"
+                                                        class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
+                                                    >
+                                                        Chambres
+                                                    </button>
+                                                </Link>
                                             </div>
                                         </td>
                                     </tr>
