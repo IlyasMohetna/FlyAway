@@ -37,7 +37,6 @@ const RoomList = ({ lodging }) => {
             const roomData = response.data;
 
             setSelectedRoom(roomData);
-            console.log(selectedRoom);
             setRoomGallery(roomData.gallery);
         } catch (error) {
             console.error("Failed to fetch room or gallery data:", error);
@@ -57,7 +56,7 @@ const RoomList = ({ lodging }) => {
         adaptiveHeight: true,
         autoplay: true,
         autoplaySpeed: 3000,
-        asNavFor: thumbSliderRef.current, // Synchronized with thumbnails
+        asNavFor: thumbSliderRef.current,
         ref: mainSliderRef,
     };
 
@@ -65,7 +64,7 @@ const RoomList = ({ lodging }) => {
     const thumbSliderSettings = {
         slidesToShow: roomGallery.length > 5 ? 5 : roomGallery.length,
         slidesToScroll: 1,
-        asNavFor: mainSliderRef.current, // Synchronized with the main slider
+        asNavFor: mainSliderRef.current,
         focusOnSelect: true,
         centerMode: true,
         centerPadding: "10px",
@@ -80,6 +79,12 @@ const RoomList = ({ lodging }) => {
     const openDeleteModal = (item) => {
         setSelectedRoom(item);
         setIsDeleteModalOpen(true);
+    };
+
+    // Reset the selectedRoom state on delete success
+    const handleDeleteSuccess = () => {
+        setSelectedRoom(null);
+        setIsDeleteModalOpen(false);
     };
 
     return (
@@ -123,9 +128,7 @@ const RoomList = ({ lodging }) => {
                             </h4>
                         </div>
                         <div className="w-2/6">
-                            <AddButton
-                                action={() => setIsAddRoomModalOpen(true)}
-                            />
+                            <AddButton action={handleAddRoomClick} />
                         </div>
                     </div>
 
@@ -137,7 +140,7 @@ const RoomList = ({ lodging }) => {
                             >
                                 <div className="col-span-5">
                                     <button
-                                        className={`cursor-pointer text-left w-full p-2 rounded-2xl ${
+                                        className={`cursor-pointer text-left w-full p-2 outline-none rounded-2xl ${
                                             selectedRoom?.id === room.id
                                                 ? "bg-blue-500 text-white"
                                                 : "bg-gray-100"
@@ -152,7 +155,7 @@ const RoomList = ({ lodging }) => {
                                     <button
                                         type="button"
                                         onClick={() => openDeleteModal(room)}
-                                        className="text-white bg-red-400 hover:bg-red-500 font-medium rounded-lg px-5 py-2.5 mt-1"
+                                        className="text-white bg-red-400 hover:bg-red-500 outline-none font-medium rounded-lg px-5 py-2.5 mt-1"
                                     >
                                         <FaRegTrashAlt />
                                     </button>
@@ -166,20 +169,22 @@ const RoomList = ({ lodging }) => {
                     {loading ? (
                         <BeatLoader />
                     ) : selectedRoom ? (
-                        <>
-                            <h2 className="text-2xl font-semibold flex">
-                                Détail De La Chambre N°{selectedRoom.number} :
-                                REF#{selectedRoom.reference}
-                                <span
-                                    className="flex h-fit ml-4 w-fit items-center font-bold bg-orange-400 text-white p-1 text-sm px-2.5 py-[5px] rounded-md"
-                                    data-testid="flowbite-badge"
-                                >
-                                    <span>Prix : {selectedRoom.price}€</span>
-                                </span>
-                            </h2>
+                        selectedRoom.id ? ( // Check if selectedRoom data is valid
+                            <>
+                                <h2 className="text-2xl font-semibold flex">
+                                    Détail De La Chambre N°{selectedRoom.number}{" "}
+                                    : REF#{selectedRoom.reference}
+                                    <span
+                                        className="flex h-fit ml-4 w-fit items-center font-bold bg-orange-400 text-white p-1 text-sm px-2.5 py-[5px] rounded-md"
+                                        data-testid="flowbite-badge"
+                                    >
+                                        <span>
+                                            Prix : {selectedRoom.price}€
+                                        </span>
+                                    </span>
+                                </h2>
 
-                            {roomGallery.length > 0 ? (
-                                <>
+                                {roomGallery.length > 0 ? (
                                     <Slider
                                         {...mainSliderSettings}
                                         className="mt-4"
@@ -196,72 +201,61 @@ const RoomList = ({ lodging }) => {
                                             </div>
                                         ))}
                                     </Slider>
-                                </>
-                            ) : (
-                                <p>No images available for this room.</p>
-                            )}
-                            <div>
-                                <div className="w-full mx-auto mt-4">
-                                    <div className="flex justify-center flex-wrap gap-4">
-                                        <IconCard
-                                            text={
-                                                Number(
+                                ) : (
+                                    <p>No images available for this room.</p>
+                                )}
+                                <div>
+                                    <div className="w-full mx-auto mt-4">
+                                        <div className="flex justify-center flex-wrap gap-4">
+                                            <IconCard
+                                                text={`${Number(
                                                     selectedRoom.surface
-                                                ).toFixed() + "m²"
-                                            }
-                                            icon={
-                                                <IoMdResize className="text-blue-500 text-3xl mb-2" />
-                                            }
-                                        />
+                                                ).toFixed()}m²`}
+                                                icon={
+                                                    <IoMdResize className="text-blue-500 text-3xl mb-2" />
+                                                }
+                                            />
 
-                                        <IconCard
-                                            text={
-                                                selectedRoom.bed_number +
-                                                " Lits"
-                                            }
-                                            icon={
-                                                <FaBed className="text-blue-500 text-3xl mb-2" />
-                                            }
-                                        />
+                                            <IconCard
+                                                text={`${selectedRoom.bed_number} Lits`}
+                                                icon={
+                                                    <FaBed className="text-blue-500 text-3xl mb-2" />
+                                                }
+                                            />
 
-                                        <IconCard
-                                            text={
-                                                "x" +
-                                                selectedRoom.max_adult +
-                                                " Adultes"
-                                            }
-                                            icon={
-                                                <IoPeopleSharp className="text-blue-500 text-3xl mb-2" />
-                                            }
-                                        />
+                                            <IconCard
+                                                text={`x${selectedRoom.max_adult} Adultes`}
+                                                icon={
+                                                    <IoPeopleSharp className="text-blue-500 text-3xl mb-2" />
+                                                }
+                                            />
 
-                                        <IconCard
-                                            text={
-                                                "x" +
-                                                selectedRoom.max_child +
-                                                " Enfants"
-                                            }
-                                            icon={
-                                                <FaChild className="text-blue-500 text-3xl mb-2" />
-                                            }
-                                        />
+                                            <IconCard
+                                                text={`x${selectedRoom.max_child} Enfants`}
+                                                icon={
+                                                    <FaChild className="text-blue-500 text-3xl mb-2" />
+                                                }
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mt-12">
+                                        <h3 className="text-1xl font-semibold">
+                                            Description :
+                                        </h3>
+                                        <div
+                                            className="quill-html-content"
+                                            dangerouslySetInnerHTML={{
+                                                __html: DOMPurify.sanitize(
+                                                    selectedRoom.description
+                                                ),
+                                            }}
+                                        ></div>
                                     </div>
                                 </div>
-                                <div className="mt-12">
-                                    <h3 className="text-1xl font-semibold">
-                                        Description :
-                                    </h3>
-                                    <div
-                                        className="quill-html-content"
-                                        dangerouslySetInnerHTML={{
-                                            __html: DOMPurify.sanitize(
-                                                selectedRoom.description
-                                            ),
-                                        }}
-                                    ></div>
-                                </div>
-                            </div>
-                        </>
+                            </>
+                        ) : (
+                            <p>Veuillez sélectionner une chambre.</p>
+                        )
                     ) : (
                         <p>Veuillez sélectionner une chambre.</p>
                     )}
@@ -272,7 +266,6 @@ const RoomList = ({ lodging }) => {
                 open={isAddRoomModalOpen}
                 setOpen={setIsAddRoomModalOpen}
                 lodgingId={lodging?.id}
-                // onAddSuccess={() => fetchAttributes(selectedCategory?.id, 1)}
             />
 
             {selectedRoom && (
@@ -282,7 +275,7 @@ const RoomList = ({ lodging }) => {
                     id={selectedRoom.id}
                     name={selectedRoom.reference}
                     route={route("lodging.rooms.delete", selectedRoom.id)}
-                    // onSuccess={() => fetchAttributes(selectedCategory?.id, 1)}
+                    onSuccess={handleDeleteSuccess}
                 />
             )}
         </>
