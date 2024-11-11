@@ -12,6 +12,7 @@
         "tightenco/ziggy": "^2.3"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.14",
         "fakerphp/faker": "^1.23",
         "laracraft-tech/laravel-schema-rules": "^1.4",
         "laravel/pail": "^1.1",
