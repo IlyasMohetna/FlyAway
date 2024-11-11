@@ -34,4 +34,7 @@ Route::group(['prefix' => 'lodging', 'middleware' => 'auth'], function () {
 
     Route::get('{lodging_id}/rooms', [LodgingController::class, 'lodging_rooms_index'])->name('lodging.rooms.index');
     Route::get('/room/{room_id}', [LodgingController::class, 'room'])->name('lodging.rooms.data');
+    Route::post('/{lodging_id}/room/store', [LodgingController::class, 'room_store'])->name('lodging.room.store');
+    Route::delete('/room/{room_id}', [LodgingController::class, 'room_delete'])->name('lodging.rooms.delete');
+
 });

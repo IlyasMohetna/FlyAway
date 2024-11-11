@@ -14,6 +14,7 @@ use App\Models\LODGING\LodgingAttribut;
 use Illuminate\Support\Facades\Storage;
 use App\Models\LODGING\AttributCategory;
 use App\Models\LODGING\EquipementCategory;
+use App\Models\LODGING\RoomGallery;
 
 class LodgingController extends Controller
 {
@@ -91,6 +92,62 @@ class LodgingController extends Controller
         });
 
         return response()->json($room);
+    }
+
+    public function room_store($lodging_id, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $room = LodgingRoom::create([
+                'reference' => $request->reference,
+                'number' => $request->number,
+                'lodging_id' => $lodging_id,
+                'max_adult' => $request->max_adult,
+                'max_child' => $request->max_child,
+                'description' => $request->description,
+                'surface' => $request->surface,
+                'status_id' => 1,
+                'price' => $request->price,
+                'bed_number' => $request->bed_number
+            ]);
+
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('', 'room_gallery');
+                RoomGallery::create([
+                    'file_name' => $path,
+                    'mime_type' => $image->getClientMimeType(),
+                    'size' => $image->getSize(),
+                    'storage_driver' => 'room_gallery',
+                    'room_id' => $room->id
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('lodging.rooms.index', ['lodging_id' => $lodging_id])->with(['success' => 'Votre demande a été traitée avec succès']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e);
+            return redirect()->route('lodging.rooms.index', ['lodging_id' => $lodging_id])->with(['error' => 'Une erreur est survenue !']);
+        }
+    }
+
+    public function room_delete($room_id)
+    {
+        DB::beginTransaction();
+        try {
+            $room = LodgingRoom::findOrFail($room_id);
+            RoomGallery::where('room_id', $room_id)->delete();
+            $room->delete();
+            DB::commit();
+            return redirect()->route('lodging.rooms.index', ['lodging_id' => $room->lodging_id])->with(['success'=> 'Votre demande a été traiter avec succès']);
+
+        }
+        catch (\Exception $e) {
+            dd($e);
+            DB::rollBack();
+            return redirect()->route('lodging.type')->with(['error'=> 'Une erreur est survenue !']);
+        }
     }
 
     //---------- Lodging types

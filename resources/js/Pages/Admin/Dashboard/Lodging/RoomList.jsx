@@ -12,11 +12,16 @@ import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import IconCard from "../../../../Components/Card/IconCard";
 import DOMPurify from "dompurify";
+import AddButton from "../../../../Components/Buttons/AddButton";
+import AddRoomModal from "./Components/AddRoomModal";
+import DeleteConfirmModal from "./Components/DeleteConfirmModal";
 
 const RoomList = ({ lodging }) => {
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [roomGallery, setRoomGallery] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isAddRoomModalOpen, setIsAddRoomModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const mainSliderRef = useRef(null);
     const thumbSliderRef = useRef(null);
@@ -32,7 +37,8 @@ const RoomList = ({ lodging }) => {
             const roomData = response.data;
 
             setSelectedRoom(roomData);
-            setRoomGallery(roomData.gallery); // Ensure gallery data is only set once
+            console.log(selectedRoom);
+            setRoomGallery(roomData.gallery);
         } catch (error) {
             console.error("Failed to fetch room or gallery data:", error);
         } finally {
@@ -65,6 +71,15 @@ const RoomList = ({ lodging }) => {
         centerPadding: "10px",
         arrows: false,
         ref: thumbSliderRef,
+    };
+
+    const handleAddRoomClick = () => {
+        setIsAddRoomModalOpen(true);
+    };
+
+    const openDeleteModal = (item) => {
+        setSelectedRoom(item);
+        setIsDeleteModalOpen(true);
     };
 
     return (
@@ -101,9 +116,19 @@ const RoomList = ({ lodging }) => {
 
             <div className="flex container mx-auto p-6">
                 <div className="w-2/6 p-4 border-r">
-                    <h4 className="font-semibold text-xl mb-4">
-                        Liste des chambres
-                    </h4>
+                    <div className="flex">
+                        <div className="w-4/6">
+                            <h4 className="font-semibold text-xl mb-4 mt-2">
+                                Liste des chambres
+                            </h4>
+                        </div>
+                        <div className="w-2/6">
+                            <AddButton
+                                action={() => setIsAddRoomModalOpen(true)}
+                            />
+                        </div>
+                    </div>
+
                     <div className="w-full">
                         {lodging.rooms.map((room) => (
                             <div
@@ -126,6 +151,7 @@ const RoomList = ({ lodging }) => {
                                 <div className="col-span-1 float-right w-full">
                                     <button
                                         type="button"
+                                        onClick={() => openDeleteModal(room)}
                                         className="text-white bg-red-400 hover:bg-red-500 font-medium rounded-lg px-5 py-2.5 mt-1"
                                     >
                                         <FaRegTrashAlt />
@@ -145,7 +171,7 @@ const RoomList = ({ lodging }) => {
                                 Détail De La Chambre N°{selectedRoom.number} :
                                 REF#{selectedRoom.reference}
                                 <span
-                                    class="flex h-fit ml-4 w-fit items-center font-bold bg-orange-400 text-white p-1 text-sm px-2.5 py-[5px] rounded-md"
+                                    className="flex h-fit ml-4 w-fit items-center font-bold bg-orange-400 text-white p-1 text-sm px-2.5 py-[5px] rounded-md"
                                     data-testid="flowbite-badge"
                                 >
                                     <span>Prix : {selectedRoom.price}€</span>
@@ -241,6 +267,24 @@ const RoomList = ({ lodging }) => {
                     )}
                 </div>
             </div>
+
+            <AddRoomModal
+                open={isAddRoomModalOpen}
+                setOpen={setIsAddRoomModalOpen}
+                lodgingId={lodging?.id}
+                // onAddSuccess={() => fetchAttributes(selectedCategory?.id, 1)}
+            />
+
+            {selectedRoom && (
+                <DeleteConfirmModal
+                    open={isDeleteModalOpen}
+                    setOpen={setIsDeleteModalOpen}
+                    id={selectedRoom.id}
+                    name={selectedRoom.reference}
+                    route={route("lodging.rooms.delete", selectedRoom.id)}
+                    // onSuccess={() => fetchAttributes(selectedCategory?.id, 1)}
+                />
+            )}
         </>
     );
 };
