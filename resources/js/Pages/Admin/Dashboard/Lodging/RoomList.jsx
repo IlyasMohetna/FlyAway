@@ -11,6 +11,7 @@ import { FaBed } from "react-icons/fa";
 import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import IconCard from "../../../../Components/Card/IconCard";
+import DOMPurify from "dompurify";
 
 const RoomList = ({ lodging }) => {
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -140,10 +141,17 @@ const RoomList = ({ lodging }) => {
                         <BeatLoader />
                     ) : selectedRoom ? (
                         <>
-                            <h2 className="text-2xl font-semibold">
+                            <h2 className="text-2xl font-semibold flex">
                                 Détail De La Chambre N°{selectedRoom.number} :
                                 REF#{selectedRoom.reference}
+                                <span
+                                    class="flex h-fit ml-4 w-fit items-center font-bold bg-orange-400 text-white p-1 text-sm px-2.5 py-[5px] rounded-md"
+                                    data-testid="flowbite-badge"
+                                >
+                                    <span>Prix : {selectedRoom.price}€</span>
+                                </span>
                             </h2>
+
                             {roomGallery.length > 0 ? (
                                 <>
                                     <Slider
@@ -212,6 +220,19 @@ const RoomList = ({ lodging }) => {
                                             }
                                         />
                                     </div>
+                                </div>
+                                <div className="mt-12">
+                                    <h3 className="text-1xl font-semibold">
+                                        Description :
+                                    </h3>
+                                    <div
+                                        className="quill-html-content"
+                                        dangerouslySetInnerHTML={{
+                                            __html: DOMPurify.sanitize(
+                                                selectedRoom.description
+                                            ),
+                                        }}
+                                    ></div>
                                 </div>
                             </div>
                         </>
