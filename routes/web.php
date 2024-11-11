@@ -16,3 +16,5 @@ require __DIR__ . '/config/location.php';
 Route::group(['prefix' => 'admin'], function () {
     require __DIR__ . '/admin/lodging.php';
 });
+
+require __DIR__ . '/select.php';

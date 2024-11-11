@@ -48,7 +48,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         forAccordion={true}
                     />
                     <MenuItemStandlone
-                        href="/"
+                        href={route("lodging.create.show")}
                         title="Ajouter un hébergement"
                         forAccordion={true}
                     />

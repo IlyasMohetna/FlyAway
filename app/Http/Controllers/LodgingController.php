@@ -2,18 +2,70 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LODGING\EquipementCategory;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\LODGING\Lodging;
-use App\Models\LODGING\Attribut;
+use App\Models\LODGING\Equipement;
+use Illuminate\Support\Facades\DB;
 use App\Models\LODGING\LodgingType;
 use App\Models\LODGING\AttributTerm;
+use App\Models\LODGING\LodgingAttribut;
 use App\Models\LODGING\AttributCategory;
-use App\Models\LODGING\Equipement;
+use App\Models\LODGING\EquipementCategory;
 
 class LodgingController extends Controller
 {
+    //---------- Equipement
+    public function create_show()
+    {
+        $categories = AttributCategory::with(['attribut' => function ($query) {
+            $query->select('id', 'name', 'attribut_categorie_id');
+        }])
+        ->select('id', 'name')
+        ->get();
+
+        return Inertia::render('Admin/Dashboard/Lodging/CreateLodging', [
+            'categories'=> $categories
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $lodging = Lodging::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'star_rating' => $request->star_rating,
+                'address_1' => $request->address1,
+                'address_2' => $request->address2,
+                'linked_city_id' => $request->link_city_id,
+                'real_city_id' => $request->real_city_id,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'check_in' => $request->check_in,
+                'check_out' => $request->check_out,
+                'lodging_type_id' => $request->type_lodging_id
+            ]);
+
+            foreach($request->attributs as $attribut) {
+                LodgingAttribut::create([
+                    'lodging_id' => $lodging->id,
+                    'attribut_term_id' => $attribut
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('lodging.index')->with(['success' => 'Votre demande a été traiter avec succès']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e);
+            return redirect()->route('lodging.index')->with(['error' => 'Une erreur est survenue !']);
+        }
+    }
+
+    //---------- Lodging types
     public function index()
     {
         $query = Lodging::query();
@@ -69,6 +121,18 @@ class LodgingController extends Controller
             ],
             'search' => request()->input('search', ''),
         ]);
+    }
+
+    public function type_select(Request $request)
+    {
+        $searchTerm = $request->query('search', '');
+
+        $cities = LodgingType::where('name', 'like', '%' . $searchTerm . '%')
+        ->select('id', 'name')
+        ->orderBy('name')
+        ->get();
+
+        return response()->json($cities);
     }
 
     public function type_store(Request $request)

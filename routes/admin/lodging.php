@@ -8,6 +8,7 @@ Route::group(['prefix' => 'lodging', 'middleware' => 'auth'], function () {
 
     // Type
     Route::get("/type", [LodgingController::class, "type"])->name("lodging.type");
+    Route::get("/type/selected", [LodgingController::class, "type_select"])->name("lodging.type.select");
     Route::post("/type", [LodgingController::class, "type_store"])->name("lodging.type.store");
     Route::delete("/type/{id}", [LodgingController::class, "type_delete"])->name("lodging.type.delete");
     //
@@ -28,4 +29,6 @@ Route::group(['prefix' => 'lodging', 'middleware' => 'auth'], function () {
     Route::post("/equipement/categorie", [LodgingController::class, "equipement_categorie_store"])->name("lodging.equipement_categorie.store");
     Route::delete("/equipement/categorie/{id}", [LodgingController::class, "equipement_categorie_delete"])->name("lodging.equipement_categorie.delete");
 
+    Route::get('/create', [LodgingController::class, 'create_show'])->name('lodging.create.show');
+    Route::post('/create', [LodgingController::class, 'store'])->name('lodging.store');
 });

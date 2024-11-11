@@ -8,4 +8,9 @@ class AttributCategory extends Model
 	protected $table = 'lodging__attribut_categories';
 
 	protected $guarded = [];
+
+    public function attribut()
+    {
+        return $this->hasMany(AttributTerm::class,'attribut_categorie_id','id');
+    }
 }
