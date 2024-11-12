@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('package__package_type', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
+            $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });

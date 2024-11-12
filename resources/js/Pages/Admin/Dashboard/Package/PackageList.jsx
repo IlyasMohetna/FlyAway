@@ -2,11 +2,15 @@ import { useState } from "react";
 import AdminDashboardLayout from "../Layouts/AdminDashboardLayout";
 import { Link, router } from "@inertiajs/react";
 import DateTimeFormat from "../../../../Components/Date/DateTimeFormat";
+import MoneyFormat from "../../../../Components/Format/MoneyFormat";
+import AddButton from "../../../../Components/Buttons/AddButton";
+import AddPackageModal from "./Components/AddPackageModal";
 
 const PackageList = ({ data, total, currentPage, lastPage, sort, search }) => {
     const [sortField, setSortField] = useState(sort.field);
     const [sortOrder, setSortOrder] = useState(sort.order);
     const [searchQuery, setSearchQuery] = useState(search);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     const handleSort = (field) => {
         const order = sortOrder === "asc" ? "desc" : "asc";
@@ -58,178 +62,186 @@ const PackageList = ({ data, total, currentPage, lastPage, sort, search }) => {
     };
 
     return (
-        <div className="container mx-auto p-6">
-            <div
-                data-testid="flowbite-card"
-                className="flex relative w-full break-words flex-col card p-6 dark:shadow-dark-md mb-6 py-4 bg-lightinfo dark:bg-darkinfo overflow-hidden rounded-md border-none shadow-none dark:shadow-none"
-                style={{ borderRadius: 7 }}
-            >
-                <div className="flex h-full flex-col justify-start gap-0 p-0">
-                    <div className="items-center grid grid-cols-12 gap-6">
-                        <div className="col-span-9">
-                            <h4 className="font-semibold text-xl text-dark dark:text-white mb-3">
-                                La liste forfaits
-                            </h4>
-                        </div>
-                        <div className="col-span-3 flex justify-center -mb-10">
-                            <img
-                                alt=""
-                                loading="lazy"
-                                width={168}
-                                height={165}
-                                decoding="async"
-                                data-nimg={1}
-                                className="md:-mb-[31px] -mb-4 "
-                                src="/assets/img/ChatBc.png"
-                                style={{ color: "transparent" }}
-                            />
+        <>
+            <div className="container mx-auto p-6">
+                <div
+                    data-testid="flowbite-card"
+                    className="flex relative w-full break-words flex-col card p-6 dark:shadow-dark-md mb-6 py-4 bg-lightinfo dark:bg-darkinfo overflow-hidden rounded-md border-none shadow-none dark:shadow-none"
+                    style={{ borderRadius: 7 }}
+                >
+                    <div className="flex h-full flex-col justify-start gap-0 p-0">
+                        <div className="items-center grid grid-cols-12 gap-6">
+                            <div className="col-span-9">
+                                <h4 className="font-semibold text-xl text-dark dark:text-white mb-3">
+                                    La liste des forfaits
+                                </h4>
+                            </div>
+                            <div className="col-span-3 flex justify-center -mb-10">
+                                <img
+                                    alt=""
+                                    loading="lazy"
+                                    width={168}
+                                    height={165}
+                                    decoding="async"
+                                    data-nimg={1}
+                                    className="md:-mb-[31px] -mb-4 "
+                                    src="/assets/img/ChatBc.png"
+                                    style={{ color: "transparent" }}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="pt-4 p-6">
-                <div className="border rounded-md border-ld overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full">
-                            <thead>
-                                <tr>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Titre</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Montant TTC</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Durée</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Type</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Destination</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Date d'ajout</span>
-                                    </th>
-                                    <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
-                                        <span>Action</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border dark:divide-darkborder">
-                                {data.map((item) => (
-                                    <tr key={item.id}>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.title}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.amount_ttc}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.duration}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.package_type_id}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.destination_id}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <p className="text-black dark:text-bodytext text-sm">
-                                                {item.created_at ? (
-                                                    <DateTimeFormat
-                                                        datetime={
-                                                            item.created_at
-                                                        }
-                                                    />
-                                                ) : (
-                                                    "-"
-                                                )}
-                                            </p>
-                                        </td>
-                                        <td className="whitespace-nowrap py-3 px-4">
-                                            <div>
-                                                <Link
-                                                    as="button"
-                                                    href={route(
-                                                        "lodging.edit.show",
-                                                        { lodging_id: item.id }
-                                                    )}
-                                                >
-                                                    <button
-                                                        type="button"
-                                                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                                    >
-                                                        Modifier
-                                                    </button>
-                                                </Link>
-                                                <Link
-                                                    as="button"
-                                                    href={route(
-                                                        "lodging.rooms.index",
-                                                        { lodging_id: item.id }
-                                                    )}
-                                                >
-                                                    <button
-                                                        type="button"
-                                                        class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
-                                                    >
-                                                        Chambres
-                                                    </button>
-                                                </Link>
-                                            </div>
-                                        </td>
+                <div className="pt-4 p-6">
+                    <div className="flex justify-between items-center border-b border-ld px-6 py-4">
+                        <div></div>
+                        <AddButton action={() => setIsAddModalOpen(true)} />
+                    </div>
+
+                    <div className="border rounded-md border-ld overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full">
+                                <thead>
+                                    <tr>
+                                        <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
+                                            <span>Titre</span>
+                                        </th>
+                                        <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
+                                            <span>Montant TTC</span>
+                                        </th>
+                                        <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
+                                            <span>Durée</span>
+                                        </th>
+                                        <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
+                                            <span>Type</span>
+                                        </th>
+                                        <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
+                                            <span>Destination</span>
+                                        </th>
+                                        <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
+                                            <span>Action</span>
+                                        </th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="sm:flex gap-2 p-3 items-center float-right mr-20 mt-6">
-                        <div className="flex items-center gap-2 ">
-                            <button
-                                onClick={() =>
-                                    handlePageChange(currentPage - 1)
-                                }
-                                disabled={currentPage === 1}
-                                className={`px-3 py-1 rounded-md ${
-                                    currentPage === 1
-                                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                        : "bg-blue-500 text-white hover:bg-blue-600"
-                                }`}
-                            >
-                                Précédent
-                            </button>
+                                </thead>
+                                <tbody className="divide-y divide-border dark:divide-darkborder">
+                                    {data.map((item) => (
+                                        <tr key={item.id}>
+                                            <td className="whitespace-nowrap py-3 px-4">
+                                                <p className="text-black dark:text-bodytext text-sm">
+                                                    {item.title}
+                                                </p>
+                                            </td>
+                                            <td className="whitespace-nowrap py-3 px-4">
+                                                <p className="text-black dark:text-bodytext text-sm">
+                                                    <MoneyFormat
+                                                        money={item.amount_ttc}
+                                                    />
+                                                </p>
+                                            </td>
+                                            <td className="whitespace-nowrap py-3 px-4">
+                                                <p className="text-black dark:text-bodytext text-sm">
+                                                    {item.duration} jours
+                                                </p>
+                                            </td>
+                                            <td className="whitespace-nowrap py-3 px-4">
+                                                <p className="text-black dark:text-bodytext text-sm">
+                                                    {item.type.name}
+                                                </p>
+                                            </td>
+                                            <td className="whitespace-nowrap py-3 px-4">
+                                                <p className="text-black dark:text-bodytext text-sm">
+                                                    {item.city.name} -{" "}
+                                                    {item.city.region.name} -{" "}
+                                                    {
+                                                        item.city.region.country
+                                                            .name
+                                                    }
+                                                </p>
+                                            </td>
+                                            <td className="whitespace-nowrap py-3 px-4">
+                                                <div>
+                                                    <Link
+                                                        as="button"
+                                                        href={route(
+                                                            "lodging.edit.show",
+                                                            {
+                                                                lodging_id:
+                                                                    item.id,
+                                                            }
+                                                        )}
+                                                    >
+                                                        <button
+                                                            type="button"
+                                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                                        >
+                                                            Modifier
+                                                        </button>
+                                                    </Link>
+                                                    <Link
+                                                        as="button"
+                                                        href={route(
+                                                            "lodging.rooms.index",
+                                                            {
+                                                                lodging_id:
+                                                                    item.id,
+                                                            }
+                                                        )}
+                                                    >
+                                                        <button
+                                                            type="button"
+                                                            class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
+                                                        >
+                                                            Chambres
+                                                        </button>
+                                                    </Link>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="sm:flex gap-2 p-3 items-center float-right mr-20 mt-6">
+                            <div className="flex items-center gap-2 ">
+                                <button
+                                    onClick={() =>
+                                        handlePageChange(currentPage - 1)
+                                    }
+                                    disabled={currentPage === 1}
+                                    className={`px-3 py-1 rounded-md ${
+                                        currentPage === 1
+                                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                            : "bg-blue-500 text-white hover:bg-blue-600"
+                                    }`}
+                                >
+                                    Précédent
+                                </button>
 
-                            {renderPageNumbers()}
+                                {renderPageNumbers()}
 
-                            <button
-                                onClick={() =>
-                                    handlePageChange(currentPage + 1)
-                                }
-                                disabled={currentPage === lastPage}
-                                className={`px-3 py-1 rounded-md ${
-                                    currentPage === lastPage
-                                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                        : "bg-blue-500 text-white hover:bg-blue-600"
-                                }`}
-                            >
-                                Suivant
-                            </button>
+                                <button
+                                    onClick={() =>
+                                        handlePageChange(currentPage + 1)
+                                    }
+                                    disabled={currentPage === lastPage}
+                                    className={`px-3 py-1 rounded-md ${
+                                        currentPage === lastPage
+                                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                            : "bg-blue-500 text-white hover:bg-blue-600"
+                                    }`}
+                                >
+                                    Suivant
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <AddPackageModal
+                open={isAddModalOpen}
+                setOpen={setIsAddModalOpen}
+            />
+        </>
     );
 };
 

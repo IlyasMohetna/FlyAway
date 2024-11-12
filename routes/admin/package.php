@@ -5,7 +5,7 @@ use App\Http\Controllers\PackageController;
 
 Route::group(['prefix' => 'package', 'middleware' => 'auth'], function () {
     Route::get("/", [PackageController::class, "index"])->name("package.index");
-
+    Route::post("/store", [PackageController::class, "store"])->name("package.store");
     // // Type
     // Route::get("/type", [LodgingController::class, "type"])->name("lodging.type");
     // Route::get("/type/selected", [LodgingController::class, "type_select"])->name("lodging.type.select");

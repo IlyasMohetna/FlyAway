@@ -5,15 +5,14 @@ import Label from "../../../../../../Components/Form/Labels/Label";
 
 function DynamicSelect({
     label,
-    dataKey,
+    selectedValue, // New prop for current selected value
     fetchRoute,
-    data,
     name,
     handleInputChange,
     errors,
     placeholder = "Select an option",
     noOptionsMessage = "No options available",
-    defaultOption = null, // Added this line
+    defaultOption = null, // Default option if any
 }) {
     // Initialize options with defaultOption if provided
     const [options, setOptions] = useState(
@@ -46,7 +45,6 @@ function DynamicSelect({
                             label: item.name,
                         }));
 
-                        // Include defaultOption if not already in fetchedOptions
                         if (
                             defaultOption &&
                             !fetchedOptions.find(
@@ -57,6 +55,7 @@ function DynamicSelect({
                         }
 
                         setOptions(fetchedOptions);
+                        console.log(fetchedOptions);
                     })
                     .catch((error) => {
                         if (axios.isCancel(error)) {
@@ -81,27 +80,30 @@ function DynamicSelect({
         fetchOptions();
     }, [fetchRoute, searchTerm]);
 
-    const getCustomStyles = (hasError) => ({
-        control: (base) => ({
+    const customStyles = {
+        control: (base, state) => ({
             ...base,
             backgroundColor: "white",
-            borderColor: hasError ? "#f87171" : "#d1d5db",
+            borderColor: errors[name] ? "#f87171" : "#d1d5db",
             borderWidth: "1px",
-            boxShadow: hasError ? "0 0 0 1px #f87171" : "none",
+            boxShadow: state.isFocused
+                ? errors[name]
+                    ? "0 0 0 1px #f87171"
+                    : "0 0 0 1px #a5b4fc"
+                : "none",
             "&:hover": {
-                borderColor: hasError ? "#f87171" : "#a5b4fc",
+                borderColor: errors[name] ? "#f87171" : "#a5b4fc",
             },
         }),
         menu: (base) => ({
             ...base,
-            zIndex: 9999,
+            zIndex: 1050, // Increased z-index to ensure the dropdown is above other components
         }),
-    });
-
-    // Determine the selected value
-    const selectedValue =
-        options.find((option) => option.value === data[dataKey]) ||
-        defaultOption;
+        menuPortal: (base) => ({
+            ...base,
+            zIndex: 1050, // To ensure the dropdown menu is above the modal or other UI elements
+        }),
+    };
 
     return (
         <>
@@ -109,19 +111,21 @@ function DynamicSelect({
             <Select
                 options={options}
                 name={name}
-                value={selectedValue}
+                value={
+                    options.find((option) => option.value === selectedValue) ||
+                    defaultOption
+                }
                 onInputChange={(inputValue) => setSearchTerm(inputValue)}
                 onMenuOpen={() => {
                     if (!searchTerm && fetchRoute) {
-                        // If there's no search term and dropdown is opened, fetch options
                         setSearchTerm(""); // Trigger the effect to load initial data
                     }
                 }}
                 onChange={(option) =>
-                    handleInputChange(dataKey, option ? option.value : "")
+                    handleInputChange(name, option ? option.value : "")
                 }
                 placeholder={placeholder}
-                styles={getCustomStyles(!!errors[dataKey])}
+                styles={customStyles}
                 menuPortalTarget={document.body}
                 noOptionsMessage={() => noOptionsMessage}
                 isClearable={true} // Allow clear option

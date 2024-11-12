@@ -52,6 +52,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'package_gallery' => [
+            'driver' => 'local',
+            'root' => storage_path('app/package_gallery'),
+            'url' => env('APP_URL') . '/storage/package_gallery',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -80,6 +87,7 @@ return [
     'links' => [
         public_path('storage') => storage_path('app/public'),
         public_path('storage/room_gallery') => storage_path('app/room_gallery'),
+        public_path('storage/package_gallery') => storage_path('app/package_gallery'),
     ],
 
 ];

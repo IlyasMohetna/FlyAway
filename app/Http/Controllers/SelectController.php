@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CONFIG\City;
+use App\Models\PACKAGE\PackageType;
 use Illuminate\Http\Request;
 
 class SelectController extends Controller
@@ -27,5 +28,18 @@ class SelectController extends Controller
         }
 
         return response()->json($return);
+    }
+
+    public function package_type_select(Request $request)
+    {
+        $query = $request->query('search', '');
+
+        $types = PackageType::where('name', 'LIKE', '%'.$query.'%')
+        ->orWhere('name', 'LIKE', '%'.$query.'%')
+        ->orderByRaw("CASE WHEN `name` = ? THEN 1 WHEN `name` LIKE ? THEN 2 ELSE 3 END", [$query, $query.'%'])
+        ->limit(10)
+        ->get();
+
+        return response()->json($types);
     }
 }
