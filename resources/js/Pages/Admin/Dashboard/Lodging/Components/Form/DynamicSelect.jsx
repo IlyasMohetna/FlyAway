@@ -5,16 +5,16 @@ import Label from "../../../../../../Components/Form/Labels/Label";
 
 function DynamicSelect({
     label,
-    selectedValue, // New prop for current selected value
+    selectedValue,
     fetchRoute,
     name,
     handleInputChange,
     errors,
     placeholder = "Select an option",
     noOptionsMessage = "No options available",
-    defaultOption = null, // Default option if any
+    defaultOption = null,
+    multiple = false, // Allow multiple selection
 }) {
-    // Initialize options with defaultOption if provided
     const [options, setOptions] = useState(
         defaultOption ? [defaultOption] : []
     );
@@ -22,7 +22,6 @@ function DynamicSelect({
     const [controller, setController] = useState(null);
 
     useEffect(() => {
-        // Function to fetch options
         const fetchOptions = () => {
             if (controller) {
                 controller.abort();
@@ -45,17 +44,65 @@ function DynamicSelect({
                             label: item.name,
                         }));
 
+                        let updatedOptions = [...fetchedOptions];
+
+                        // Add currently selected options to ensure they are available in the list
+                        if (multiple && Array.isArray(selectedValue)) {
+                            const selectedOptions = selectedValue
+                                .map((val) => {
+                                    return (
+                                        options.find(
+                                            (opt) => opt.value === val
+                                        ) || {
+                                            value: val,
+                                            label: `Loading...`, // Placeholder if not found in fetched options
+                                        }
+                                    );
+                                })
+                                .filter(
+                                    (selectedOption, index, self) =>
+                                        self.findIndex(
+                                            (opt) =>
+                                                opt.value ===
+                                                selectedOption.value
+                                        ) === index
+                                ); // Remove duplicates based on value
+                            updatedOptions = [
+                                ...selectedOptions,
+                                ...fetchedOptions.filter(
+                                    (fetchedOption) =>
+                                        !selectedOptions.find(
+                                            (selectedOption) =>
+                                                selectedOption.value ===
+                                                fetchedOption.value
+                                        )
+                                ),
+                            ];
+                        } else if (!multiple && selectedValue) {
+                            const selectedOption = options.find(
+                                (opt) => opt.value === selectedValue
+                            );
+                            if (
+                                selectedOption &&
+                                !fetchedOptions.find(
+                                    (opt) => opt.value === selectedOption.value
+                                )
+                            ) {
+                                updatedOptions.unshift(selectedOption);
+                            }
+                        }
+
+                        // Include defaultOption if not already present
                         if (
                             defaultOption &&
-                            !fetchedOptions.find(
+                            !updatedOptions.find(
                                 (option) => option.value === defaultOption.value
                             )
                         ) {
-                            fetchedOptions.unshift(defaultOption);
+                            updatedOptions.unshift(defaultOption);
                         }
 
-                        setOptions(fetchedOptions);
-                        console.log(fetchedOptions);
+                        setOptions(updatedOptions);
                     })
                     .catch((error) => {
                         if (axios.isCancel(error)) {
@@ -76,9 +123,8 @@ function DynamicSelect({
             };
         };
 
-        // Fetch options initially on mount and when searchTerm changes
         fetchOptions();
-    }, [fetchRoute, searchTerm]);
+    }, [fetchRoute, searchTerm, selectedValue]);
 
     const customStyles = {
         control: (base, state) => ({
@@ -97,12 +143,29 @@ function DynamicSelect({
         }),
         menu: (base) => ({
             ...base,
-            zIndex: 1050, // Increased z-index to ensure the dropdown is above other components
+            zIndex: 1050,
         }),
         menuPortal: (base) => ({
             ...base,
-            zIndex: 1050, // To ensure the dropdown menu is above the modal or other UI elements
+            zIndex: 1050,
         }),
+    };
+
+    const getValue = () => {
+        if (multiple) {
+            // If multiple, selectedValue should be an array
+            if (Array.isArray(selectedValue)) {
+                return options.filter((option) =>
+                    selectedValue.includes(option.value)
+                );
+            }
+            return [];
+        } else {
+            // If single, selectedValue should be a single value
+            return (
+                options.find((option) => option.value === selectedValue) || null
+            );
+        }
     };
 
     return (
@@ -111,24 +174,30 @@ function DynamicSelect({
             <Select
                 options={options}
                 name={name}
-                value={
-                    options.find((option) => option.value === selectedValue) ||
-                    defaultOption
-                }
+                isMulti={multiple}
+                value={getValue()}
                 onInputChange={(inputValue) => setSearchTerm(inputValue)}
                 onMenuOpen={() => {
                     if (!searchTerm && fetchRoute) {
                         setSearchTerm(""); // Trigger the effect to load initial data
                     }
                 }}
-                onChange={(option) =>
-                    handleInputChange(name, option ? option.value : "")
-                }
+                onChange={(option) => {
+                    if (multiple) {
+                        // If multiple selection, option will be an array
+                        handleInputChange(
+                            name,
+                            option ? option.map((opt) => opt.value) : []
+                        );
+                    } else {
+                        handleInputChange(name, option ? option.value : null);
+                    }
+                }}
                 placeholder={placeholder}
                 styles={customStyles}
                 menuPortalTarget={document.body}
                 noOptionsMessage={() => noOptionsMessage}
-                isClearable={true} // Allow clear option
+                isClearable={true}
             />
         </>
     );

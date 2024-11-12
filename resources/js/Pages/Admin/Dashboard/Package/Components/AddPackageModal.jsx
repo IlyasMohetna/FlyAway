@@ -46,6 +46,7 @@ export default function AddPackageDetailModal({ open, setOpen }) {
         description: "",
         package_type_id: "",
         destination_id: "",
+        lodging_options: [], // Lodging options for multi-select
         images: [],
     });
 
@@ -286,6 +287,38 @@ export default function AddPackageDetailModal({ open, setOpen }) {
                                             )}
                                         </div>
                                     </div>
+                                    <div className="grid grid-cols-2 gap-4 mb-3">
+                                        <div>
+                                            <DynamicSelect
+                                                label="Options d'hébergements"
+                                                name="lodging_options"
+                                                selectedValue={
+                                                    data.lodging_options
+                                                }
+                                                handleInputChange={(
+                                                    name,
+                                                    value
+                                                ) => {
+                                                    setData(name, value);
+                                                    removeClientError(name);
+                                                }}
+                                                fetchRoute={route(
+                                                    "select.lodging"
+                                                )}
+                                                errors={clientErrors}
+                                                noOptionsMessage="Veuillez sélectionner des options d'hébergements !"
+                                                placeholder="Sélectionner une ou plusieurs options"
+                                                multiple={true}
+                                            />
+                                            {clientErrors.lodging_options && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {
+                                                        clientErrors.lodging_options
+                                                    }
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
                                     <div className="w-full mb-3">
                                         <label
                                             htmlFor="description"
@@ -311,7 +344,6 @@ export default function AddPackageDetailModal({ open, setOpen }) {
                                             </p>
                                         )}
                                     </div>
-
                                     <div className="w-full mb-3">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Images

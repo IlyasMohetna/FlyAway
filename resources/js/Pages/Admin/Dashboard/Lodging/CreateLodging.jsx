@@ -171,8 +171,7 @@ function CreateLodging({ categories }) {
                                         <DynamicSelect
                                             label="Type du logement"
                                             name="type_lodging_id"
-                                            dataKey="type_lodging_id"
-                                            data={data}
+                                            selectedValue={data.type_lodging_id}
                                             handleInputChange={
                                                 handleInputChange
                                             }
@@ -250,6 +249,9 @@ function CreateLodging({ categories }) {
                                             <DynamicSelect
                                                 label="Ville réelle"
                                                 name="real_city_id"
+                                                selectedValue={
+                                                    data.real_city_id
+                                                }
                                                 handleInputChange={
                                                     handleInputChange
                                                 }
@@ -266,7 +268,9 @@ function CreateLodging({ categories }) {
                                             <DynamicSelect
                                                 label="Ville de rattachement"
                                                 name="link_city_id"
-                                                dataKey="link_city_id"
+                                                selectedValue={
+                                                    data.link_city_id
+                                                }
                                                 handleInputChange={
                                                     handleInputChange
                                                 }
