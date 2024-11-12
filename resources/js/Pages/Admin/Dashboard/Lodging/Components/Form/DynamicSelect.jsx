@@ -13,49 +13,72 @@ function DynamicSelect({
     errors,
     placeholder = "Select an option",
     noOptionsMessage = "No options available",
+    defaultOption = null, // Added this line
 }) {
-    const [options, setOptions] = useState([]);
+    // Initialize options with defaultOption if provided
+    const [options, setOptions] = useState(
+        defaultOption ? [defaultOption] : []
+    );
     const [searchTerm, setSearchTerm] = useState("");
     const [controller, setController] = useState(null);
 
     useEffect(() => {
-        if (controller) {
-            controller.abort();
-        }
+        // Function to fetch options
+        const fetchOptions = () => {
+            if (controller) {
+                controller.abort();
+            }
 
-        const newController = new AbortController();
-        setController(newController);
+            const newController = new AbortController();
+            setController(newController);
 
-        if (fetchRoute) {
-            axios
-                .get(fetchRoute, {
-                    params: {
-                        search: searchTerm,
-                    },
-                    signal: newController.signal,
-                })
-                .then((response) => {
-                    setOptions(
-                        response.data.map((item) => ({
+            if (fetchRoute) {
+                axios
+                    .get(fetchRoute, {
+                        params: {
+                            search: searchTerm,
+                        },
+                        signal: newController.signal,
+                    })
+                    .then((response) => {
+                        const fetchedOptions = response.data.map((item) => ({
                             value: item.id,
                             label: item.name,
-                        }))
-                    );
-                })
-                .catch((error) => {
-                    if (axios.isCancel(error)) {
-                        console.log("Previous request canceled", error.message);
-                    } else {
-                        console.error("Error fetching options:", error);
-                    }
-                });
-        }
+                        }));
 
-        return () => {
-            if (newController) {
-                newController.abort();
+                        // Include defaultOption if not already in fetchedOptions
+                        if (
+                            defaultOption &&
+                            !fetchedOptions.find(
+                                (option) => option.value === defaultOption.value
+                            )
+                        ) {
+                            fetchedOptions.unshift(defaultOption);
+                        }
+
+                        setOptions(fetchedOptions);
+                    })
+                    .catch((error) => {
+                        if (axios.isCancel(error)) {
+                            console.log(
+                                "Previous request canceled",
+                                error.message
+                            );
+                        } else {
+                            console.error("Error fetching options:", error);
+                        }
+                    });
             }
+
+            return () => {
+                if (newController) {
+                    newController.abort();
+                }
+            };
         };
+
+        // Fetch options initially on mount and when searchTerm changes
+        fetchOptions();
     }, [fetchRoute, searchTerm]);
 
     const getCustomStyles = (hasError) => ({
@@ -75,20 +98,25 @@ function DynamicSelect({
         }),
     });
 
+    // Determine the selected value
+    const selectedValue =
+        options.find((option) => option.value === data[dataKey]) ||
+        defaultOption;
+
     return (
         <>
             <Label text={label} />
             <Select
                 options={options}
                 name={name}
-                value={
-                    data[dataKey]
-                        ? options.find(
-                              (option) => option.value === data[dataKey]
-                          )
-                        : null
-                }
+                value={selectedValue}
                 onInputChange={(inputValue) => setSearchTerm(inputValue)}
+                onMenuOpen={() => {
+                    if (!searchTerm && fetchRoute) {
+                        // If there's no search term and dropdown is opened, fetch options
+                        setSearchTerm(""); // Trigger the effect to load initial data
+                    }
+                }}
                 onChange={(option) =>
                     handleInputChange(dataKey, option ? option.value : "")
                 }
@@ -96,6 +124,7 @@ function DynamicSelect({
                 styles={getCustomStyles(!!errors[dataKey])}
                 menuPortalTarget={document.body}
                 noOptionsMessage={() => noOptionsMessage}
+                isClearable={true} // Allow clear option
             />
         </>
     );

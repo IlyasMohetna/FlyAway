@@ -14,13 +14,23 @@ class Lodging extends Model
         return $this->belongsTo(LodgingType::class, 'lodging_type_id');
     }
 
-    public function city()
+    public function real_city()
     {
         return $this->belongsTo(City::class,'real_city_id');
+    }
+
+    public function linked_city()
+    {
+        return $this->belongsTo(City::class,'linked_city_id');
     }
 
     public function rooms()
     {
         return $this->hasMany(LodgingRoom::class,'lodging_id', 'id');
+    }
+
+    public function attributs()
+    {
+        return $this->hasMany(LodgingAttribut::class, 'lodging_id', 'id');
     }
 }

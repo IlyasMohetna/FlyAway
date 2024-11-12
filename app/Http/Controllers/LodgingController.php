@@ -68,6 +68,63 @@ class LodgingController extends Controller
         }
     }
 
+    public function edit_lodging_show($lodging_id)
+    {
+        $lodging = Lodging::with('real_city', 'linked_city', 'type')->find($lodging_id);
+        $lodging_attributs = $lodging->attributs->pluck('attribut_term_id');
+        $categories = AttributCategory::with(['attribut' => function ($query) {
+            $query->select('id', 'name', 'attribut_categorie_id');
+        }])
+        ->select('id', 'name')
+        ->get();
+
+        return Inertia::render('Admin/Dashboard/Lodging/EditLodging', [
+            'lodging' => $lodging,
+            'lodging_attributs' => $lodging_attributs,
+            'categories' => $categories
+        ]);
+    }
+
+    public function edit_lodging(Request $request, $lodging_id)
+    {
+        DB::beginTransaction();
+        try {
+            $lodging = Lodging::findOrFail($lodging_id);
+
+            $lodging->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'star_rating' => $request->star_rating,
+                'address_1' => $request->address1,
+                'address_2' => $request->address2,
+                'linked_city_id' => $request->link_city_id,
+                'real_city_id' => $request->real_city_id,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'check_in' => $request->check_in,
+                'check_out' => $request->check_out,
+                'lodging_type_id' => $request->type_lodging_id
+            ]);
+
+            $lodging->attributs()->delete();
+
+            foreach ($request->attributs as $attribut) {
+                LodgingAttribut::create([
+                    'lodging_id' => $lodging->id,
+                    'attribut_term_id' => $attribut
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('lodging.index')->with(['success' => 'Votre demande a été traitée avec succès']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e);
+            return redirect()->route('lodging.index')->with(['error' => 'Une erreur est survenue : ' . $e->getMessage()]);
+        }
+    }
+
     //----------- REooms
     public function lodging_rooms_index($lodging_id)
     {
@@ -154,7 +211,7 @@ class LodgingController extends Controller
     public function index()
     {
         $query = Lodging::query();
-        $query->with('type', 'city.region.country');
+        $query->with('type', 'real_city.region.country');
         if(request()->has("sort")){
             $sortField = request()->input('sort.field', 'id');
             $sortOrder = request()->input('sort.order', 'asc');
@@ -210,14 +267,17 @@ class LodgingController extends Controller
 
     public function type_select(Request $request)
     {
-        $searchTerm = $request->query('search', '');
+        $query = $request->query('search', '');
 
-        $cities = LodgingType::where('name', 'like', '%' . $searchTerm . '%')
-        ->select('id', 'name')
-        ->orderBy('name')
+        $types = LodgingType::where('name', 'LIKE', '%'.$query.'%')
+        ->orWhere('name', 'LIKE', '%'.$query.'%')
+        ->orderByRaw("CASE WHEN `name` = ? THEN 1 WHEN `name` LIKE ? THEN 2 ELSE 3 END", [$query, $query.'%'])
+        ->limit(10)
         ->get();
 
-        return response()->json($cities);
+        $return = [];
+
+        return response()->json($types);
     }
 
     public function type_store(Request $request)

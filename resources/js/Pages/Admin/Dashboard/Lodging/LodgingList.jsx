@@ -131,17 +131,20 @@ const LodgingList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                         </td>
                                         <td className="whitespace-nowrap py-3 px-4">
                                             <p className="text-black dark:text-bodytext text-sm">
-                                                {item.city.name}
+                                                {item.real_city.name}
                                             </p>
                                         </td>
                                         <td className="whitespace-nowrap py-3 px-4">
                                             <p className="text-black dark:text-bodytext text-sm">
-                                                {item.city.region.name}
+                                                {item.real_city.region.name}
                                             </p>
                                         </td>
                                         <td className="whitespace-nowrap py-3 px-4">
                                             <p className="text-black dark:text-bodytext text-sm">
-                                                {item.city.region.country.name}
+                                                {
+                                                    item.real_city.region
+                                                        .country.name
+                                                }
                                             </p>
                                         </td>
                                         <td className="whitespace-nowrap py-3 px-4">
@@ -159,12 +162,20 @@ const LodgingList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                         </td>
                                         <td className="whitespace-nowrap py-3 px-4">
                                             <div>
-                                                <button
-                                                    type="button"
-                                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                                <Link
+                                                    as="button"
+                                                    href={route(
+                                                        "lodging.edit.show",
+                                                        { lodging_id: item.id }
+                                                    )}
                                                 >
-                                                    Modifier
-                                                </button>
+                                                    <button
+                                                        type="button"
+                                                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                                    >
+                                                        Modifier
+                                                    </button>
+                                                </Link>
                                                 <Link
                                                     as="button"
                                                     href={route(
