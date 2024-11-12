@@ -78,7 +78,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     onToggle={() => handleToggle("Forfait")}
                 >
                     <MenuItemStandlone
-                        href="/"
+                        href={route("package.index")}
                         title="Liste des forfaits"
                         forAccordion={true}
                     />
