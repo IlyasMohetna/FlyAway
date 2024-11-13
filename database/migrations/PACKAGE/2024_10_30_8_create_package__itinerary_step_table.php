@@ -17,7 +17,7 @@ return new class extends Migration
             $table->longText('description');
             $table->integer('day');
             $table->integer('rank');
-            $table->foreignId('id_itinerary')->foreign()->references('id')->on('package__itinerary');
+            $table->foreignId('package_id')->foreign()->references('id')->on('package__package');
             $table->timestamps();
             $table->softDeletes();
         });
