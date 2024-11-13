@@ -84,7 +84,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     />
                     <MenuItemStandlone
                         href="/"
-                        title="Ajouter un forfait"
+                        title="Options de transports"
                         forAccordion={true}
                     />
                 </AccordionMenu>
