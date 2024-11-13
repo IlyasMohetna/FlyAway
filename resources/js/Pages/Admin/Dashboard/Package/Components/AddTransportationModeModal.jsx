@@ -77,7 +77,7 @@ export default function AddTransportationModeModal({ open, setOpen }) {
                                     as="h3"
                                     className="text-lg font-medium leading-6 text-gray-900"
                                 >
-                                    Ajouter un type de forfait
+                                    Ajouter un mode de transport
                                 </Dialog.Title>
                                 <form onSubmit={handleSubmit} className="mt-4">
                                     <div className="w-full mb-3">
