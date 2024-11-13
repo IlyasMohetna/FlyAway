@@ -46,6 +46,7 @@ class PackageController extends Controller
 
     public function store(Request $request)
     {
+        dd($request);
         DB::beginTransaction();
         try {
             $package = Package::create([
