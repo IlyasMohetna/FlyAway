@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('package__package', function (Blueprint $table) {
             $table->id();
-            $table->string('titre', 120);
+            $table->string('title', 120);
             $table->decimal('amount_ht');
             $table->decimal('amount_ttc');
-            $table->integer('duree');
+            $table->integer('duration');
             $table->longText('description');
             $table->foreignId('package_type_id')->foreign()->references('id')->on('package__package_type');
             $table->foreignId('destination_id')->foreign()->references('id')->on('config__city');

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\EMPLOYE\Employe;
 use App\Models\Client\Client;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -54,5 +55,9 @@ class User extends Authenticatable
      */
     public function client(){
         return $this->hasOne(Client::class, 'user_id');
+    }
+
+    public function employe(){
+        return $this->hasOne(Employe::class, 'user_id');
     }
 }
