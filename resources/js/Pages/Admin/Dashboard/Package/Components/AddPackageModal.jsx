@@ -318,6 +318,36 @@ export default function AddPackageDetailModal({ open, setOpen }) {
                                                 </p>
                                             )}
                                         </div>
+                                        <div>
+                                            <DynamicSelect
+                                                label="Options de transports"
+                                                name="transportation_options"
+                                                selectedValue={
+                                                    data.transportation_options
+                                                }
+                                                handleInputChange={(
+                                                    name,
+                                                    value
+                                                ) => {
+                                                    setData(name, value);
+                                                    removeClientError(name);
+                                                }}
+                                                fetchRoute={route(
+                                                    "select.transport"
+                                                )}
+                                                errors={clientErrors}
+                                                noOptionsMessage="Veuillez sélectionner des options de transports !"
+                                                placeholder="Sélectionner une ou plusieurs options"
+                                                multiple={true}
+                                            />
+                                            {clientErrors.transportation_options && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {
+                                                        clientErrors.transportation_options
+                                                    }
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="w-full mb-3">
                                         <label

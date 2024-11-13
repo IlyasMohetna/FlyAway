@@ -6,6 +6,7 @@ use App\Models\CONFIG\City;
 use Illuminate\Http\Request;
 use App\Models\LODGING\Lodging;
 use App\Models\PACKAGE\PackageType;
+use App\Models\PACKAGE\TransportationMode;
 
 class SelectController extends Controller
 {
@@ -65,4 +66,17 @@ class SelectController extends Controller
 
         return response()->json($return);
     }
+    public function transport_select(Request $request)
+    {
+        $query = $request->query('search', '');
+
+        $types = TransportationMode::where('name', 'LIKE', '%'.$query.'%')
+        ->orWhere('name', 'LIKE', '%'.$query.'%')
+        ->orderByRaw("CASE WHEN `name` = ? THEN 1 WHEN `name` LIKE ? THEN 2 ELSE 3 END", [$query, $query.'%'])
+        ->limit(10)
+        ->get();
+
+        return response()->json($types);
+    }
+
 }
