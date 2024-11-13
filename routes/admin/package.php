@@ -8,9 +8,13 @@ Route::group(['prefix' => 'package', 'middleware' => 'auth'], function () {
     Route::post("/store", [PackageController::class, "store"])->name("package.store");
     // // Type
     Route::get("/type", [PackageController::class, "type"])->name("package.type");
-    Route::get("/type/selected", [PackageController::class, "type_select"])->name("package.type.select");
     Route::post("/type", [PackageController::class, "type_store"])->name("package.type.store");
     Route::delete("/type/{id}", [PackageController::class, "type_delete"])->name("package.type.delete");
+
+    Route::get("/transport", [PackageController::class, "transportation_index"])->name("package.transport");
+    Route::post("/transport", [PackageController::class, "transportation_store"])->name("package.transport.store");
+    Route::delete("/transport/{id}", [PackageController::class, "transportation_delete"])->name("package.transport.delete");
+    
     
 
     // // Attribut

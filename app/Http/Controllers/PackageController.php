@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\LODGING\LodgingType;
 use App\Models\PACKAGE\PackageType;
 use App\Models\PACKAGE\PackageGallery;
+use App\Models\PACKAGE\TransportationMode;
 
 class PackageController extends Controller
 {
@@ -76,7 +77,7 @@ class PackageController extends Controller
         }
     }
 
-    //---------- Lodging types
+    //---------- Package types
     public function type()
     {
         $query = PackageType::query();
@@ -104,22 +105,7 @@ class PackageController extends Controller
             'search' => request()->input('search', ''),
         ]);
     }
-        
-       public function type_select(Request $request)
-       {
-           $query = $request->query('search', '');
-   
-           $types = LodgingType::where('name', 'LIKE', '%'.$query.'%')
-           ->orWhere('name', 'LIKE', '%'.$query.'%')
-           ->orderByRaw("CASE WHEN `name` = ? THEN 1 WHEN `name` LIKE ? THEN 2 ELSE 3 END", [$query, $query.'%'])
-           ->limit(10)
-           ->get();
-   
-           $return = [];
-   
-           return response()->json($types);
-       }
-   
+
     public function type_store(Request $request)
     {
         try {
@@ -141,6 +127,61 @@ class PackageController extends Controller
         }
         catch (\Exception $e) {
             return redirect()->route('package.type')->with(['error'=> 'Une erreur est survenue !']);
+        }
+    }
+
+
+
+    //---------- Package transport options
+    public function transportation_index()
+    {
+        $query = TransportationMode::query();
+        
+        $sortField = request()->input('sort.created_at', 'id');
+        $sortOrder = request()->input('sort.order', 'desc');
+        
+        $query->orderBy($sortField, $sortOrder);
+        
+        if (request()->filled('search')) {
+            $query->where('column_name', 'like', '%' . request()->input('search') . '%');
+        }
+            
+        $data = $query->paginate(10);
+        
+        return Inertia::render('Admin/Dashboard/Package/TransportationList', [
+            'data' => $data->items(),
+            'total' => $data->total(),
+            'currentPage' => $data->currentPage(),
+            'lastPage' => $data->lastPage(),
+            'sort' => [
+                'field' => request()->input('sort.field', 'id'),
+                'order' => request()->input('sort.order', 'asc'),
+            ],
+            'search' => request()->input('search', ''),
+        ]);
+    }
+
+    public function transportation_store(Request $request)
+    {
+        try {
+            TransportationMode::create([
+                'name' => $request->input('name'),
+            ]);
+                
+            return redirect()->route('package.transport')->with(['success' => 'Votre demande a été traiter avec succès']);
+        } catch (\Exception $e) {
+            return redirect()->route('package.transport')->with(['error' => 'Une erreur est survenue !']);
+        }
+    }
+        
+    public function transportation_delete($id)
+    {
+        try {
+            TransportationMode::where('id', $id)->delete();
+            return redirect()->route('package.transport')->with(['success'=> 'Votre demande a été traiter avec succès']);
+        }
+        catch (\Exception $e) {
+            return redirect()->route('package.transport')->with(['error'=> 'Une erreur est survenue !']);
         }
     }
 }
