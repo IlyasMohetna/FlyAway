@@ -83,7 +83,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         forAccordion={true}
                     />
                     <MenuItemStandlone
-                        href="/"
+                        href={route("package.type")}
+                        title="Les types de forfaits"
+                        forAccordion={true}
+                    />
+                    <MenuItemStandlone
+                        href={route("package.transport")}
                         title="Options de transports"
                         forAccordion={true}
                     />

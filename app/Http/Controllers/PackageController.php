@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\PACKAGE\Package;
-use App\Models\PACKAGE\PackageGallery;
 use Illuminate\Support\Facades\DB;
+use App\Models\LODGING\LodgingType;
+use App\Models\PACKAGE\PackageType;
+use App\Models\PACKAGE\PackageGallery;
+use App\Models\PACKAGE\TransportationMode;
 
 class PackageController extends Controller
 {
@@ -69,7 +72,116 @@ class PackageController extends Controller
             return redirect()->route('package.index')->with(['success' => 'Votre demande a été traitée avec succès']);
         } catch (\Exception $e) {
             DB::rollBack();
+            dd($e);
             return redirect()->route('package.index')->with(['error' => 'Une erreur est survenue !']);
+        }
+    }
+
+    //---------- Package types
+    public function type()
+    {
+        $query = PackageType::query();
+        
+        $sortField = request()->input('sort.created_at', 'id');
+        $sortOrder = request()->input('sort.order', 'desc');
+        
+        $query->orderBy($sortField, $sortOrder);
+        
+        if (request()->filled('search')) {
+            $query->where('column_name', 'like', '%' . request()->input('search') . '%');
+        }
+            
+        $data = $query->paginate(10);
+        
+        return Inertia::render('Admin/Dashboard/Package/TypeList', [
+            'data' => $data->items(),
+            'total' => $data->total(),
+            'currentPage' => $data->currentPage(),
+            'lastPage' => $data->lastPage(),
+            'sort' => [
+                'field' => request()->input('sort.field', 'id'),
+                'order' => request()->input('sort.order', 'asc'),
+            ],
+            'search' => request()->input('search', ''),
+        ]);
+    }
+
+    public function type_store(Request $request)
+    {
+        try {
+            PackageType::create([
+                'name' => $request->input('name'),
+            ]);
+                
+            return redirect()->route('package.type')->with(['success' => 'Votre demande a été traiter avec succès']);
+        } catch (\Exception $e) {
+            return redirect()->route('package.type')->with(['error' => 'Une erreur est survenue !']);
+        }
+    }
+        
+    public function type_delete($id)
+    {
+        try {
+            PackageType::where('id', $id)->delete();
+            return redirect()->route('package.type')->with(['success'=> 'Votre demande a été traiter avec succès']);
+        }
+        catch (\Exception $e) {
+            return redirect()->route('package.type')->with(['error'=> 'Une erreur est survenue !']);
+        }
+    }
+
+
+
+    //---------- Package transport options
+    public function transportation_index()
+    {
+        $query = TransportationMode::query();
+        
+        $sortField = request()->input('sort.created_at', 'id');
+        $sortOrder = request()->input('sort.order', 'desc');
+        
+        $query->orderBy($sortField, $sortOrder);
+        
+        if (request()->filled('search')) {
+            $query->where('column_name', 'like', '%' . request()->input('search') . '%');
+        }
+            
+        $data = $query->paginate(10);
+        
+        return Inertia::render('Admin/Dashboard/Package/TransportationList', [
+            'data' => $data->items(),
+            'total' => $data->total(),
+            'currentPage' => $data->currentPage(),
+            'lastPage' => $data->lastPage(),
+            'sort' => [
+                'field' => request()->input('sort.field', 'id'),
+                'order' => request()->input('sort.order', 'asc'),
+            ],
+            'search' => request()->input('search', ''),
+        ]);
+    }
+
+    public function transportation_store(Request $request)
+    {
+        try {
+            TransportationMode::create([
+                'name' => $request->input('name'),
+            ]);
+                
+            return redirect()->route('package.transport')->with(['success' => 'Votre demande a été traiter avec succès']);
+        } catch (\Exception $e) {
+            return redirect()->route('package.transport')->with(['error' => 'Une erreur est survenue !']);
+        }
+    }
+        
+    public function transportation_delete($id)
+    {
+        try {
+            TransportationMode::where('id', $id)->delete();
+            return redirect()->route('package.transport')->with(['success'=> 'Votre demande a été traiter avec succès']);
+        }
+        catch (\Exception $e) {
+            return redirect()->route('package.transport')->with(['error'=> 'Une erreur est survenue !']);
         }
     }
 }
