@@ -182,7 +182,7 @@ export default function AddPackageDetailModal({ open, setOpen }) {
                             <form onSubmit={handleSubmit} className="mt-4">
                                 <div className="grid grid-cols-2 gap-4 mb-3">
                                     <div className="flex space-x-4">
-                                        <Label text={"Annonce public"} />
+                                        <Label text={"Annonce Exclusive"} />
                                         <Switch
                                             checked={data.public}
                                             onChange={(e) => {
@@ -193,7 +193,7 @@ export default function AddPackageDetailModal({ open, setOpen }) {
                                         >
                                             <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-[checked]:translate-x-6" />
                                         </Switch>
-                                        <Label text={"Annonce Exclusive"} />
+                                        <Label text={"Annonce public"} />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 mb-3">

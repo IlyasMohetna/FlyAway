@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PACKAGE\PackageLodging;
-use App\Models\PACKAGE\PackageTransport;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\PACKAGE\Package;
 use Illuminate\Support\Facades\DB;
 use App\Models\LODGING\LodgingType;
 use App\Models\PACKAGE\PackageType;
+use App\Models\PACKAGE\ItineraryStep;
 use App\Models\PACKAGE\PackageGallery;
+use App\Models\PACKAGE\PackageLodging;
+use App\Models\PACKAGE\PackageTransport;
 use App\Models\PACKAGE\TransportationMode;
 
 class PackageController extends Controller
@@ -46,7 +47,6 @@ class PackageController extends Controller
 
     public function store(Request $request)
     {
-        dd($request);
         DB::beginTransaction();
         try {
             $package = Package::create([
@@ -55,6 +55,7 @@ class PackageController extends Controller
                 'amount_ttc' => $request->amount_ttc,
                 'duration' => $request->duration,
                 'description' => $request->description,
+                'public' => $request->public,
                 'package_type_id' => $request->package_type_id,
                 'destination_id' => $request->destination_id
             ]);
@@ -87,7 +88,17 @@ class PackageController extends Controller
                     ]);
             }
 
-            // Génerer un itiniraire
+            foreach($request->itinerary_days as $day) {
+                foreach($day['steps'] as $rank => $step){
+                    ItineraryStep::create([
+                        'title' => $step['title'],
+                        'description' => $step['description'],
+                        'day' => $day['day'],
+                        'rank' => $rank+1,
+                        'package_id' => $package->id
+                    ]);
+                }
+            }
 
             DB::commit();
 
