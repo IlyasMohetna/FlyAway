@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PACKAGE\PackageLodging;
+use App\Models\PACKAGE\PackageTransport;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\PACKAGE\Package;
@@ -56,6 +58,7 @@ class PackageController extends Controller
                 'destination_id' => $request->destination_id
             ]);
 
+            // Stocker les fichiers
             foreach ($request->file('images') as $image) {
                 $path = $image->store('', 'package_gallery');
                 PackageGallery::create([
@@ -66,6 +69,24 @@ class PackageController extends Controller
                     'package_id' => $package->id
                 ]);
             }
+
+            // Rattacher le forfait aux options de logements
+            foreach($request->lodging_options as $lodging_option) {
+                PackageLodging::create([
+                    'lodging_mode_id' => $lodging_option,
+                    'package_id' => $package->id
+                ]);
+            }
+
+            // Rattacher le forfait aux options de trannsports
+            foreach($request->transportation_options as $transportation_option) {
+                    PackageTransport::create([
+                        'transportation_mode_id' => $transportation_option,
+                        'package_id' => $package->id
+                    ]);
+            }
+
+            // Génerer un itiniraire
 
             DB::commit();
 
@@ -81,18 +102,18 @@ class PackageController extends Controller
     public function type()
     {
         $query = PackageType::query();
-        
+
         $sortField = request()->input('sort.created_at', 'id');
         $sortOrder = request()->input('sort.order', 'desc');
-        
+
         $query->orderBy($sortField, $sortOrder);
-        
+
         if (request()->filled('search')) {
             $query->where('column_name', 'like', '%' . request()->input('search') . '%');
         }
-            
+
         $data = $query->paginate(10);
-        
+
         return Inertia::render('Admin/Dashboard/Package/TypeList', [
             'data' => $data->items(),
             'total' => $data->total(),
@@ -112,13 +133,13 @@ class PackageController extends Controller
             PackageType::create([
                 'name' => $request->input('name'),
             ]);
-                
+
             return redirect()->route('package.type')->with(['success' => 'Votre demande a été traiter avec succès']);
         } catch (\Exception $e) {
             return redirect()->route('package.type')->with(['error' => 'Une erreur est survenue !']);
         }
     }
-        
+
     public function type_delete($id)
     {
         try {
@@ -136,18 +157,18 @@ class PackageController extends Controller
     public function transportation_index()
     {
         $query = TransportationMode::query();
-        
+
         $sortField = request()->input('sort.created_at', 'id');
         $sortOrder = request()->input('sort.order', 'desc');
-        
+
         $query->orderBy($sortField, $sortOrder);
-        
+
         if (request()->filled('search')) {
             $query->where('column_name', 'like', '%' . request()->input('search') . '%');
         }
-            
+
         $data = $query->paginate(10);
-        
+
         return Inertia::render('Admin/Dashboard/Package/TransportationList', [
             'data' => $data->items(),
             'total' => $data->total(),
@@ -167,13 +188,13 @@ class PackageController extends Controller
             TransportationMode::create([
                 'name' => $request->input('name'),
             ]);
-                
+
             return redirect()->route('package.transport')->with(['success' => 'Votre demande a été traiter avec succès']);
         } catch (\Exception $e) {
             return redirect()->route('package.transport')->with(['error' => 'Une erreur est survenue !']);
         }
     }
-        
+
     public function transportation_delete($id)
     {
         try {

@@ -33,6 +33,14 @@ export default function AddPackageDetailModal({ open, setOpen }) {
         description: Yup.string().required("La description est requise"),
         package_type_id: Yup.string().required("Le type de forfait est requis"),
         destination_id: Yup.string().required("La destination est requise"),
+        lodging_options: Yup.array().min(
+            1,
+            "Une option de logement est requise"
+        ),
+        transportation_options: Yup.array().min(
+            1,
+            "Une option de transport est requise"
+        ),
         images: Yup.array()
             .min(1, "Vous devez télécharger au moins une image.")
             .required("Les images sont requises."),
@@ -47,6 +55,7 @@ export default function AddPackageDetailModal({ open, setOpen }) {
         package_type_id: "",
         destination_id: "",
         lodging_options: [], // Lodging options for multi-select
+        transportation_options: [],
         images: [],
     });
 
@@ -84,6 +93,11 @@ export default function AddPackageDetailModal({ open, setOpen }) {
             formData.append("description", data.description);
             formData.append("package_type_id", data.package_type_id);
             formData.append("destination_id", data.destination_id);
+            formData.append("lodging_options", data.lodging_options);
+            formData.append(
+                "transportation_options",
+                data.transportation_options
+            );
             data.images.forEach((file, index) => {
                 formData.append(`images[${index}]`, file);
             });
