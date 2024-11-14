@@ -92,7 +92,7 @@ function NavigationBar() {
                         </li>
 
                         <li>
-                            {auth.user?.data ? (
+                            {auth.user?.data && !auth.user?.data.employe ? (
                                 <>
                                     <Link href={route("client.dashboard.show")}>
                                         <PrimaryButton label={"Mon compte"} />
