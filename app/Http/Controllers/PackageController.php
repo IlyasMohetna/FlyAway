@@ -20,7 +20,7 @@ class PackageController extends Controller
     public function index()
     {
         $query = Package::query();
-        $query->with('type', 'city.region.country');
+        $query->with('type', 'city');
         if(request()->has("sort")){
             $sortField = request()->input('sort.field', 'id');
             $sortOrder = request()->input('sort.order', 'asc');

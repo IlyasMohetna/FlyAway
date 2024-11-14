@@ -5,6 +5,8 @@ import DateTimeFormat from "../../../../Components/Date/DateTimeFormat";
 import MoneyFormat from "../../../../Components/Format/MoneyFormat";
 import AddButton from "../../../../Components/Buttons/AddButton";
 import AddPackageModal from "./Components/AddPackageModal";
+import { MdPublic } from "react-icons/md";
+import { MdPublicOff } from "react-icons/md";
 
 const PackageList = ({ data, total, currentPage, lastPage, sort, search }) => {
     const [sortField, setSortField] = useState(sort.field);
@@ -118,6 +120,9 @@ const PackageList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                         <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
                                             <span>Destination</span>
                                         </th>
+                                        <th className="text-base text-ld text-center font-semibold py-3 border-b border-ld px-4">
+                                            <span>Visibilité</span>
+                                        </th>
                                         <th className="text-base text-ld font-semibold py-3 text-left border-b border-ld px-4">
                                             <span>Action</span>
                                         </th>
@@ -150,33 +155,32 @@ const PackageList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                             </td>
                                             <td className="whitespace-nowrap py-3 px-4">
                                                 <p className="text-black dark:text-bodytext text-sm">
-                                                    {item.city.name} -{" "}
-                                                    {item.city.region.name} -{" "}
-                                                    {
-                                                        item.city.region.country
-                                                            .name
-                                                    }
+                                                    {item.city.name}
+                                                </p>
+                                            </td>
+                                            <td className="whitespace-nowrap py-3 px-4 text-center">
+                                                <p className="text-black dark:text-bodytext text-sm">
+                                                    {item.public ? (
+                                                        <div className="inline-flex items-center justify-center space-x-1 bg-green-100 text-green-800 text-xs font-medium rounded border border-green-400 px-1 py-0.5">
+                                                            <span>Public</span>
+                                                            <MdPublic
+                                                                size={15}
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="inline-flex items-center justify-center space-x-1 bg-red-100 text-red-800 text-xs font-medium rounded border border-red-400 px-1 py-0.5 ">
+                                                            <span>
+                                                                Exclusive
+                                                            </span>
+                                                            <MdPublicOff
+                                                                size={15}
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </p>
                                             </td>
                                             <td className="whitespace-nowrap py-3 px-4">
                                                 <div>
-                                                    <Link
-                                                        as="button"
-                                                        href={route(
-                                                            "lodging.edit.show",
-                                                            {
-                                                                lodging_id:
-                                                                    item.id,
-                                                            }
-                                                        )}
-                                                    >
-                                                        <button
-                                                            type="button"
-                                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                                        >
-                                                            Modifier
-                                                        </button>
-                                                    </Link>
                                                     <Link
                                                         as="button"
                                                         href={route(
@@ -191,7 +195,7 @@ const PackageList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                                             type="button"
                                                             class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
                                                         >
-                                                            Chambres
+                                                            Gérer l'accès
                                                         </button>
                                                     </Link>
                                                 </div>
