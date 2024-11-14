@@ -31,7 +31,6 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = null;
-
         if (Auth::check()) {
             $authenticatedUser = Auth::user();
 

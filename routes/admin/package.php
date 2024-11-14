@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PackageController;
 
-Route::group(['prefix' => 'package', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'package'], function () {
     Route::get("/", [PackageController::class, "index"])->name("package.index");
     Route::post("/store", [PackageController::class, "store"])->name("package.store");
     // // Type
@@ -14,8 +14,8 @@ Route::group(['prefix' => 'package', 'middleware' => 'auth'], function () {
     Route::get("/transport", [PackageController::class, "transportation_index"])->name("package.transport");
     Route::post("/transport", [PackageController::class, "transportation_store"])->name("package.transport.store");
     Route::delete("/transport/{id}", [PackageController::class, "transportation_delete"])->name("package.transport.delete");
-    
-    
+
+
 
     // // Attribut
     // Route::get("/attribut", [LodgingController::class, "attribut_categories"])->name("lodging.attribut");

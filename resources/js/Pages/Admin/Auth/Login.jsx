@@ -5,7 +5,7 @@ import DangerMessage from "../../../Components/Error/DangerMessage";
 import { Head, useForm } from "@inertiajs/react";
 
 function Login() {
-    const [isLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const { data, setData, errors, post } = useForm({
         email: "johndoe@example.com",
         password: "secret",
@@ -14,147 +14,132 @@ function Login() {
 
     function handleSubmit(e) {
         e.preventDefault();
-        post(route("client.login.action"));
+        setIsLoading(true);
+        post(route("admin.login.action"), {
+            onFinish: () => setIsLoading(false),
+        });
     }
 
     return (
-        <section className="bg-gray-50">
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                <a
-                    href="#"
-                    className="flex items-center mb-6 text-2xl font-semibold text-gray-900"
-                >
-                    FlyAway
-                </a>
-                <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
-                    <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-                        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                            Se connecter
-                        </h1>
+        <div className="font-[sans-serif]">
+            <div className="min-h-screen flex flex-col items-center justify-center">
+                <div className="grid md:grid-cols-2 items-center gap-4 max-md:gap-8 max-w-6xl max-md:max-w-lg w-full p-4 m-4 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] rounded-md">
+                    <div className="md:max-w-md w-full px-4 py-4">
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-4">
+                                <h3 className="text-gray-800 text-3xl font-extrabold">
+                                    Admin FlyAway
+                                </h3>
+                            </div>
 
-                        {errors.general && (
-                            <DangerMessage text={errors.general} />
-                        )}
+                            {errors.general && (
+                                <DangerMessage text={errors.general} />
+                            )}
 
-                        <form
-                            className="space-y-4 md:space-y-6"
-                            action="#"
-                            onSubmit={handleSubmit}
-                        >
                             <div>
-                                <label
-                                    htmlFor="email"
-                                    className="block mb-2 text-sm font-medium text-gray-900"
-                                >
+                                <label className="text-gray-800 text-xs block mb-2 mt-4">
                                     Email
                                 </label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    id="email"
-                                    value={data.email}
-                                    onChange={(e) =>
-                                        setData("email", e.target.value)
-                                    }
-                                    className={`bg-gray-50 border ${
-                                        errors.email
-                                            ? "border-red-500"
-                                            : "border-gray-300"
-                                    } text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
-                                    placeholder="name@company.com"
-                                    required
-                                />
-                                {errors.email && (
-                                    <p className="mt-2 text-sm text-red-600">
-                                        {errors.email}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <label
-                                    htmlFor="password"
-                                    className="block mb-2 text-sm font-medium text-gray-900"
-                                >
-                                    Mot de passe
-                                </label>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    id="password"
-                                    placeholder="••••••••"
-                                    value={data.password}
-                                    onChange={(e) =>
-                                        setData("password", e.target.value)
-                                    }
-                                    className={`bg-gray-50 border ${
-                                        errors.password
-                                            ? "border-red-500"
-                                            : "border-gray-300"
-                                    } text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
-                                    required
-                                />
-                                {errors.password && (
-                                    <p className="mt-2 text-sm text-red-600">
-                                        {errors.password}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-start">
-                                    <div className="flex items-center h-5">
-                                        <input
-                                            id="remember"
-                                            aria-describedby="remember"
-                                            checked={data.remember}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "remember",
-                                                    e.target.checked
-                                                )
-                                            }
-                                            type="checkbox"
-                                            className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300"
-                                            required
-                                        />
-                                    </div>
-                                    <div className="ml-3 text-sm">
-                                        <label
-                                            htmlFor="remember"
-                                            className="text-gray-500"
-                                        >
-                                            Se rappeler de moi
-                                        </label>
-                                    </div>
+                                <div className="relative flex items-center">
+                                    <input
+                                        name="email"
+                                        type="text"
+                                        value={data.email}
+                                        onChange={(e) =>
+                                            setData("email", e.target.value)
+                                        }
+                                        className={`w-full text-gray-800 text-sm border-b ${
+                                            errors.email
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                        } focus:border-blue-600 px-2 py-3 outline-none`}
+                                        placeholder="Enter email"
+                                        required
+                                    />
+                                    {errors.email && (
+                                        <p className="mt-2 text-sm text-red-600">
+                                            {errors.email}
+                                        </p>
+                                    )}
                                 </div>
-                                <a
-                                    href="#"
-                                    className="text-sm font-medium text-primary-600 hover:underline"
-                                >
-                                    Mot de passe oublié?
-                                </a>
                             </div>
-                            <button
-                                disabled={isLoading}
-                                type="submit"
-                                className="w-full justify-center text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
-                            >
-                                {isLoading ? <ButtonSpinner /> : "Se connecter"}
-                            </button>
 
-                            <p className="text-sm font-light text-gray-500">
-                                Vous n'avez pas encore de compte?{" "}
-                                <Link
-                                    className="font-medium text-primary-600 hover:underline"
-                                    href={route("client.register.show")}
+                            <div className="mt-8">
+                                <label className="text-gray-800 text-xs block mb-2">
+                                    Password
+                                </label>
+                                <div className="relative flex items-center">
+                                    <input
+                                        name="password"
+                                        type="password"
+                                        value={data.password}
+                                        onChange={(e) =>
+                                            setData("password", e.target.value)
+                                        }
+                                        className={`w-full text-gray-800 text-sm border-b ${
+                                            errors.password
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                        } focus:border-blue-600 px-2 py-3 outline-none`}
+                                        placeholder="Enter password"
+                                        required
+                                    />
+                                    {errors.password && (
+                                        <p className="mt-2 text-sm text-red-600">
+                                            {errors.password}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex flex-wrap items-center justify-between gap-4 mt-6">
+                                <div className="flex items-center">
+                                    <input
+                                        id="remember"
+                                        type="checkbox"
+                                        checked={data.remember}
+                                        onChange={(e) =>
+                                            setData(
+                                                "remember",
+                                                e.target.checked
+                                            )
+                                        }
+                                        className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                    />
+                                    <label
+                                        htmlFor="remember"
+                                        className="ml-3 block text-sm text-gray-800"
+                                    >
+                                        Se rappeler de moi
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="mt-12">
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="w-full shadow-xl py-2.5 px-4 text-sm tracking-wide rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                                 >
-                                    Créer un
-                                </Link>
-                            </p>
+                                    {isLoading ? (
+                                        <ButtonSpinner />
+                                    ) : (
+                                        "Se connecter"
+                                    )}
+                                </button>
+                            </div>
                         </form>
+                    </div>
+                    <div className="md:h-full bg-[#000842] rounded-xl lg:p-12 p-8">
+                        <img
+                            src="/assets/img/logo.svg"
+                            className="w-full h-full object-contain"
+                            alt="login-image"
+                        />
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     );
 }
 

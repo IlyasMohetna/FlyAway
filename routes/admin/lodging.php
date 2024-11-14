@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LodgingController;
 
-Route::group(['prefix' => 'lodging', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'lodging'], function () {
     Route::get("/", [LodgingController::class, "index"])->name("lodging.index");
 
     // Type

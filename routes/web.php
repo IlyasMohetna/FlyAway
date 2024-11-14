@@ -14,8 +14,13 @@ require __DIR__ . '/client/dashboard.php';
 require __DIR__ . '/config/location.php';
 
 Route::group(['prefix' => 'admin'], function () {
-    require __DIR__ . '/admin/lodging.php';
-    require __DIR__ . '/admin/package.php';
+    require __DIR__ . '/admin/auth.php';
+    Route::group(['middleware' => ['admin']], function () {
+        require __DIR__ . '/admin/dashboard.php';
+        require __DIR__ . '/admin/lodging.php';
+        require __DIR__ . '/admin/package.php';
+    });
+
 });
 
 require __DIR__ . '/select.php';

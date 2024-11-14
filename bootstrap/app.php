@@ -15,7 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             HandleInertiaRequests::class,
         ]);
-        $middleware->redirectGuestsTo(fn () => route('client.login.show'));
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\EnsureAdmin::class,
+            'client' => \App\Http\Middleware\EnsureClient::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
