@@ -81,9 +81,12 @@ class PackageController extends Controller
 
     public function show($id)
     {
-        $package = Package::with('city.region.country')->find($id);
+        $package = Package::with(['city.region.country', 'gallery', 'type', 'steps'])->find($id);
+        $steps = $package->steps->groupBy('day');
+        
         return Inertia::render('Landing/Package/PackageView', [
             'apackage' => $package,
+            'steps' => $steps,
         ]);
     }
 }

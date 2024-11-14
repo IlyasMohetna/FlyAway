@@ -41,7 +41,7 @@ export default function ViewOnMap({ longitude, latitude }) {
                         <img
                             className="img-fluid"
                             alt="Address-Description"
-                            src="https://mytravel.bookingcore.co/themes/mytravel/images/map.jpg"
+                            src="/assets/img/map_show_illustration.png"
                             style={{
                                 boxSizing: "border-box",
                                 borderStyle: "none",

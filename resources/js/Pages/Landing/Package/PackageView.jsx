@@ -1,243 +1,211 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SearchBar from "../Components/SearchBar";
 import ViewOnMap from "../Components/ViewOnMap";
+import Slider from "react-slick";
+import MoneyFormat from "../../../Components/Format/MoneyFormat";
+import CountryFlag from "../../../Components/Country/CountryFlag";
+import ItineraryPreview from "../Components/ItineraryPreview";
 
-const PackageView = ({ apackage }) => {
+const PackageView = ({ apackage, steps }) => {
+    const mainSliderRef = useRef(null);
+    const [totalAmountHT, setTotalAmountHT] = useState(apackage.amount_ht);
+    const [totalAmountTTC, setTotalAmountTTC] = useState(apackage.amount_ttc);
+    const [nbPersons, setNbPersons] = useState(1);
+
+    useEffect(() => {
+        setTotalAmountHT(apackage.amount_ht * nbPersons);
+        setTotalAmountTTC(apackage.amount_ttc * nbPersons);
+    }, [nbPersons]);
+    const mainSliderSettings = {
+        dots: false,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: true,
+        adaptiveHeight: true,
+        autoplay: true,
+        autoplaySpeed: 3000,
+        ref: mainSliderRef,
+    };
+
     return (
-        <div>
+        <>
             <SearchBar />
-            <div className="container mx-auto max-w-5xl px-6 lg:px-16 py-8">
-                <div className="flex">
-                    {/* Left Content */}
-                    <div className="w-4/6 pr-8">
-                        {/* Package Summary */}
-                        <div className="border-b pb-4 mb-4">
-                            <h1 className="text-2xl font-semibold">
-                                Eastern Discovery (Start New Orleans)
-                            </h1>
-                            <p className="text-sm text-gray-500 mt-2">
-                                Prince St Station - View on map • 1 Review
-                            </p>
-                            <div className="flex flex-wrap mt-4 text-sm space-x-6">
-                                <div>4 Hours</div>
-                                <div>Max People: 12</div>
-                                <div>Wifi Available</div>
-                                <div>Jan 18 - Dec 21</div>
-                                <div>Min Age: 12+</div>
-                                <div>Pickup: Airport</div>
+            <div className="max-w-full overflow-x-hidden">
+                {apackage.gallery.length > 0 ? (
+                    <Slider {...mainSliderSettings}>
+                        {apackage.gallery.map((image, index) => (
+                            <div key={index} className="w-full">
+                                <img
+                                    src={
+                                        "/storage/" +
+                                        image?.storage_driver +
+                                        "/" +
+                                        image?.file_name
+                                    }
+                                    className="w-full h-[500px] object-cover rounded-md"
+                                />
                             </div>
-                        </div>
-
-                        {/* Description */}
-                        <div className="mt-4">
-                            <h2 className="text-lg font-semibold mb-2">
-                                Description
-                            </h2>
-                            <p className="text-sm text-gray-700">
-                                Start and end in San Francisco! With the
-                                in-depth cultural tour Northern California
-                                Summer 2019, you have an 8 day tour package
-                                taking you through San Francisco, USA and 9
-                                other destinations in USA.
-                            </p>
-                        </div>
-
-                        {/* Highlights */}
-                        <div className="mt-4">
-                            <h3 className="text-lg font-semibold mb-2">
-                                Highlights
-                            </h3>
-                            <ul className="list-disc list-inside text-gray-700">
-                                <li>
-                                    Visit the Museum of Modern Art in Manhattan
-                                </li>
-                                <li>See amazing works of contemporary art</li>
-                                <li>
-                                    Check out Campbell's Soup Cans by Warhol and
-                                    The Dance (I) by Matisse
-                                </li>
-                                <li>
-                                    Free audio guides available in English,
-                                    French, German, Italian, Spanish, Portuguese
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* Price Details */}
-                        <div className="flex justify-between mt-4">
-                            {/* Price Includes */}
-                            <div>
-                                <h4 className="text-lg font-semibold mb-2">
-                                    Price Includes
-                                </h4>
-                                <ul className="list-disc list-inside text-gray-700">
-                                    <li>Specialized bilingual guide</li>
-                                    <li>Private Transport</li>
-                                    <li>
-                                        Entrance fees (Cable car and Moon
-                                        Valley)
-                                    </li>
-                                    <li>
-                                        Box lunch water, banana apple and
-                                        chocolate
-                                    </li>
-                                </ul>
-                            </div>
-                            {/* Price Excludes */}
-                            <div>
-                                <h4 className="text-lg font-semibold mb-2">
-                                    Price Excludes
-                                </h4>
-                                <ul className="list-disc list-inside text-gray-700">
-                                    <li>Additional Services</li>
-                                    <li>Insurance</li>
-                                    <li>Drink</li>
-                                    <li>Tickets</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        {/* Travel Styles & Facilities */}
-                        <div className="mt-4">
-                            <h4 className="text-lg font-semibold mb-2">
-                                Travel Styles
-                            </h4>
-                            <div className="flex flex-wrap gap-4 text-sm">
-                                <span className="px-3 py-1 bg-gray-100 rounded-md">
-                                    Cultural
-                                </span>
-                                <span className="px-3 py-1 bg-gray-100 rounded-md">
-                                    Marine
-                                </span>
-                                <span className="px-3 py-1 bg-gray-100 rounded-md">
-                                    Festival & Events
-                                </span>
-                            </div>
-                            <h4 className="text-lg font-semibold mt-4 mb-2">
-                                Facilities
-                            </h4>
-                            <div className="flex flex-wrap gap-4 text-sm">
-                                <span className="px-3 py-1 bg-gray-100 rounded-md">
-                                    Gymnasium
-                                </span>
-                                <span className="px-3 py-1 bg-gray-100 rounded-md">
-                                    Mountain Bike
-                                </span>
-                                <span className="px-3 py-1 bg-gray-100 rounded-md">
-                                    Satellite Office
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Itinerary */}
-                        <div className="mt-4">
-                            <h4 className="text-lg font-semibold mb-2">
-                                Itinerary
-                            </h4>
-                            <ul className="text-blue-600">
-                                <li>Day 1 - Los Angeles</li>
-                                <li>Day 2 - Lake Havasu City</li>
-                                <li>Day 3 - Las Vegas/Bakersfield</li>
-                                <li>Day 4 - San Francisco</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    {/* Booking Sidebar */}
-                    <div className="w-2/6">
-                        <div>
-                            <ViewOnMap
-                                longitude={apackage.city.longitude}
-                                latitude={apackage.city.latitude}
-                            />
-                        </div>
-                        <div className="bg-white p-6 shadow-lg rounded-lg">
-                            <div className="text-xl font-semibold mb-2">
-                                From{" "}
-                                <span className="line-through text-gray-500">
-                                    $2,100
-                                </span>{" "}
-                                <span className="text-blue-600">$379</span>
-                            </div>
-                            <div className="text-xs text-red-600 mb-4">
-                                Save 8%
-                            </div>
-                            {/* Booking Form */}
-                            <form className="space-y-4">
-                                <label className="block">
-                                    <span className="text-gray-700">
-                                        Start Date
+                        ))}
+                    </Slider>
+                ) : (
+                    <p>No images available for this room.</p>
+                )}
+                <div className="container mx-auto max-w-5xl px-6 lg:px-16 py-8">
+                    <div className="flex">
+                        <div className="w-4/6 pr-8">
+                            <div className="border-b pb-4 mb-4">
+                                <h1 className="text-2xl font-semibold">
+                                    {apackage.title}
+                                </h1>
+                                <div className="flex space-x-2">
+                                    <span className="text-gray-500">
+                                        {apackage.city.name} -{" "}
+                                        {apackage.city.region.name} -{" "}
+                                        {apackage.city.region.country.name}
                                     </span>
-                                    <input
-                                        type="date"
-                                        className="mt-1 block w-full border rounded-md p-2"
+                                    <CountryFlag
+                                        iso2={apackage.city.region.country.iso2}
+                                        height={20}
+                                        width={20}
                                     />
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">
-                                        Adults
-                                    </span>
-                                    <input
-                                        type="number"
-                                        className="mt-1 block w-full border rounded-md p-2"
-                                        min="0"
-                                        defaultValue="1"
-                                    />
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">
-                                        Children
-                                    </span>
-                                    <input
-                                        type="number"
-                                        className="mt-1 block w-full border rounded-md p-2"
-                                        min="0"
-                                        defaultValue="0"
-                                    />
-                                </label>
-                                <div className="flex justify-between items-center mt-4">
-                                    <span>Extra Prices</span>
-                                    <span>$100</span>
                                 </div>
-                                <div className="flex justify-between items-center">
-                                    <span>Service Fee</span>
-                                    <span>$100</span>
-                                </div>
-                                <button
-                                    type="button"
-                                    className="w-full mt-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                                >
-                                    Book Now
-                                </button>
-                            </form>
 
-                            {/* Vendor Information */}
-                            <div className="mt-8">
-                                <p className="text-sm text-gray-700">
-                                    Vendor 01
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                    Member since Oct 2024
-                                </p>
+                                <span class="bg-blue-100 ml-2 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full">
+                                    <b>{apackage.type.name}</b>
+                                </span>
                             </div>
 
-                            {/* Why Book With Us Section */}
-                            <div className="mt-8">
+                            {/* Description */}
+                            <div
+                                className="mt-4"
+                                dangerouslySetInnerHTML={{
+                                    __html: apackage.description,
+                                }}
+                            ></div>
+
+                            {/* Itinerary */}
+                            <div className="mt-4">
                                 <h4 className="text-lg font-semibold mb-2">
-                                    Why Book With Us?
+                                    Itineraire
                                 </h4>
-                                <ul className="text-sm text-gray-700 space-y-1">
-                                    <li>No-hassle best price guarantee</li>
-                                    <li>Customer care available 24/7</li>
-                                    <li>Hand-picked Tours & Activities</li>
-                                    <li>Free Travel Insurance</li>
-                                </ul>
+                                <ItineraryPreview days={steps} />
+                            </div>
+                        </div>
+
+                        {/* Booking Sidebar */}
+                        <div className="w-2/6">
+                            <div>
+                                <ViewOnMap
+                                    longitude={apackage.city.longitude}
+                                    latitude={apackage.city.latitude}
+                                />
+                            </div>
+                            <div className="bg-white p-6 shadow-lg rounded-lg">
+                                <div className="text-xl font-semibold mb-2">
+                                    <span className="text-blue-600">
+                                        <MoneyFormat
+                                            money={apackage.amount_ttc}
+                                        />
+                                    </span>
+                                </div>
+
+                                <form className="space-y-4">
+                                    <label className="block">
+                                        <span className="text-gray-700">
+                                            Nombre de personnes
+                                        </span>
+                                        <input
+                                            type="number"
+                                            className="mt-1 block w-full border rounded-md p-2"
+                                            min="1"
+                                            onChange={(e) =>
+                                                setNbPersons(e.target.value)
+                                            }
+                                            value={nbPersons}
+                                        />
+                                    </label>
+                                    <div className="flex justify-between items-center">
+                                        <span>Total</span>
+                                        <span>
+                                            <MoneyFormat
+                                                money={totalAmountTTC}
+                                            />
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="w-full mt-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                    >
+                                        Réserver maintenant
+                                    </button>
+                                </form>
+
+                                <div className="mt-8">
+                                    <h4 className="text-lg font-semibold mb-2">
+                                        Pourquoi réserver avec nous ?
+                                    </h4>
+                                    <ul className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+                                        <li class="flex items-center">
+                                            <svg
+                                                class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                                            </svg>
+                                            Garantie du meilleur prix sans
+                                            tracas
+                                        </li>
+                                        <li class="flex items-center">
+                                            <svg
+                                                class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                                            </svg>
+                                            Service client disponible 24h/24 et
+                                            7j/7
+                                        </li>
+                                        <li class="flex items-center">
+                                            <svg
+                                                class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                                            </svg>
+                                            Tours et activités sélectionnés avec
+                                            soin
+                                        </li>
+                                        <li class="flex items-center">
+                                            <svg
+                                                class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                                            </svg>
+                                            Assurance voyage gratuite
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

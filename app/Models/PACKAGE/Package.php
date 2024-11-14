@@ -25,4 +25,14 @@ class Package extends Model
     {
         return $this->hasOne(PackageGallery::class, 'package_id', 'id');
     }
+
+    public function gallery()
+    {
+        return $this->hasMany(PackageGallery::class, 'package_id', 'id');
+    }
+
+    public function steps()
+    {
+        return $this->hasMany(ItineraryStep::class, 'package_id', 'id');
+    }
 }
