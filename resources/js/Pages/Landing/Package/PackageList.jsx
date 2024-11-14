@@ -17,6 +17,7 @@ const PackagesList = ({
     lastPage,
     sort,
     search,
+    destination_detail,
 }) => {
     const { props, url } = usePage();
 
@@ -24,18 +25,19 @@ const PackagesList = ({
         const params = new URLSearchParams(url.split("?")[1]);
         const types = [];
 
-        // Loop through each entry to find package_types parameters
         params.forEach((value, key) => {
             if (key.startsWith("package_types[")) {
-                types.push(Number(value)); // Convert value to number and add to types array
+                types.push(Number(value));
             }
         });
 
         return types;
     };
 
-    // Initialize state variables
-    const [destinationId, setDestinationId] = useState("");
+    const [destinationId, setDestinationId] = useState(
+        props.filters?.destination_id || ""
+    );
+    const [showSelect, setShowSelect] = useState(false);
     const [packageTypes, setPackageTypes] = useState(
         parsePackageTypesFromUrl()
     );
@@ -49,26 +51,21 @@ const PackagesList = ({
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(initialPage || 1);
 
-    // Parse URL parameters on initial load
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
 
-        // Destination ID
         if (params.has("destination_id")) {
             setDestinationId(params.get("destination_id"));
         }
 
-        // Package Types
         setPackageTypes(parsePackageTypesFromUrl());
 
-        // Amount Range
         const amountMin = params.get("amount_range[0]");
         const amountMax = params.get("amount_range[1]");
         if (amountMin !== null && amountMax !== null) {
             setAmountRange([parseFloat(amountMin), parseFloat(amountMax)]);
         }
 
-        // Duration Range
         const durationMin = params.get("duration_range[0]");
         const durationMax = params.get("duration_range[1]");
         if (durationMin !== null && durationMax !== null) {
@@ -78,7 +75,6 @@ const PackagesList = ({
             ]);
         }
 
-        // Sort Field and Order
         const sortFieldParam = params.get("sort[field]");
         const sortOrderParam = params.get("sort[order]");
         if (sortFieldParam) {
@@ -88,12 +84,10 @@ const PackagesList = ({
             setSortOrder(sortOrderParam);
         }
 
-        // Search Query
         if (params.has("search")) {
             setSearchQuery(params.get("search"));
         }
 
-        // Page
         if (params.has("page")) {
             setCurrentPage(parseInt(params.get("page"), 10));
         }
@@ -198,16 +192,34 @@ const PackagesList = ({
                         </h2>
 
                         <div className="relative mb-6">
-                            <DynamicSelect
-                                label="Destination"
-                                name="destination_id"
-                                selectedValue={destinationId}
-                                onChange={(value) => setDestinationId(value)}
-                                fetchRoute={route("select.city")}
-                                errors={{}}
-                                noOptionsMessage="Veuillez sélectionner une destination !"
-                                placeholder="Sélectionner une option"
-                            />
+                            <span className="font-semibold text-gray-700">
+                                {destination_detail?.name} -{" "}
+                                {destination_detail?.region?.country?.name}
+                            </span>
+                            <button
+                                onClick={() => setShowSelect(!showSelect)}
+                                className="ml-4 text-blue-500 underline outline-none"
+                            >
+                                {showSelect ? "Annuler" : "Changer"}
+                            </button>
+
+                            <div className="mt-2">
+                                {showSelect && (
+                                    <DynamicSelect
+                                        label=""
+                                        name="destination_id"
+                                        selectedValue={destinationId}
+                                        handleInputChange={(name, value) => {
+                                            setDestinationId(value);
+                                            // setShowSelect(false);
+                                        }}
+                                        fetchRoute={route("select.city")}
+                                        errors={{}}
+                                        noOptionsMessage="Veuillez sélectionner une destination !"
+                                        placeholder="Sélectionner une option"
+                                    />
+                                )}
+                            </div>
                         </div>
 
                         <div className="mb-6">

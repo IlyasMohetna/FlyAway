@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\PACKAGE\Package;
 use App\Http\Controllers\Controller;
+use App\Models\CONFIG\City;
 use App\Models\PACKAGE\PackageType;
 
 class PackageController extends Controller
@@ -31,6 +32,12 @@ class PackageController extends Controller
     // Handle package types
     if ($request->filled('package_types')) {
         $query->whereIn('package_type_id', $request->input('package_types'));
+    }
+
+    // Handle Destination
+    if ($request->filled('destination_id')) {
+        $query->where('destination_id', $request->input('destination_id'));
+        $destination_detail = City::where('id', $request->input('destination_id'))->with('region.country')->first();
     }
 
     // Handle amount range
@@ -68,6 +75,7 @@ class PackageController extends Controller
             'order' => $request->input('sort.order', 'asc'),
         ],
         'search' => $request->input('search', ''),
+        'destination_detail' => $destination_detail ?? null,
     ]);
 }
 

@@ -13,7 +13,7 @@ function DynamicSelect({
     placeholder = "Select an option",
     noOptionsMessage = "No options available",
     defaultOption = null,
-    multiple = false, // Allow multiple selection
+    multiple = false,
 }) {
     const [options, setOptions] = useState(
         defaultOption ? [defaultOption] : []
@@ -46,7 +46,6 @@ function DynamicSelect({
 
                         let updatedOptions = [...fetchedOptions];
 
-                        // Add currently selected options to ensure they are available in the list
                         if (multiple && Array.isArray(selectedValue)) {
                             const selectedOptions = selectedValue
                                 .map((val) => {
@@ -55,7 +54,7 @@ function DynamicSelect({
                                             (opt) => opt.value === val
                                         ) || {
                                             value: val,
-                                            label: `Loading...`, // Placeholder if not found in fetched options
+                                            label: `Loading...`,
                                         }
                                     );
                                 })
@@ -66,7 +65,7 @@ function DynamicSelect({
                                                 opt.value ===
                                                 selectedOption.value
                                         ) === index
-                                ); // Remove duplicates based on value
+                                );
                             updatedOptions = [
                                 ...selectedOptions,
                                 ...fetchedOptions.filter(
@@ -92,7 +91,6 @@ function DynamicSelect({
                             }
                         }
 
-                        // Include defaultOption if not already present
                         if (
                             defaultOption &&
                             !updatedOptions.find(
@@ -153,7 +151,6 @@ function DynamicSelect({
 
     const getValue = () => {
         if (multiple) {
-            // If multiple, selectedValue should be an array
             if (Array.isArray(selectedValue)) {
                 return options.filter((option) =>
                     selectedValue.includes(option.value)
@@ -161,7 +158,6 @@ function DynamicSelect({
             }
             return [];
         } else {
-            // If single, selectedValue should be a single value
             return (
                 options.find((option) => option.value === selectedValue) || null
             );
@@ -179,12 +175,11 @@ function DynamicSelect({
                 onInputChange={(inputValue) => setSearchTerm(inputValue)}
                 onMenuOpen={() => {
                     if (!searchTerm && fetchRoute) {
-                        setSearchTerm(""); // Trigger the effect to load initial data
+                        setSearchTerm("");
                     }
                 }}
                 onChange={(option) => {
                     if (multiple) {
-                        // If multiple selection, option will be an array
                         handleInputChange(
                             name,
                             option ? option.map((opt) => opt.value) : []
