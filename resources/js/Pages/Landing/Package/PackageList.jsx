@@ -1,101 +1,95 @@
-import React from "react";
-import { Link } from "@inertiajs/react";
+import React, { useState } from "react";
+import { Link, useForm } from "@inertiajs/react";
 import SearchBar from "../Components/SearchBar";
+import MultiRangeSlider from "../Components/MultiRangeSlider";
+import DynamicSelect from "../../Admin/Dashboard/Lodging/Components/Form/DynamicSelect";
 
-const PackagesList = () => {
+const PackagesList = ({
+    min_amount,
+    max_amount,
+    min_duration,
+    max_duration,
+    package_types,
+}) => {
+    const [amountRange, setAmountRange] = useState([min_amount, max_amount]);
+    const [durationRange, setDurationRange] = useState([
+        min_duration,
+        max_duration,
+    ]);
+
+    const {
+        post,
+        data,
+        setData,
+        processing,
+        errors: serverErrors,
+    } = useForm({
+        destination_id: "",
+    });
+
+    const [clientErrors, setClientErrors] = useState({});
+
     return (
         <>
             <SearchBar />
             <div className="flex justify-center bg-gray-100 py-10">
                 <div className="flex w-full max-w-6xl">
-                    {/* Sidebar Filter */}
                     <aside className="w-1/4 p-6 bg-white rounded-lg shadow-lg mr-8">
                         <h2 className="text-lg font-semibold text-gray-700 mb-4">
-                            Filter
+                            Filtrer
                         </h2>
-                        {/* Search Box */}
                         <div className="relative mb-6">
-                            <input
-                                type="text"
-                                placeholder="Search by package name"
-                                className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            <DynamicSelect
+                                label="Destination"
+                                name="destination_id"
+                                selectedValue={data.destination_id}
+                                // handleInputChange={handleInputChange}
+                                fetchRoute={route("select.city")}
+                                errors={serverErrors}
+                                noOptionsMessage="Veuillez sélectionner une destination !"
+                                placeholder="Sélectionner une option"
                             />
-                            <span className="absolute inset-y-0 right-3 flex items-center text-gray-400">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="w-5 h-5"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </svg>
-                            </span>
                         </div>
-                        {/* Types of Tour */}
+
+                        {/* Package Types */}
                         <div className="mb-6">
                             <h3 className="font-medium text-gray-700 mb-2">
-                                Types of Tour
+                                Types de forfaits
                             </h3>
                             <ul>
-                                <li>
-                                    <label className="flex items-center space-x-2">
-                                        <input
-                                            type="checkbox"
-                                            className="text-blue-500 rounded"
-                                        />{" "}
-                                        <span>Beach</span>
-                                    </label>
-                                </li>
-                                <li>
-                                    <label className="flex items-center space-x-2">
-                                        <input
-                                            type="checkbox"
-                                            className="text-blue-500 rounded"
-                                        />{" "}
-                                        <span>Mountain</span>
-                                    </label>
-                                </li>
-                                <li>
-                                    <label className="flex items-center space-x-2">
-                                        <input
-                                            type="checkbox"
-                                            className="text-blue-500 rounded"
-                                        />{" "}
-                                        <span>Heritage</span>
-                                    </label>
-                                </li>
-                                <li>
-                                    <label className="flex items-center space-x-2">
-                                        <input
-                                            type="checkbox"
-                                            className="text-blue-500 rounded"
-                                        />{" "}
-                                        <span>Desert</span>
-                                    </label>
-                                </li>
+                                {package_types.map((type) => (
+                                    <li key={type.id}>
+                                        <label className="flex items-center space-x-2">
+                                            <input
+                                                type="checkbox"
+                                                className="text-blue-500 rounded"
+                                            />
+                                            <span>{type.name}</span>
+                                        </label>
+                                    </li>
+                                ))}
                             </ul>
                         </div>
-                        {/* Pricing Scale */}
+
                         <div className="mb-6">
-                            <h3 className="font-medium text-gray-700 mb-2">
-                                Pricing Scale
-                            </h3>
-                            <input
-                                type="range"
-                                min="0"
-                                max="100"
-                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none"
+                            {" "}
+                            <MultiRangeSlider
+                                min={min_amount}
+                                max={max_amount}
+                                label="Prix"
+                                unit="€"
+                                onChange={setAmountRange}
                             />
-                            <div className="flex justify-between text-sm text-gray-600 mt-2">
-                                <span>$24</span>
-                                <span>$62</span>
-                            </div>
+                        </div>
+
+                        <div className="mb-6">
+                            <MultiRangeSlider
+                                min={min_duration}
+                                max={max_duration}
+                                label="Durée (Jours)"
+                                unit=""
+                                onChange={setDurationRange}
+                            />
                         </div>
                     </aside>
 
@@ -106,27 +100,16 @@ const PackagesList = () => {
                                 Showing 5 of 20 Results
                             </h2>
                             <div className="flex items-center space-x-4">
-                                <div className="flex space-x-2">
-                                    <button className="px-3 py-2 text-gray-600 rounded hover:bg-gray-200">
-                                        Grid
-                                    </button>
-                                    <button className="px-3 py-2 text-blue-600 bg-blue-100 rounded">
-                                        List
-                                    </button>
-                                    <button className="px-3 py-2 text-gray-600 rounded hover:bg-gray-200">
-                                        Map
-                                    </button>
-                                </div>
                                 <select className="px-4 py-2 border border-gray-300 rounded-lg">
-                                    <option>Sort By: Latest</option>
-                                    <option>Sort By: Price</option>
+                                    <option>
+                                        Filtrer Par: Date de publication
+                                    </option>
+                                    <option>Filtrer Par: Prix</option>
                                 </select>
                             </div>
                         </div>
 
-                        {/* Package List */}
                         <div className="space-y-6">
-                            {/* Package Card */}
                             <div className="flex items-center bg-white rounded-lg shadow-lg p-6">
                                 <div className="w-1/4">
                                     <img
@@ -179,7 +162,6 @@ const PackagesList = () => {
                                     </span>
                                 </div>
                             </div>
-                            {/* Repeat similar package cards as needed */}
                         </div>
                     </main>
                 </div>
