@@ -18,11 +18,27 @@ const PackagesList = ({
     sort,
     search,
 }) => {
-    const { props } = usePage();
+    const { props, url } = usePage();
+
+    const parsePackageTypesFromUrl = () => {
+        const params = new URLSearchParams(url.split("?")[1]);
+        const types = [];
+
+        // Loop through each entry to find package_types parameters
+        params.forEach((value, key) => {
+            if (key.startsWith("package_types[")) {
+                types.push(Number(value)); // Convert value to number and add to types array
+            }
+        });
+
+        return types;
+    };
 
     // Initialize state variables
     const [destinationId, setDestinationId] = useState("");
-    const [packageTypes, setPackageTypes] = useState([]);
+    const [packageTypes, setPackageTypes] = useState(
+        parsePackageTypesFromUrl()
+    );
     const [amountRange, setAmountRange] = useState([min_amount, max_amount]);
     const [durationRange, setDurationRange] = useState([
         min_duration,
@@ -43,10 +59,7 @@ const PackagesList = ({
         }
 
         // Package Types
-        const packageTypesParams = params.getAll("package_types[]");
-        if (packageTypesParams.length > 0) {
-            setPackageTypes(packageTypesParams.map(Number));
-        }
+        setPackageTypes(parsePackageTypesFromUrl());
 
         // Amount Range
         const amountMin = params.get("amount_range[0]");
@@ -91,7 +104,7 @@ const PackagesList = ({
             setCurrentPage(page);
             router.get(route("landing.package.search.index"), {
                 destination_id: destinationId,
-                "package_types[]": packageTypes,
+                package_types: packageTypes,
                 "amount_range[0]": amountRange[0],
                 "amount_range[1]": amountRange[1],
                 "duration_range[0]": durationRange[0],
