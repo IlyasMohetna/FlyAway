@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { Link, useForm } from "@inertiajs/react";
+import React, { useEffect } from "react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 import SearchBar from "../Components/SearchBar";
 import MultiRangeSlider from "../Components/MultiRangeSlider";
 import DynamicSelect from "../../Admin/Dashboard/Lodging/Components/Form/DynamicSelect";
+import PackageCard from "../Components/PackageCard";
+import { Inertia } from "@inertiajs/inertia";
 
 const PackagesList = ({
     min_amount,
@@ -10,31 +12,226 @@ const PackagesList = ({
     min_duration,
     max_duration,
     package_types,
+    packages,
+    total,
+    currentPage,
+    lastPage,
+    sort,
+    search,
 }) => {
-    const [amountRange, setAmountRange] = useState([min_amount, max_amount]);
-    const [durationRange, setDurationRange] = useState([
-        min_duration,
-        max_duration,
-    ]);
+    const { url, props } = usePage();
 
+    // Use useForm for managing form data
     const {
-        post,
+        get,
         data,
         setData,
         processing,
         errors: serverErrors,
     } = useForm({
-        destination_id: "",
+        destination_id: props.filters?.destination_id || "",
+        package_types: props.filters?.package_types || [],
+        amount_range: props.filters?.amount_range || [min_amount, max_amount],
+        duration_range: props.filters?.duration_range || [
+            min_duration,
+            max_duration,
+        ],
+        sort: props.filters?.sort || { field: sort.field, order: sort.order },
+        search: props.filters?.search || search,
+        page: currentPage || 1,
     });
 
-    const [clientErrors, setClientErrors] = useState({});
+    useEffect(() => {
+        // Update the form data based on URL query parameters
+        const params = new URLSearchParams(url.split("?")[1]);
+        setData((prevData) => {
+            const newData = { ...prevData };
+
+            // Update only if params exist
+            if (params.has("destination_id")) {
+                newData.destination_id = params.get("destination_id");
+            }
+
+            const packageTypes = params.getAll("package_types[]");
+            if (packageTypes.length > 0) {
+                newData.package_types = packageTypes.map(Number);
+            }
+
+            if (
+                params.has("amount_range[0]") ||
+                params.has("amount_range[1]")
+            ) {
+                newData.amount_range = [
+                    params.get("amount_range[0]")
+                        ? parseFloat(params.get("amount_range[0]"))
+                        : prevData.amount_range[0],
+                    params.get("amount_range[1]")
+                        ? parseFloat(params.get("amount_range[1]"))
+                        : prevData.amount_range[1],
+                ];
+            }
+
+            if (
+                params.has("duration_range[0]") ||
+                params.has("duration_range[1]")
+            ) {
+                newData.duration_range = [
+                    params.get("duration_range[0]")
+                        ? parseFloat(params.get("duration_range[0]"))
+                        : prevData.duration_range[0],
+                    params.get("duration_range[1]")
+                        ? parseFloat(params.get("duration_range[1]"))
+                        : prevData.duration_range[1],
+                ];
+            }
+
+            if (params.has("sort[field]") || params.has("sort[order]")) {
+                newData.sort = {
+                    field: params.get("sort[field]") || prevData.sort.field,
+                    order: params.get("sort[order]") || prevData.sort.order,
+                };
+            }
+
+            if (params.has("search")) {
+                newData.search = params.get("search");
+            }
+
+            if (params.has("page")) {
+                newData.page = parseInt(params.get("page"), 10);
+            }
+
+            console.log("Data updated from URL params:", newData);
+            return newData;
+        });
+    }, [url]);
+
+    // Update local filter state
+    const updateFilters = (key, value) => {
+        setData((prevData) => ({
+            ...prevData,
+            [key]: value,
+        }));
+    };
+
+    // Helper to prepare form data properly for backend
+    const prepareFormData = (formData) => {
+        return {
+            destination_id: formData.destination_id,
+            "package_types[]": formData.package_types,
+            "amount_range[0]": formData.amount_range[0],
+            "amount_range[1]": formData.amount_range[1],
+            "duration_range[0]": formData.duration_range[0],
+            "duration_range[1]": formData.duration_range[1],
+            "sort[field]": formData.sort.field,
+            "sort[order]": formData.sort.order,
+            search: formData.search,
+            page: formData.page,
+        };
+    };
+
+    // Handle search button click
+    const handleSearch = () => {
+        // Reset page to 1 when filters are updated
+        const updatedData = {
+            ...data,
+            page: 1,
+        };
+
+        setData(updatedData);
+
+        console.log("Data before search request:", updatedData);
+
+        get(route("landing.package.search.index"), {
+            preserveScroll: true,
+            data: prepareFormData(updatedData),
+            replace: true,
+        });
+    };
+
+    const handleAmountChange = (range) => {
+        updateFilters("amount_range", range);
+    };
+
+    const handleDurationChange = (range) => {
+        updateFilters("duration_range", range);
+    };
+
+    const handlePackageTypeChange = (typeId) => {
+        const updatedTypes = data.package_types.includes(typeId)
+            ? data.package_types.filter((id) => id !== typeId)
+            : [...data.package_types, typeId];
+        updateFilters("package_types", updatedTypes);
+    };
+
+    const handleSortChange = (e) => {
+        const [field, order] = e.target.value.split(":");
+        const updatedData = {
+            ...data,
+            sort: { field, order },
+            page: 1,
+        };
+
+        setData(updatedData);
+
+        console.log("Data before sort request:", updatedData);
+
+        // Trigger search immediately when sort changes
+        get(route("landing.package.search.index"), {
+            preserveScroll: true,
+            data: prepareFormData(updatedData),
+            replace: true,
+        });
+    };
+
+    const handlePageChange = (page) => {
+        const updatedData = {
+            ...data,
+            page,
+        };
+
+        setData(updatedData);
+
+        console.log("Updated data in handlePageChange:", updatedData);
+        console.log("Real data : ", prepareFormData(updatedData));
+
+        Inertia.get(
+            route("landing.package.search.index"),
+            prepareFormData(updatedData),
+            {
+                preserveScroll: true,
+            }
+        );
+    };
+    const renderPageNumbers = () => {
+        const pageNumbers = [];
+        for (let i = 1; i <= lastPage; i++) {
+            pageNumbers.push(
+                <button
+                    key={i}
+                    onClick={() => handlePageChange(i)}
+                    className={`px-4 py-2 mx-1 rounded-md transition-colors duration-300 ${
+                        i === data.page
+                            ? "bg-blue-500 text-white border border-blue-500 outline-none"
+                            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                    }`}
+                >
+                    {i}
+                </button>
+            );
+        }
+        return pageNumbers;
+    };
 
     return (
         <>
-            <SearchBar />
+            <SearchBar
+                value={data.search}
+                onChange={(e) => updateFilters("search", e.target.value)}
+            />
             <div className="flex justify-center bg-gray-100 py-10">
                 <div className="flex w-full max-w-6xl">
-                    <aside className="w-1/4 p-6 bg-white rounded-lg shadow-lg mr-8">
+                    {/* Sidebar Filter */}
+                    <aside className="w-1/4 p-6 bg-white rounded-lg shadow-lg mr-8 h-full sticky top-10 overflow-y-auto max-h-[60vh]">
                         <h2 className="text-lg font-semibold text-gray-700 mb-4">
                             Filtrer
                         </h2>
@@ -43,7 +240,9 @@ const PackagesList = ({
                                 label="Destination"
                                 name="destination_id"
                                 selectedValue={data.destination_id}
-                                // handleInputChange={handleInputChange}
+                                onChange={(value) =>
+                                    updateFilters("destination_id", value)
+                                }
                                 fetchRoute={route("select.city")}
                                 errors={serverErrors}
                                 noOptionsMessage="Veuillez sélectionner une destination !"
@@ -62,6 +261,14 @@ const PackagesList = ({
                                         <label className="flex items-center space-x-2">
                                             <input
                                                 type="checkbox"
+                                                checked={data.package_types.includes(
+                                                    type.id
+                                                )}
+                                                onChange={() =>
+                                                    handlePackageTypeChange(
+                                                        type.id
+                                                    )
+                                                }
                                                 className="text-blue-500 rounded"
                                             />
                                             <span>{type.name}</span>
@@ -71,25 +278,39 @@ const PackagesList = ({
                             </ul>
                         </div>
 
+                        {/* Amount Range */}
                         <div className="mb-6">
-                            {" "}
                             <MultiRangeSlider
                                 min={min_amount}
                                 max={max_amount}
                                 label="Prix"
                                 unit="€"
-                                onChange={setAmountRange}
+                                value={data.amount_range}
+                                onChange={handleAmountChange}
                             />
                         </div>
 
+                        {/* Duration Range */}
                         <div className="mb-6">
                             <MultiRangeSlider
                                 min={min_duration}
                                 max={max_duration}
                                 label="Durée (Jours)"
                                 unit=""
-                                onChange={setDurationRange}
+                                value={data.duration_range}
+                                onChange={handleDurationChange}
                             />
+                        </div>
+
+                        {/* Search Button */}
+                        <div className="mt-6">
+                            <button
+                                onClick={handleSearch}
+                                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                                disabled={processing}
+                            >
+                                {processing ? "Recherche..." : "Rechercher"}
+                            </button>
                         </div>
                     </aside>
 
@@ -97,70 +318,63 @@ const PackagesList = ({
                     <main className="flex-1 max-w-3xl">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-lg font-semibold text-gray-700">
-                                Showing 5 of 20 Results
+                                Affichage de {packages.length} sur {total}{" "}
+                                Résultats
                             </h2>
                             <div className="flex items-center space-x-4">
-                                <select className="px-4 py-2 border border-gray-300 rounded-lg">
-                                    <option>
+                                <select
+                                    className="px-4 py-2 border border-gray-300 rounded-lg"
+                                    value={`${data.sort.field}:${data.sort.order}`}
+                                    onChange={handleSortChange}
+                                >
+                                    <option value="created_at:desc">
                                         Filtrer Par: Date de publication
                                     </option>
-                                    <option>Filtrer Par: Prix</option>
+                                    <option value="price:asc">
+                                        Filtrer Par: Prix
+                                    </option>
                                 </select>
                             </div>
                         </div>
 
                         <div className="space-y-6">
-                            <div className="flex items-center bg-white rounded-lg shadow-lg p-6">
-                                <div className="w-1/4">
-                                    <img
-                                        src="https://via.placeholder.com/150"
-                                        alt="Dubai"
-                                        className="w-full h-32 object-cover rounded-lg"
-                                    />
-                                </div>
-                                <div className="flex-1 px-4">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <span className="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
-                                            16 Places
-                                        </span>
-                                        <span className="px-2 py-1 text-xs font-semibold text-orange-700 bg-orange-100 rounded-full">
-                                            4 Activities
-                                        </span>
-                                    </div>
-                                    <h3 className="text-xl font-semibold text-gray-800">
-                                        Dubai, UAE
-                                    </h3>
-                                    <p className="text-sm text-gray-600">
-                                        4 Days 5 Nights • Capacity 12
-                                    </p>
-                                    <div className="flex items-center mt-2">
-                                        <p className="text-2xl font-bold text-blue-600 mr-2">
-                                            $5220
-                                        </p>
-                                        <span className="text-gray-500">
-                                            / month
-                                        </span>
-                                    </div>
-                                    <Link
-                                        href="#"
-                                        className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                                    >
-                                        Book Now
-                                    </Link>
-                                </div>
-                                <div className="flex items-center space-x-1 ml-auto text-yellow-400">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="w-5 h-5"
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                    >
-                                        <path d="M12 .587l3.668 7.445L23.334 9.74l-5.668 5.524L19.002 24 12 20.312 4.998 24l1.336-8.736L0 9.74l7.666-1.708z" />
-                                    </svg>
-                                    <span className="text-sm font-semibold">
-                                        4.8
-                                    </span>
-                                </div>
+                            {packages.map((apackage, index) => (
+                                <PackageCard key={index} package={apackage} />
+                            ))}
+                        </div>
+
+                        {/* Pagination Controls */}
+                        <div className="sm:flex gap-2 p-3 items-center float-right mr-20 mt-6">
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() =>
+                                        handlePageChange(data.page - 1)
+                                    }
+                                    disabled={data.page === 1}
+                                    className={`px-3 py-1 rounded-md ${
+                                        data.page === 1
+                                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                            : "bg-blue-500 text-white hover:bg-blue-600"
+                                    }`}
+                                >
+                                    Précédent
+                                </button>
+
+                                {renderPageNumbers()}
+
+                                <button
+                                    onClick={() =>
+                                        handlePageChange(data.page + 1)
+                                    }
+                                    disabled={data.page === lastPage}
+                                    className={`px-3 py-1 rounded-md ${
+                                        data.page === lastPage
+                                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                            : "bg-blue-500 text-white hover:bg-blue-600"
+                                    }`}
+                                >
+                                    Suivant
+                                </button>
                             </div>
                         </div>
                     </main>

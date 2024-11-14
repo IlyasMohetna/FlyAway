@@ -1,16 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-import "../../../../css/MultiRangeSlider.css"; // Custom CSS for additional styling
 
-const MultiRangeSlider = ({ min, max, label, unit, onChange }) => {
-    const [range, setRange] = useState([Number(min), Number(max)]);
-
-    const handleSliderChange = (values) => {
-        setRange(values);
-        onChange(values); // Pass the values up to the parent component
-    };
-
+const MultiRangeSlider = ({ min, max, label, unit, value, onChange }) => {
     return (
         <div className="slider-container">
             <h3 className="font-medium text-gray-800 mb-4">{label}</h3>
@@ -18,9 +10,8 @@ const MultiRangeSlider = ({ min, max, label, unit, onChange }) => {
                 range
                 min={Number(min)}
                 max={Number(max)}
-                defaultValue={[Number(min), Number(max)]}
-                value={range}
-                onChange={handleSliderChange}
+                value={value}
+                onChange={onChange}
                 trackStyle={[{ backgroundColor: "#3b82f6", height: 6 }]}
                 handleStyle={[
                     { backgroundColor: "#3b82f6", borderColor: "#3b82f6" },
@@ -31,11 +22,11 @@ const MultiRangeSlider = ({ min, max, label, unit, onChange }) => {
             <div className="flex justify-between text-sm text-gray-600 mt-2">
                 <span>
                     {unit}
-                    {range[0]}
+                    {value[0]}
                 </span>
                 <span>
                     {unit}
-                    {range[1]}
+                    {value[1]}
                 </span>
             </div>
         </div>
