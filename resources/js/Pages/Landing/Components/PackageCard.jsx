@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
 
-function PackageCard() {
+function PackageCard({ apackage }) {
     return (
         <div className="flex items-center bg-white rounded-lg shadow-lg p-6">
             <div className="w-1/4">
@@ -21,14 +21,14 @@ function PackageCard() {
                     </span>
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800">
-                    Dubai, UAE
+                    {apackage.title}
                 </h3>
                 <p className="text-sm text-gray-600">
                     4 Days 5 Nights • Capacity 12
                 </p>
                 <div className="flex items-center mt-2">
                     <p className="text-2xl font-bold text-blue-600 mr-2">
-                        $5220
+                        {apackage.amount_ttc}
                     </p>
                     <span className="text-gray-500">/ month</span>
                 </div>

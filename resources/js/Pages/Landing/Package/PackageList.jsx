@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
-import { Link, useForm, usePage } from "@inertiajs/react";
+import React, { useState, useEffect } from "react";
+import { Link, router, usePage } from "@inertiajs/react";
 import SearchBar from "../Components/SearchBar";
 import MultiRangeSlider from "../Components/MultiRangeSlider";
 import DynamicSelect from "../../Admin/Dashboard/Lodging/Components/Form/DynamicSelect";
 import PackageCard from "../Components/PackageCard";
-import { Inertia } from "@inertiajs/inertia";
 
 const PackagesList = ({
     min_amount,
@@ -14,194 +13,144 @@ const PackagesList = ({
     package_types,
     packages,
     total,
-    currentPage,
+    currentPage: initialPage,
     lastPage,
     sort,
     search,
 }) => {
-    const { url, props } = usePage();
+    const { props } = usePage();
 
-    // Use useForm for managing form data
-    const {
-        get,
-        data,
-        setData,
-        processing,
-        errors: serverErrors,
-    } = useForm({
-        destination_id: props.filters?.destination_id || "",
-        package_types: props.filters?.package_types || [],
-        amount_range: props.filters?.amount_range || [min_amount, max_amount],
-        duration_range: props.filters?.duration_range || [
-            min_duration,
-            max_duration,
-        ],
-        sort: props.filters?.sort || { field: sort.field, order: sort.order },
-        search: props.filters?.search || search,
-        page: currentPage || 1,
-    });
+    // Initialize state variables
+    const [destinationId, setDestinationId] = useState("");
+    const [packageTypes, setPackageTypes] = useState([]);
+    const [amountRange, setAmountRange] = useState([min_amount, max_amount]);
+    const [durationRange, setDurationRange] = useState([
+        min_duration,
+        max_duration,
+    ]);
+    const [sortField, setSortField] = useState("created_at");
+    const [sortOrder, setSortOrder] = useState("desc");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(initialPage || 1);
 
+    // Parse URL parameters on initial load
     useEffect(() => {
-        // Update the form data based on URL query parameters
-        const params = new URLSearchParams(url.split("?")[1]);
-        setData((prevData) => {
-            const newData = { ...prevData };
+        const params = new URLSearchParams(window.location.search);
 
-            // Update only if params exist
-            if (params.has("destination_id")) {
-                newData.destination_id = params.get("destination_id");
-            }
+        // Destination ID
+        if (params.has("destination_id")) {
+            setDestinationId(params.get("destination_id"));
+        }
 
-            const packageTypes = params.getAll("package_types[]");
-            if (packageTypes.length > 0) {
-                newData.package_types = packageTypes.map(Number);
-            }
+        // Package Types
+        const packageTypesParams = params.getAll("package_types[]");
+        if (packageTypesParams.length > 0) {
+            setPackageTypes(packageTypesParams.map(Number));
+        }
 
-            if (
-                params.has("amount_range[0]") ||
-                params.has("amount_range[1]")
-            ) {
-                newData.amount_range = [
-                    params.get("amount_range[0]")
-                        ? parseFloat(params.get("amount_range[0]"))
-                        : prevData.amount_range[0],
-                    params.get("amount_range[1]")
-                        ? parseFloat(params.get("amount_range[1]"))
-                        : prevData.amount_range[1],
-                ];
-            }
+        // Amount Range
+        const amountMin = params.get("amount_range[0]");
+        const amountMax = params.get("amount_range[1]");
+        if (amountMin !== null && amountMax !== null) {
+            setAmountRange([parseFloat(amountMin), parseFloat(amountMax)]);
+        }
 
-            if (
-                params.has("duration_range[0]") ||
-                params.has("duration_range[1]")
-            ) {
-                newData.duration_range = [
-                    params.get("duration_range[0]")
-                        ? parseFloat(params.get("duration_range[0]"))
-                        : prevData.duration_range[0],
-                    params.get("duration_range[1]")
-                        ? parseFloat(params.get("duration_range[1]"))
-                        : prevData.duration_range[1],
-                ];
-            }
+        // Duration Range
+        const durationMin = params.get("duration_range[0]");
+        const durationMax = params.get("duration_range[1]");
+        if (durationMin !== null && durationMax !== null) {
+            setDurationRange([
+                parseFloat(durationMin),
+                parseFloat(durationMax),
+            ]);
+        }
 
-            if (params.has("sort[field]") || params.has("sort[order]")) {
-                newData.sort = {
-                    field: params.get("sort[field]") || prevData.sort.field,
-                    order: params.get("sort[order]") || prevData.sort.order,
-                };
-            }
+        // Sort Field and Order
+        const sortFieldParam = params.get("sort[field]");
+        const sortOrderParam = params.get("sort[order]");
+        if (sortFieldParam) {
+            setSortField(sortFieldParam);
+        }
+        if (sortOrderParam) {
+            setSortOrder(sortOrderParam);
+        }
 
-            if (params.has("search")) {
-                newData.search = params.get("search");
-            }
+        // Search Query
+        if (params.has("search")) {
+            setSearchQuery(params.get("search"));
+        }
 
-            if (params.has("page")) {
-                newData.page = parseInt(params.get("page"), 10);
-            }
+        // Page
+        if (params.has("page")) {
+            setCurrentPage(parseInt(params.get("page"), 10));
+        }
+    }, []);
 
-            console.log("Data updated from URL params:", newData);
-            return newData;
-        });
-    }, [url]);
-
-    // Update local filter state
-    const updateFilters = (key, value) => {
-        setData((prevData) => ({
-            ...prevData,
-            [key]: value,
-        }));
+    const handlePageChange = (page) => {
+        if (page > 0 && page <= lastPage && page !== currentPage) {
+            setCurrentPage(page);
+            router.get(route("landing.package.search.index"), {
+                destination_id: destinationId,
+                "package_types[]": packageTypes,
+                "amount_range[0]": amountRange[0],
+                "amount_range[1]": amountRange[1],
+                "duration_range[0]": durationRange[0],
+                "duration_range[1]": durationRange[1],
+                sort: { field: sortField, order: sortOrder },
+                search: searchQuery,
+                page,
+            });
+        }
     };
 
-    // Helper to prepare form data properly for backend
-    const prepareFormData = (formData) => {
-        return {
-            destination_id: formData.destination_id,
-            "package_types[]": formData.package_types,
-            "amount_range[0]": formData.amount_range[0],
-            "amount_range[1]": formData.amount_range[1],
-            "duration_range[0]": formData.duration_range[0],
-            "duration_range[1]": formData.duration_range[1],
-            "sort[field]": formData.sort.field,
-            "sort[order]": formData.sort.order,
-            search: formData.search,
-            page: formData.page,
-        };
-    };
-
-    // Handle search button click
     const handleSearch = () => {
-        // Reset page to 1 when filters are updated
-        const updatedData = {
-            ...data,
+        setCurrentPage(1);
+        router.get(route("landing.package.search.index"), {
+            destination_id: destinationId,
+            "package_types[]": packageTypes,
+            "amount_range[0]": amountRange[0],
+            "amount_range[1]": amountRange[1],
+            "duration_range[0]": durationRange[0],
+            "duration_range[1]": durationRange[1],
+            sort: { field: sortField, order: sortOrder },
+            search: searchQuery,
             page: 1,
-        };
-
-        setData(updatedData);
-
-        console.log("Data before search request:", updatedData);
-
-        get(route("landing.package.search.index"), {
-            preserveScroll: true,
-            data: prepareFormData(updatedData),
-            replace: true,
         });
     };
 
     const handleAmountChange = (range) => {
-        updateFilters("amount_range", range);
+        setAmountRange(range);
     };
 
     const handleDurationChange = (range) => {
-        updateFilters("duration_range", range);
+        setDurationRange(range);
     };
 
     const handlePackageTypeChange = (typeId) => {
-        const updatedTypes = data.package_types.includes(typeId)
-            ? data.package_types.filter((id) => id !== typeId)
-            : [...data.package_types, typeId];
-        updateFilters("package_types", updatedTypes);
+        const updatedTypes = packageTypes.includes(typeId)
+            ? packageTypes.filter((id) => id !== typeId)
+            : [...packageTypes, typeId];
+        setPackageTypes(updatedTypes);
     };
 
     const handleSortChange = (e) => {
         const [field, order] = e.target.value.split(":");
-        const updatedData = {
-            ...data,
+        setSortField(field);
+        setSortOrder(order);
+        setCurrentPage(1);
+        router.get(route("landing.package.search.index"), {
+            destination_id: destinationId,
+            "package_types[]": packageTypes,
+            "amount_range[0]": amountRange[0],
+            "amount_range[1]": amountRange[1],
+            "duration_range[0]": durationRange[0],
+            "duration_range[1]": durationRange[1],
             sort: { field, order },
+            search: searchQuery,
             page: 1,
-        };
-
-        setData(updatedData);
-
-        console.log("Data before sort request:", updatedData);
-
-        // Trigger search immediately when sort changes
-        get(route("landing.package.search.index"), {
-            preserveScroll: true,
-            data: prepareFormData(updatedData),
-            replace: true,
         });
     };
 
-    const handlePageChange = (page) => {
-        const updatedData = {
-            ...data,
-            page,
-        };
-
-        setData(updatedData);
-
-        console.log("Updated data in handlePageChange:", updatedData);
-        console.log("Real data : ", prepareFormData(updatedData));
-
-        Inertia.get(
-            route("landing.package.search.index"),
-            prepareFormData(updatedData),
-            {
-                preserveScroll: true,
-            }
-        );
-    };
     const renderPageNumbers = () => {
         const pageNumbers = [];
         for (let i = 1; i <= lastPage; i++) {
@@ -210,7 +159,7 @@ const PackagesList = ({
                     key={i}
                     onClick={() => handlePageChange(i)}
                     className={`px-4 py-2 mx-1 rounded-md transition-colors duration-300 ${
-                        i === data.page
+                        i === currentPage
                             ? "bg-blue-500 text-white border border-blue-500 outline-none"
                             : "bg-blue-100 text-blue-700 hover:bg-blue-200"
                     }`}
@@ -225,32 +174,29 @@ const PackagesList = ({
     return (
         <>
             <SearchBar
-                value={data.search}
-                onChange={(e) => updateFilters("search", e.target.value)}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <div className="flex justify-center bg-gray-100 py-10">
+            <div className="flex justify-center bg-gray-100 py-10 min-h-screen">
                 <div className="flex w-full max-w-6xl">
-                    {/* Sidebar Filter */}
-                    <aside className="w-1/4 p-6 bg-white rounded-lg shadow-lg mr-8 h-full sticky top-10 overflow-y-auto max-h-[60vh]">
+                    <aside className="w-1/4 p-6 bg-white rounded-lg shadow-lg mr-8 min-h-screen h-screen sticky top-0 overflow-y-auto">
                         <h2 className="text-lg font-semibold text-gray-700 mb-4">
                             Filtrer
                         </h2>
+
                         <div className="relative mb-6">
                             <DynamicSelect
                                 label="Destination"
                                 name="destination_id"
-                                selectedValue={data.destination_id}
-                                onChange={(value) =>
-                                    updateFilters("destination_id", value)
-                                }
+                                selectedValue={destinationId}
+                                onChange={(value) => setDestinationId(value)}
                                 fetchRoute={route("select.city")}
-                                errors={serverErrors}
+                                errors={{}}
                                 noOptionsMessage="Veuillez sélectionner une destination !"
                                 placeholder="Sélectionner une option"
                             />
                         </div>
 
-                        {/* Package Types */}
                         <div className="mb-6">
                             <h3 className="font-medium text-gray-700 mb-2">
                                 Types de forfaits
@@ -261,7 +207,7 @@ const PackagesList = ({
                                         <label className="flex items-center space-x-2">
                                             <input
                                                 type="checkbox"
-                                                checked={data.package_types.includes(
+                                                checked={packageTypes.includes(
                                                     type.id
                                                 )}
                                                 onChange={() =>
@@ -278,43 +224,39 @@ const PackagesList = ({
                             </ul>
                         </div>
 
-                        {/* Amount Range */}
                         <div className="mb-6">
                             <MultiRangeSlider
                                 min={min_amount}
                                 max={max_amount}
                                 label="Prix"
                                 unit="€"
-                                value={data.amount_range}
+                                value={amountRange}
                                 onChange={handleAmountChange}
                             />
                         </div>
 
-                        {/* Duration Range */}
                         <div className="mb-6">
                             <MultiRangeSlider
                                 min={min_duration}
                                 max={max_duration}
                                 label="Durée (Jours)"
                                 unit=""
-                                value={data.duration_range}
+                                value={durationRange}
                                 onChange={handleDurationChange}
                             />
                         </div>
 
-                        {/* Search Button */}
                         <div className="mt-6">
                             <button
                                 onClick={handleSearch}
                                 className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                                disabled={processing}
+                                disabled={false}
                             >
-                                {processing ? "Recherche..." : "Rechercher"}
+                                Rechercher
                             </button>
                         </div>
                     </aside>
 
-                    {/* Main Content Area */}
                     <main className="flex-1 max-w-3xl">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-lg font-semibold text-gray-700">
@@ -324,7 +266,7 @@ const PackagesList = ({
                             <div className="flex items-center space-x-4">
                                 <select
                                     className="px-4 py-2 border border-gray-300 rounded-lg"
-                                    value={`${data.sort.field}:${data.sort.order}`}
+                                    value={`${sortField}:${sortOrder}`}
                                     onChange={handleSortChange}
                                 >
                                     <option value="created_at:desc">
@@ -339,20 +281,19 @@ const PackagesList = ({
 
                         <div className="space-y-6">
                             {packages.map((apackage, index) => (
-                                <PackageCard key={index} package={apackage} />
+                                <PackageCard key={index} apackage={apackage} />
                             ))}
                         </div>
 
-                        {/* Pagination Controls */}
                         <div className="sm:flex gap-2 p-3 items-center float-right mr-20 mt-6">
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() =>
-                                        handlePageChange(data.page - 1)
+                                        handlePageChange(currentPage - 1)
                                     }
-                                    disabled={data.page === 1}
+                                    disabled={currentPage === 1}
                                     className={`px-3 py-1 rounded-md ${
-                                        data.page === 1
+                                        currentPage === 1
                                             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                                             : "bg-blue-500 text-white hover:bg-blue-600"
                                     }`}
@@ -364,11 +305,11 @@ const PackagesList = ({
 
                                 <button
                                     onClick={() =>
-                                        handlePageChange(data.page + 1)
+                                        handlePageChange(currentPage + 1)
                                     }
-                                    disabled={data.page === lastPage}
+                                    disabled={currentPage === lastPage}
                                     className={`px-3 py-1 rounded-md ${
-                                        data.page === lastPage
+                                        currentPage === lastPage
                                             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                                             : "bg-blue-500 text-white hover:bg-blue-600"
                                     }`}
