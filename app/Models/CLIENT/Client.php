@@ -2,6 +2,7 @@
 namespace App\Models\Client;
 
 use App\Models\CONFIG\City;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -13,6 +14,12 @@ class Client extends Model
 	/**
 	 * Get the city linked to the client
 	 */
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 	public function city(){
 		return $this->belongsTo(City::class, 'city_id');
 	}

@@ -19,6 +19,7 @@ Route::group(['prefix' => 'admin'], function () {
         require __DIR__ . '/admin/dashboard.php';
         require __DIR__ . '/admin/lodging.php';
         require __DIR__ . '/admin/package.php';
+        require __DIR__ . '/admin/client.php';
     });
 
 });

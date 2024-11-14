@@ -6,6 +6,7 @@ import MenuItemStandlone from "./MenuItemStandlone";
 import AccordionMenu from "./AccordionMenu";
 import { MdOutlineTravelExplore } from "react-icons/md";
 import { FaTrain, FaPlane, FaHotel, FaCar, FaBusAlt } from "react-icons/fa";
+import { FaUserFriends } from "react-icons/fa";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     const [openMenu, setOpenMenu] = useState(null);
@@ -24,13 +25,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             <div className="flex items-center justify-between px-4 py-4 text-white border-b border-gray-700 border-1">
                 <h2>FlyAway Admin</h2>
             </div>
-
             <nav className="p-4 space-y-2">
                 <MenuItemStandlone
                     href="/"
                     title="Accueil"
                     icon={
                         <FaHome className="mr-3 text-gray-400 hover:text-white" />
+                    }
+                />
+
+                <MenuItemStandlone
+                    href={route("client.index")}
+                    title="Gestion des clients"
+                    icon={
+                        <FaUserFriends className="mr-3 text-gray-400 hover:text-white" />
                     }
                 />
 
