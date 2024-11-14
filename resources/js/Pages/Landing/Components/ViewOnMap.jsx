@@ -20,7 +20,7 @@ export default function ViewOnMap({ longitude, latitude }) {
                     <a
                         className="d-block border rounded mb-4"
                         href={
-                            "https://www.google.com/maps/place/Lumen+Field/@" +
+                            "https://www.google.com/maps/@" +
                             latitude +
                             "," +
                             longitude +

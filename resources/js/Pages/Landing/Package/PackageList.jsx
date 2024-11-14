@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
-import SearchBar from "../Components/SearchBar";
+import SearchBar from "../Components/Header";
 import MultiRangeSlider from "../Components/MultiRangeSlider";
 import DynamicSelect from "../../Admin/Dashboard/Lodging/Components/Form/DynamicSelect";
 import PackageCard from "../Components/PackageCard";
+import Header from "../Components/Header";
 
 const PackagesList = ({
     min_amount,
@@ -180,13 +181,10 @@ const PackagesList = ({
 
     return (
         <>
-            <SearchBar
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            <Header />
             <div className="flex justify-center bg-gray-100 py-10 min-h-screen">
                 <div className="flex w-full max-w-6xl">
-                    <aside className="w-1/4 p-6 bg-white rounded-lg shadow-lg mr-8 min-h-screen h-screen sticky top-0 overflow-y-auto">
+                    <aside className="w-1/4 p-6 bg-white rounded-lg shadow-lg mr-8 h-[650px] lg:h-[80vh] sticky top-0 overflow-y-auto">
                         <h2 className="text-lg font-semibold text-gray-700 mb-4">
                             Filtrer
                         </h2>

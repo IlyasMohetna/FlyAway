@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import SearchBar from "../Components/SearchBar";
+import SearchBar from "../Components/Header";
 import ViewOnMap from "../Components/ViewOnMap";
 import Slider from "react-slick";
 import MoneyFormat from "../../../Components/Format/MoneyFormat";
 import CountryFlag from "../../../Components/Country/CountryFlag";
 import ItineraryPreview from "../Components/ItineraryPreview";
+import Header from "../Components/Header";
 
 const PackageView = ({ apackage, steps }) => {
     const mainSliderRef = useRef(null);
@@ -31,7 +32,7 @@ const PackageView = ({ apackage, steps }) => {
 
     return (
         <>
-            <SearchBar />
+            <Header />
             <div className="max-w-full overflow-x-hidden">
                 {apackage.gallery.length > 0 ? (
                     <Slider {...mainSliderSettings}>
