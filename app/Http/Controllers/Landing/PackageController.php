@@ -14,6 +14,8 @@ class PackageController extends Controller
 {
     $query = Package::query();
 
+    $query->with('thumbnail');
+
     // Handle sorting
     if ($request->has('sort')) {
         $sortField = $request->input('sort.field', 'id');

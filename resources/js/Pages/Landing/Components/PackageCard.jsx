@@ -1,13 +1,18 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
+import MoneyFormat from "../../../Components/Format/MoneyFormat";
 
 function PackageCard({ apackage }) {
     return (
         <div className="flex items-center bg-white rounded-lg shadow-lg p-6">
             <div className="w-1/4">
                 <img
-                    src="https://via.placeholder.com/150"
-                    alt="Dubai"
+                    src={
+                        "/storage/" +
+                        apackage.thumbnail?.storage_driver +
+                        "/" +
+                        apackage.thumbnail?.file_name
+                    }
                     className="w-full h-32 object-cover rounded-lg"
                 />
             </div>
@@ -24,19 +29,18 @@ function PackageCard({ apackage }) {
                     {apackage.title}
                 </h3>
                 <p className="text-sm text-gray-600">
-                    4 Days 5 Nights • Capacity 12
+                    Durée : {apackage.duration} Jours
                 </p>
                 <div className="flex items-center mt-2">
                     <p className="text-2xl font-bold text-blue-600 mr-2">
-                        {apackage.amount_ttc}
+                        <MoneyFormat money={apackage.amount_ttc} />
                     </p>
-                    <span className="text-gray-500">/ month</span>
                 </div>
                 <Link
                     href="#"
                     className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                    Book Now
+                    Voir
                 </Link>
             </div>
             <div className="flex items-center space-x-1 ml-auto text-yellow-400">

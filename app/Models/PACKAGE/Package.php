@@ -20,4 +20,9 @@ class Package extends Model
     {
         return $this->hasOne(City::class, 'id', 'destination_id');
     }
+
+    public function thumbnail()
+    {
+        return $this->hasOne(PackageGallery::class, 'package_id', 'id');
+    }
 }
