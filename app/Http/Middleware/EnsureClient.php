@@ -12,10 +12,13 @@ class EnsureClient
     {
         $user = Auth::user();
 
-        if ($user && $user->employe !== null) {
+        if ($user && $user->client !== null) {
             return $next($request);
         }
 
-        return redirect('/')->with('error', 'Unauthorized access');
+        $comebackUrl = $request->fullUrl();
+        $request->session()->put('comebackUrl', $comebackUrl);
+
+        return redirect()->route('client.login.show');
     }
 }

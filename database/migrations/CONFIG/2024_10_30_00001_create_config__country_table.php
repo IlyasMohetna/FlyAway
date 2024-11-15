@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('numeric_code');
             $table->string('currency_code');
             $table->string('currency_name', 50);
-            $table->string('currency_symbol', 5);
+            $table->string('currency_symbol', 10);
             $table->timestamps();
             $table->softDeletes();
         });

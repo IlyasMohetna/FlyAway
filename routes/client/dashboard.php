@@ -4,4 +4,4 @@ use App\Http\Controllers\Client\Dashboard\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get("/client/dashboard", [DashboardController::class, "index_show"])->middleware('auth')->name("client.dashboard.show");
+Route::get("/dashboard", [DashboardController::class, "index_show"])->name("client.dashboard.show");

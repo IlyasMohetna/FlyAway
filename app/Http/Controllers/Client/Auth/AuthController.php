@@ -29,11 +29,15 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
+        $comebackUrl = session()->get('comebackUrl', route('client.dashboard.show'));
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        Auth::logout();
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
-            return Redirect::route('client.dashboard.show');
+            return redirect()->intended($comebackUrl);
         }
 
         return back()->withErrors([

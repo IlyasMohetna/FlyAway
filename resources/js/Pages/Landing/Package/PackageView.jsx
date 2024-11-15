@@ -6,6 +6,7 @@ import MoneyFormat from "../../../Components/Format/MoneyFormat";
 import CountryFlag from "../../../Components/Country/CountryFlag";
 import ItineraryPreview from "../Components/ItineraryPreview";
 import Header from "../Components/Header";
+import { Link, router } from "@inertiajs/react";
 
 const PackageView = ({ apackage, steps }) => {
     const mainSliderRef = useRef(null);
@@ -28,6 +29,13 @@ const PackageView = ({ apackage, steps }) => {
         autoplay: true,
         autoplaySpeed: 3000,
         ref: mainSliderRef,
+    };
+
+    const handleBooking = () => {
+        router.get(route("client.package.booking.show"), {
+            package_id: apackage.id,
+            nbPersons: nbPersons,
+        });
     };
 
     return (
@@ -135,9 +143,11 @@ const PackageView = ({ apackage, steps }) => {
                                             />
                                         </span>
                                     </div>
+
                                     <button
                                         type="button"
-                                        className="w-full mt-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        onClick={handleBooking}
+                                        className="w-full mt-4 py-2 px-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                                     >
                                         Réserver maintenant
                                     </button>
