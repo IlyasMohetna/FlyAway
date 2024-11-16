@@ -19,4 +19,9 @@ class BookingController extends Controller
             'transportation_modes' => $transportation_modes
         ]);
     }
+
+    public function store(Request $request)
+    {
+        dd($request);
+    }
 }

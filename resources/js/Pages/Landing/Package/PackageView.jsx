@@ -1,12 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import SearchBar from "../Components/Header";
-import ViewOnMap from "../Components/ViewOnMap";
 import Slider from "react-slick";
+import { DateRange } from "react-date-range";
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css"; // theme css file
 import MoneyFormat from "../../../Components/Format/MoneyFormat";
 import CountryFlag from "../../../Components/Country/CountryFlag";
 import ItineraryPreview from "../Components/ItineraryPreview";
 import Header from "../Components/Header";
+import ViewOnMap from "../Components/ViewOnMap";
+import InputLabeled from "../../../Components/Form/Pack/InputLabeled";
 import { Link, router } from "@inertiajs/react";
+import { format, addDays } from "date-fns";
 
 const PackageView = ({ apackage, steps }) => {
     const mainSliderRef = useRef(null);
@@ -14,10 +18,59 @@ const PackageView = ({ apackage, steps }) => {
     const [totalAmountTTC, setTotalAmountTTC] = useState(apackage.amount_ttc);
     const [nbPersons, setNbPersons] = useState(1);
 
+    const [isPickerOpen, setIsPickerOpen] = useState(false);
+    const [dateRange, setDateRange] = useState({
+        startDate: new Date(),
+        endDate: addDays(new Date(), 4), // Default to a 5-day range
+        key: "selection",
+    });
+    const pickerRef = useRef(null);
+
+    const handleDateChange = (ranges) => {
+        const { startDate } = ranges.selection;
+        const endDate = addDays(startDate, 4); // Automatically calculate the end date (4 additional days)
+        setDateRange({ startDate, endDate, key: "selection" });
+        setIsPickerOpen(false); // Close the picker after selection
+    };
+
+    // const handleDates = () => {
+    //     console.log("Selected Dates:", {
+    //         startDate: dateRange.startDate.toISOString(),
+    //         endDate: dateRange.endDate.toISOString(),
+    //     });
+    //     // Add booking logic here
+    // };
+
+    // Close picker when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                pickerRef.current &&
+                !pickerRef.current.contains(event.target)
+            ) {
+                setIsPickerOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     useEffect(() => {
         setTotalAmountHT(apackage.amount_ht * nbPersons);
         setTotalAmountTTC(apackage.amount_ttc * nbPersons);
     }, [nbPersons]);
+
+    const handleBooking = () => {
+        router.get(route("client.package.booking.show"), {
+            package_id: apackage.id,
+            nbPersons: nbPersons,
+            startDate: dateRange.startDate.toISOString(),
+            endDate: dateRange.endDate.toISOString(),
+        });
+    };
+
     const mainSliderSettings = {
         dots: false,
         infinite: true,
@@ -29,13 +82,6 @@ const PackageView = ({ apackage, steps }) => {
         autoplay: true,
         autoplaySpeed: 3000,
         ref: mainSliderRef,
-    };
-
-    const handleBooking = () => {
-        router.get(route("client.package.booking.show"), {
-            package_id: apackage.id,
-            nbPersons: nbPersons,
-        });
     };
 
     return (
@@ -54,6 +100,7 @@ const PackageView = ({ apackage, steps }) => {
                                         image?.file_name
                                     }
                                     className="w-full h-[500px] object-cover rounded-md"
+                                    alt={`Gallery Image ${index + 1}`}
                                 />
                             </div>
                         ))}
@@ -81,7 +128,7 @@ const PackageView = ({ apackage, steps }) => {
                                     />
                                 </div>
 
-                                <span class="bg-blue-100 ml-2 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full">
+                                <span className="bg-blue-100 ml-2 text-blue-800 font-medium me-2 px-2.5 py-0.5 rounded-full">
                                     <b>{apackage.type.name}</b>
                                 </span>
                             </div>
@@ -97,7 +144,7 @@ const PackageView = ({ apackage, steps }) => {
                             {/* Itinerary */}
                             <div className="mt-4">
                                 <h4 className="text-lg font-semibold mb-2">
-                                    Itineraire
+                                    Itinéraire
                                 </h4>
                                 <ItineraryPreview days={steps} />
                             </div>
@@ -121,27 +168,51 @@ const PackageView = ({ apackage, steps }) => {
                                 </div>
 
                                 <form className="space-y-4">
-                                    <label className="block">
-                                        <span className="text-gray-700">
-                                            Nombre de personnes
-                                        </span>
+                                    <InputLabeled
+                                        label="Nombre de personnes"
+                                        id="nbPersons"
+                                        name="nbPersons"
+                                        type="number"
+                                        value={nbPersons}
+                                        onChange={(e) =>
+                                            setNbPersons(e.target.value)
+                                        }
+                                    />
+
+                                    <div className="mb-4">
+                                        <label className="text-sm font-medium text-gray-700 mb-2 block">
+                                            Sélectionnez vos dates
+                                        </label>
                                         <input
-                                            type="number"
-                                            className="mt-1 block w-full border rounded-md p-2"
-                                            min="1"
-                                            onChange={(e) =>
-                                                setNbPersons(e.target.value)
+                                            type="text"
+                                            readOnly
+                                            value={`${format(
+                                                dateRange.startDate,
+                                                "dd/MM/yyyy"
+                                            )} - ${format(
+                                                dateRange.endDate,
+                                                "dd/MM/yyyy"
+                                            )}`}
+                                            className="w-full border border-gray-300 rounded-lg p-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            onClick={() =>
+                                                setIsPickerOpen(!isPickerOpen)
                                             }
-                                            value={nbPersons}
                                         />
-                                    </label>
-                                    <div className="flex justify-between items-center">
-                                        <span>Total</span>
-                                        <span>
-                                            <MoneyFormat
-                                                money={totalAmountTTC}
-                                            />
-                                        </span>
+                                        {isPickerOpen && (
+                                            <div
+                                                className="absolute z-50 mt-2"
+                                                ref={pickerRef}
+                                            >
+                                                <DateRange
+                                                    ranges={[dateRange]}
+                                                    onChange={handleDateChange}
+                                                    rangeColors={["#4A90E2"]}
+                                                    minDate={new Date()}
+                                                    showSelectionPreview={true}
+                                                    editableDateInputs={false} // Prevent editing end date
+                                                />
+                                            </div>
+                                        )}
                                     </div>
 
                                     <button
@@ -152,65 +223,6 @@ const PackageView = ({ apackage, steps }) => {
                                         Réserver maintenant
                                     </button>
                                 </form>
-
-                                <div className="mt-8">
-                                    <h4 className="text-lg font-semibold mb-2">
-                                        Pourquoi réserver avec nous ?
-                                    </h4>
-                                    <ul className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                                        <li class="flex items-center">
-                                            <svg
-                                                class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="currentColor"
-                                                viewBox="0 0 20 20"
-                                            >
-                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-                                            </svg>
-                                            Garantie du meilleur prix sans
-                                            tracas
-                                        </li>
-                                        <li class="flex items-center">
-                                            <svg
-                                                class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="currentColor"
-                                                viewBox="0 0 20 20"
-                                            >
-                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-                                            </svg>
-                                            Service client disponible 24h/24 et
-                                            7j/7
-                                        </li>
-                                        <li class="flex items-center">
-                                            <svg
-                                                class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="currentColor"
-                                                viewBox="0 0 20 20"
-                                            >
-                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-                                            </svg>
-                                            Tours et activités sélectionnés avec
-                                            soin
-                                        </li>
-                                        <li class="flex items-center">
-                                            <svg
-                                                class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="currentColor"
-                                                viewBox="0 0 20 20"
-                                            >
-                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-                                            </svg>
-                                            Assurance voyage gratuite
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
                         </div>
                     </div>

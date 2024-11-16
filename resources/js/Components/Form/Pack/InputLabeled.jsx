@@ -1,4 +1,3 @@
-// InputLabeled.js
 import React from "react";
 import Label from "../Labels/Label";
 import Input from "../Inputs/Input";

@@ -164,7 +164,7 @@ function BookingMake({ apackage, transportation_modes }) {
             }
 
             // Submit the form
-            post("/booking/submit", {
+            post(route("client.package.booking.store"), {
                 onSuccess: () => {
                     // Handle success (e.g., redirect to confirmation)
                 },
