@@ -176,7 +176,7 @@ const AttributList = ({ categories }) => {
                                                 <th className="text-left py-3 px-4">
                                                     Créer le
                                                 </th>
-                                                <th className="text-left text-center py-3 px-4">
+                                                <th className="text-center py-3 px-4">
                                                     Action
                                                 </th>
                                             </tr>

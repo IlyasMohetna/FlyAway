@@ -3,10 +3,8 @@ import AdminDashboardLayout from "../Layouts/AdminDashboardLayout";
 import { FaRegTrashAlt } from "react-icons/fa";
 import DateTimeFormat from "../../../../Components/Date/DateTimeFormat";
 import { BeatLoader } from "react-spinners";
-import AddAttributModal from "./Components/AddAttributModal";
 import AddButton from "../../../../Components/Buttons/AddButton";
 import DeleteConfirmModal from "./Components/DeleteConfirmModal";
-import AddAttributCategorieModal from "./Components/AddAttributCategorieModal";
 import AddEquipementCategorieModal from "./Components/AddEquipementCategorieModal";
 import AddEquipementModal from "./Components/AddEquipementModal";
 
@@ -177,7 +175,7 @@ const EquipementList = ({ categories }) => {
                                                 <th className="text-left py-3 px-4">
                                                     Créer le
                                                 </th>
-                                                <th className="text-left text-center py-3 px-4">
+                                                <th className="text-center py-3 px-4">
                                                     Action
                                                 </th>
                                             </tr>
