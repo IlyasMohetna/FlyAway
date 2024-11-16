@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Client\Auth\AuthController;
+use App\Http\Controllers\Client\AuthController;
 
 
 Route::get("/login", [AuthController::class, "show_login"])->name("client.login.show");

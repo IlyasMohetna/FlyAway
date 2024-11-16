@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Client\Auth;
+namespace App\Http\Controllers\Client;
 use Exception;
 use App\Models\User;
 use Inertia\Inertia;
