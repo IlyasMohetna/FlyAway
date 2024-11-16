@@ -29,15 +29,25 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-        $comebackUrl = session()->get('comebackUrl', route('client.dashboard.show'));
+        $followUrl = session()->get('followUrl', route('client.dashboard.show'));
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         Auth::logout();
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended($comebackUrl);
+            $user = Auth::user();
+
+            if($user->client){
+                $request->session()->regenerate();
+                return redirect()->intended($followUrl);
+            }
+
+            Auth::logout();
+
+            return back()->withErrors([
+                'general' => 'Seuls les clients peuvent se connecter ici.',
+            ])->onlyInput('email');
         }
 
         return back()->withErrors([

@@ -16,8 +16,8 @@ class EnsureClient
             return $next($request);
         }
 
-        $comebackUrl = $request->fullUrl();
-        $request->session()->put('comebackUrl', $comebackUrl);
+        $followUrl = $request->fullUrl();
+        $request->session()->put('followUrl', $followUrl);
 
         return redirect()->route('client.login.show');
     }
