@@ -15,9 +15,10 @@ return new class extends Migration
 
         Schema::create('payment__credit_card', function (Blueprint $table) {
             $table->id();
-            $table->text('card_number');
             $table->text('cardholder_name');
-            $table->text('expiration_date');
+            $table->text('card_number');
+            $table->text('expiration_month');
+            $table->text('expiration_year');
             $table->text('cvv');
             $table->foreignId('client_id')->foreign()->references('id')->on('client__client');
             $table->timestamps();

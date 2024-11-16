@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Client\BookingController;
 use App\Http\Controllers\HomeController;
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
@@ -36,3 +37,6 @@ Route::group(['prefix' => 'client'], function () {
 });
 
 require __DIR__ . '/select.php';
+
+
+Route::get('/invoice/', [BookingController::class, 'generateInvoice']);
