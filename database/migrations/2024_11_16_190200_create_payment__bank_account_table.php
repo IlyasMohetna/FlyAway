@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('factures', function (Blueprint $table) {
+        Schema::create('payment__bank_account', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_reservation');
-            $table->foreign('id_reservation')->references('id')->on('reservation_forfait');
-            $table->bigInteger('montant_total');
-            $table->bigInteger('id_statut');
-            $table->foreign('id_statut')->references('id')->on('facture_statut');
+            $table->text('bic');
+            $table->text('iban');
+            $table->foreignId('client_id')->foreign()->references('id')->on('client__client');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('factures');
+        Schema::dropIfExists('payment__bank_account');
     }
 };

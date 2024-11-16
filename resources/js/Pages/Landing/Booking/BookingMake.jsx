@@ -146,18 +146,12 @@ function BookingMake({ apackage, transportation_modes }) {
         e.preventDefault();
         clearErrors();
         try {
-            // Validate payment method selection
             await paymentMethodSchema.validate(
                 {
                     payment_method: chosenPaymentMethod,
                 },
                 { abortEarly: false }
             );
-
-            setData((prevData) => ({
-                ...prevData,
-                payment_method: chosenPaymentMethod,
-            }));
 
             if (chosenPaymentMethod === paymentMethods.CREDIT_CARD) {
                 await creditCardSchema.validate(
@@ -178,6 +172,11 @@ function BookingMake({ apackage, transportation_modes }) {
                     { abortEarly: false }
                 );
             }
+
+            setData((prevData) => ({
+                ...prevData,
+                payment_method: chosenPaymentMethod,
+            }));
 
             // Submit the form
             post(route("client.package.booking.store"), {
@@ -382,11 +381,15 @@ function BookingMake({ apackage, transportation_modes }) {
                                                             chosenPaymentMethod ===
                                                             paymentMethods.CREDIT_CARD
                                                         }
-                                                        onChange={(e) =>
+                                                        onChange={(e) => (
                                                             setChosenPaymentMethod(
                                                                 e.target.value
+                                                            ),
+                                                            setData(
+                                                                "payment_method",
+                                                                e.target.value
                                                             )
-                                                        }
+                                                        )}
                                                         className="h-4 w-4 border-gray-300 bg-white text-primary-600"
                                                     />
                                                 </div>
@@ -425,11 +428,15 @@ function BookingMake({ apackage, transportation_modes }) {
                                                             chosenPaymentMethod ===
                                                             paymentMethods.BANK_ACCOUNT
                                                         }
-                                                        onChange={(e) =>
+                                                        onChange={(e) => (
                                                             setChosenPaymentMethod(
                                                                 e.target.value
+                                                            ),
+                                                            setData(
+                                                                "payment_method",
+                                                                e.target.value
                                                             )
-                                                        }
+                                                        )}
                                                         className="h-4 w-4 border-gray-300 bg-white text-primary-600"
                                                     />
                                                 </div>

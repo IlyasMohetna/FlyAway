@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment__payment', function (Blueprint $table) {
+        Schema::create('payment__invoice', function (Blueprint $table) {
             $table->id();
-            $table->decimal('amount');
-            $table->foreignId('booking_id')->foreign()->references('id')->on('package__booking');
-            $table->foreignId('status_id')->foreign()->references('id')->on('payment__payment_status');
-            $table->morphs('paymentable');
+            $table->string('name');
+            $table->string('file_name');
+            $table->string('mime_type');
+            $table->integer('size');
+            $table->string('storage_driver');
+            $table->foreignId('payment_id')->foreign()->references('id')->on('payment__payment');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payment__payment');
+        Schema::dropIfExists('payment__invoice');
     }
 };

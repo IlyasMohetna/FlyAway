@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('carte_bancaire', function (Blueprint $table) {
+        Schema::create('payment__credit_card', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('numero');
-            $table->bigInteger('expiration_mois');
-            $table->bigInteger('expiration_annee');
-            $table->bigInteger('cvv');
+            $table->text('card_number');
+            $table->text('cardholder_name');
+            $table->text('expiration_date');
+            $table->text('cvv');
+            $table->foreignId('client_id')->foreign()->references('id')->on('client__client');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();
@@ -29,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('carte_bancaire');
+        Schema::dropIfExists('payment__credit_card');
     }
 };

@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('package__booking', function (Blueprint $table) {
             $table->id();
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->integer('quantity');
             $table->foreignId('package_id')->references('id')->on('package__package');
             $table->foreignId('transportation_mode_id')->foreign()->references('id')->on('package__transportation_modes');
             $table->foreignId('lodging_mode_id')->foreign()->references('id')->on('lodging__lodging');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->foreignId('client_id')->foreign()->references('id')->on('client__client');
             $table->timestamps();
             $table->softDeletes();
         });
