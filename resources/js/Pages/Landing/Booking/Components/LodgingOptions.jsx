@@ -9,8 +9,6 @@ function LodgingOptions({
         setSelectedLodgingOption(id);
     };
 
-    console.log(lodgingOptions);
-
     return (
         <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">

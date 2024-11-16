@@ -11,6 +11,10 @@ function BookingMake({ apackage, transportation_modes }) {
     const { props, url } = usePage();
     const searchParams = new URLSearchParams(window.location.search);
     const { auth } = usePage().props;
+    const param_packageId = searchParams.get("package_id");
+    const param_nbPersons = searchParams.get("nbPersons");
+    const param_startDate = searchParams.get("startDate");
+    const param_endDate = searchParams.get("endDate");
 
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedTransportationMode, setSelectedTransportationMode] =
@@ -19,7 +23,7 @@ function BookingMake({ apackage, transportation_modes }) {
     const [chosenPaymentMethod, setChosenPaymentMethod] =
         useState("credit_card");
     const [showError, setShowError] = useState("");
-    const [nbPersons, setNbPersons] = useState(searchParams.get("nbPersons"));
+    const [nbPersons, setNbPersons] = useState(param_nbPersons);
     const [amountTTC, setAmountTTC] = useState(apackage.amount_ttc);
 
     const paymentMethods = {
@@ -73,6 +77,14 @@ function BookingMake({ apackage, transportation_modes }) {
 
     const { data, setData, post, processing, errors, setError, clearErrors } =
         useForm({
+            package_id: param_packageId || "",
+            nbPersons: param_nbPersons || 1,
+            startDate: param_startDate
+                ? new Date(param_startDate).toISOString().split("T")[0] // Format as YYYY-MM-DD
+                : new Date().toISOString().split("T")[0],
+            endDate: param_endDate
+                ? new Date(param_endDate).toISOString().split("T")[0] // Format as YYYY-MM-DD
+                : new Date().toISOString().split("T")[0],
             transportation_mode: "",
             lodging_option: "",
             payment_method: "",
@@ -94,9 +106,11 @@ function BookingMake({ apackage, transportation_modes }) {
                 { abortEarly: false }
             );
 
-            // Set form data
-            setData("transportation_mode", selectedTransportationMode);
-            setData("lodging_option", selectedLodgingOption);
+            setData((prevData) => ({
+                ...prevData,
+                transportation_mode: selectedTransportationMode,
+                lodging_option: selectedLodgingOption,
+            }));
 
             setCurrentStep(2);
             setShowError("");
@@ -132,9 +146,6 @@ function BookingMake({ apackage, transportation_modes }) {
         e.preventDefault();
         clearErrors();
         try {
-            // Set payment method in form data
-            setData("payment_method", chosenPaymentMethod);
-
             // Validate payment method selection
             await paymentMethodSchema.validate(
                 {
@@ -142,6 +153,11 @@ function BookingMake({ apackage, transportation_modes }) {
                 },
                 { abortEarly: false }
             );
+
+            setData((prevData) => ({
+                ...prevData,
+                payment_method: chosenPaymentMethod,
+            }));
 
             if (chosenPaymentMethod === paymentMethods.CREDIT_CARD) {
                 await creditCardSchema.validate(
@@ -165,9 +181,7 @@ function BookingMake({ apackage, transportation_modes }) {
 
             // Submit the form
             post(route("client.package.booking.store"), {
-                onSuccess: () => {
-                    // Handle success (e.g., redirect to confirmation)
-                },
+                onSuccess: () => {},
             });
         } catch (err) {
             if (err instanceof Yup.ValidationError) {
