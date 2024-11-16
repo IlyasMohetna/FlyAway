@@ -6,6 +6,8 @@ import LodgingOptions from "./Components/LodgingOptions";
 import { CiBank } from "react-icons/ci";
 import * as Yup from "yup";
 import MoneyFormat from "../../../Components/Format/MoneyFormat";
+import ButtonSpinner from "../../../Components/Spinners/ButtonSpinner";
+import { Player, Controls } from "@lottiefiles/react-lottie-player";
 
 function BookingMake({ apackage, transportation_modes }) {
     const { props, url } = usePage();
@@ -15,7 +17,9 @@ function BookingMake({ apackage, transportation_modes }) {
     const param_nbPersons = searchParams.get("nbPersons");
     const param_startDate = searchParams.get("startDate");
     const param_endDate = searchParams.get("endDate");
+    const player = React.createRef();
 
+    const [isPaying, setIsPaying] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedTransportationMode, setSelectedTransportationMode] =
         useState(null);
@@ -146,6 +150,7 @@ function BookingMake({ apackage, transportation_modes }) {
         e.preventDefault();
         clearErrors();
         try {
+            setIsPaying(true);
             await paymentMethodSchema.validate(
                 {
                     payment_method: chosenPaymentMethod,
@@ -178,11 +183,12 @@ function BookingMake({ apackage, transportation_modes }) {
                 payment_method: chosenPaymentMethod,
             }));
 
-            // Submit the form
             post(route("client.package.booking.store"), {
                 onSuccess: () => {},
             });
         } catch (err) {
+            setIsPaying(false);
+
             if (err instanceof Yup.ValidationError) {
                 // Map Yup errors to the errors object
                 err.inner.forEach((error) => {
@@ -668,7 +674,6 @@ function BookingMake({ apackage, transportation_modes }) {
                                 </div>
                             </div>
                         )}
-
                         {/* Sidebar with totals and button */}
                         <div className="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
                             <div className="flow-root">
@@ -717,7 +722,7 @@ function BookingMake({ apackage, transportation_modes }) {
                                             onClick={handleNextStep}
                                             className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none"
                                         >
-                                            Procéder au paiement
+                                            Continuer
                                         </button>
 
                                         {showError && (
@@ -730,10 +735,18 @@ function BookingMake({ apackage, transportation_modes }) {
                                 {currentStep === 2 && (
                                     <button
                                         type="submit"
-                                        disabled={processing}
-                                        className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none"
+                                        disabled={isPaying}
+                                        className={`flex w-full items-center justify-center rounded-lg ${
+                                            isPaying
+                                                ? "bg-primary-200"
+                                                : "bg-primary-700 hover:bg-primary-800"
+                                        } px-5 py-2.5 text-sm font-medium text-white focus:outline-none`}
                                     >
-                                        Payer
+                                        {isPaying ? (
+                                            <ButtonSpinner />
+                                        ) : (
+                                            "Procéder au paiement"
+                                        )}
                                     </button>
                                 )}
                             </div>

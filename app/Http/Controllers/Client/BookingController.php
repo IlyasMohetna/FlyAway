@@ -8,12 +8,14 @@ use Illuminate\Http\Request;
 use App\Models\Client\Client;
 use App\Models\PACKAGE\Booking;
 use App\Models\PACKAGE\Package;
+use App\Models\PAYMENT\Invoice;
 use App\Models\PAYMENT\Payment;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\PAYMENT\CreditCard;
 use Illuminate\Support\Facades\DB;
 use App\Models\PAYMENT\BankAccount;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Models\PACKAGE\TransportationMode;
 
 class BookingController extends Controller
@@ -81,10 +83,19 @@ class BookingController extends Controller
             ]);
 
             //--------- Generate Invoice
-
-
-
             DB::commit();
+
+            $success = [
+                'date' => Carbon::now()->format('d/m/Y'),
+                'payment_method' => get_class($paymentable),
+                'name' => auth()->user()->firstname.' '.auth()->user()->lastname,
+                'address' => auth()->user()->client->address_1,
+                'phone' => auth()->user()->client->phone,
+            ];
+
+            return Inertia::render('Landing/Booking/BookingSuccess', [
+                'success' => $success
+            ]);
 
             //---------- Store Payment
         }catch(\Exception $e){
@@ -93,10 +104,22 @@ class BookingController extends Controller
         }
     }
 
-    public function generateInvoice($id = null)
+    public function generateInvoice($id)
     {
-        $payment = Payment::with('paymentable', 'booking.client.city.region.country', 'booking.client.user', 'booking.package.city.region.country')->findOrFail(7)->toArray();
+        $payment = Payment::with('paymentable', 'booking.client.city.region.country', 'booking.client.user', 'booking.package.city.region.country')->findOrFail($id)->toArray();
         $pdf = Pdf::loadView('invoice', ['payment' => $payment]);
-        return $pdf->download('invoice.pdf');
+
+        $pdfContent = $pdf->output();
+        $fileName = 'invoice_' . uniqid() . '.pdf';
+
+        Storage::disk('invoice')->put($fileName, $pdfContent);
+
+        Invoice::create([
+            'file_name' => $fileName,
+            'mime_type' => 'application/pdf',
+            'size' => strlen($pdfContent),
+            'storage_driver' => 'invoice',
+            'payment_id' => $id
+        ]);
     }
 }
