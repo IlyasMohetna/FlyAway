@@ -12,7 +12,7 @@ class BookingController extends Controller
 {
     public function index_show(Request $request)
     {
-        $package = Package::with('city', 'transportations.transport', 'lodgings.lodging')->find($request->package_id);
+        $package = Package::with('city', 'transportations.transport', 'lodgings.lodging.type')->find($request->package_id);
         $transportation_modes = TransportationMode::all();
         return Inertia::render('Landing/Booking/BookingMake', [
             'apackage' => $package,

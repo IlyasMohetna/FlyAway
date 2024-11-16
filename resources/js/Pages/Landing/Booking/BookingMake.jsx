@@ -1,515 +1,679 @@
-import { Link, usePage } from "@inertiajs/react";
-import React, { useEffect, useState } from "react";
+import { Link, usePage, useForm } from "@inertiajs/react";
+import React, { useState, useEffect } from "react";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { FaBusAlt } from "react-icons/fa";
-import iconConfig from "../../../iconConfig";
-import { select } from "@material-tailwind/react";
+import TransportationModes from "./Components/TransportationModes";
+import LodgingOptions from "./Components/LodgingOptions";
+import { CiBank } from "react-icons/ci";
+import * as Yup from "yup";
+import MoneyFormat from "../../../Components/Format/MoneyFormat";
 
 function BookingMake({ apackage, transportation_modes }) {
     const { props, url } = usePage();
-    const searchParams = new URLSearchParams(url);
+    const searchParams = new URLSearchParams(window.location.search);
     const { auth } = usePage().props;
+
+    const [currentStep, setCurrentStep] = useState(1);
     const [selectedTransportationMode, setSelectedTransportationMode] =
         useState(null);
+    const [selectedLodgingOption, setSelectedLodgingOption] = useState(null);
+    const [chosenPaymentMethod, setChosenPaymentMethod] =
+        useState("credit_card");
+    const [showError, setShowError] = useState("");
+    const [nbPersons, setNbPersons] = useState(searchParams.get("nbPersons"));
+    const [amountTTC, setAmountTTC] = useState(apackage.amount_ttc);
 
-    const handleSelectTransportationMode = (id) => {
-        setSelectedTransportationMode(id);
-        console.log("Selected Mode ID:", id);
+    const paymentMethods = {
+        CREDIT_CARD: "credit_card",
+        BANK_ACCOUNT: "bank_account",
     };
 
-    useEffect(() => {
-        console.log("Current Selected Mode:", selectedTransportationMode);
-    }, [selectedTransportationMode]);
+    const step1Schema = Yup.object().shape({
+        transportation_mode: Yup.string().required(
+            "Veuillez choisir un mode de transport."
+        ),
+        lodging_option: Yup.string().required(
+            "Veuillez choisir une option d'hébergement."
+        ),
+    });
+
+    const paymentMethodSchema = Yup.object().shape({
+        payment_method: Yup.string().required(
+            "Veuillez choisir une méthode de paiement."
+        ),
+    });
+
+    const creditCardSchema = Yup.object().shape({
+        full_name: Yup.string().required("Le nom complet est requis."),
+        card_number: Yup.string()
+            .matches(
+                /^\d{16}$/,
+                "Le numéro de carte doit comporter 16 chiffres."
+            )
+            .required("Le numéro de carte est requis."),
+        card_expiration: Yup.string()
+            .matches(
+                /^(0[1-9]|1[0-2])\/(\d{2})$/,
+                "La date d'expiration doit être au format MM/YY."
+            )
+            .required("La date d'expiration est requise."),
+        cvv: Yup.string()
+            .matches(/^\d{3}$/, "Le CVV doit comporter 3 chiffres.")
+            .required("Le CVV est requis."),
+    });
+
+    const bankAccountSchema = Yup.object().shape({
+        bic: Yup.string().required("Le BIC est requis."),
+        iban: Yup.string()
+            .matches(
+                /^\w{15,34}$/,
+                "L'IBAN doit comporter entre 15 et 34 caractères."
+            )
+            .required("L'IBAN est requis."),
+    });
+
+    const { data, setData, post, processing, errors, setError, clearErrors } =
+        useForm({
+            transportation_mode: "",
+            lodging_option: "",
+            payment_method: "",
+            full_name: "",
+            card_number: "",
+            card_expiration: "",
+            cvv: "",
+            bic: "",
+            iban: "",
+        });
+
+    const handleNextStep = async () => {
+        try {
+            await step1Schema.validate(
+                {
+                    transportation_mode: selectedTransportationMode,
+                    lodging_option: selectedLodgingOption,
+                },
+                { abortEarly: false }
+            );
+
+            // Set form data
+            setData("transportation_mode", selectedTransportationMode);
+            setData("lodging_option", selectedLodgingOption);
+
+            setCurrentStep(2);
+            setShowError("");
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) {
+                setShowError(err.errors.join(" "));
+            }
+        }
+    };
+
+    const handleInputChange = (field, value) => {
+        setData(field, value);
+        let schema;
+        if (chosenPaymentMethod === paymentMethods.CREDIT_CARD) {
+            schema = creditCardSchema;
+        } else if (chosenPaymentMethod === paymentMethods.BANK_ACCOUNT) {
+            schema = bankAccountSchema;
+        }
+
+        if (schema) {
+            Yup.reach(schema, field)
+                .validate(value)
+                .then(() => {
+                    setError(field, null);
+                })
+                .catch((err) => {
+                    setError(field, err.message);
+                });
+        }
+    };
+
+    const handlePaymentSubmit = async (e) => {
+        e.preventDefault();
+        clearErrors();
+        try {
+            // Set payment method in form data
+            setData("payment_method", chosenPaymentMethod);
+
+            // Validate payment method selection
+            await paymentMethodSchema.validate(
+                {
+                    payment_method: chosenPaymentMethod,
+                },
+                { abortEarly: false }
+            );
+
+            if (chosenPaymentMethod === paymentMethods.CREDIT_CARD) {
+                await creditCardSchema.validate(
+                    {
+                        full_name: data.full_name,
+                        card_number: data.card_number,
+                        card_expiration: data.card_expiration,
+                        cvv: data.cvv,
+                    },
+                    { abortEarly: false }
+                );
+            } else if (chosenPaymentMethod === paymentMethods.BANK_ACCOUNT) {
+                await bankAccountSchema.validate(
+                    {
+                        bic: data.bic,
+                        iban: data.iban,
+                    },
+                    { abortEarly: false }
+                );
+            }
+
+            // Submit the form
+            post("/booking/submit", {
+                onSuccess: () => {
+                    // Handle success (e.g., redirect to confirmation)
+                },
+            });
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) {
+                // Map Yup errors to the errors object
+                err.inner.forEach((error) => {
+                    setError(error.path, error.message);
+                });
+                setShowError("");
+            } else {
+                setShowError(err.message);
+            }
+        }
+    };
 
     return (
         <>
             <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
                 <form
-                    action="#"
+                    onSubmit={handlePaymentSubmit}
                     className="mx-auto max-w-screen-xl px-4 2xl:px-0"
+                    noValidate
                 >
                     <div className="py-4">
-                        <Link
-                            href={route("landing.package.show", {
-                                id: searchParams.get("package_id"),
-                            })}
-                            class="inline-flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                        >
-                            <FaArrowLeftLong />
-                            <span>Retour</span>
-                        </Link>
+                        {currentStep === 1 && (
+                            <Link
+                                href={route("landing.package.show", {
+                                    id: searchParams.get("package_id"),
+                                })}
+                                className="inline-flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                            >
+                                <FaArrowLeftLong />
+                                <span>Retour</span>
+                            </Link>
+                        )}
+                        {currentStep === 2 && (
+                            <button
+                                type="button"
+                                onClick={() => setCurrentStep(1)}
+                                className="inline-flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                            >
+                                <FaArrowLeftLong />
+                                <span>Retour</span>
+                            </button>
+                        )}
                     </div>
-                    <ol className="items-center flex w-full max-w-2xl text-center text-sm font-medium text-gray-500 dark:text-gray-400 sm:text-base">
-                        <li className="after:border-1 flex items-center text-primary-700 after:mx-6 after:hidden after:h-1 after:w-full after:border-b after:border-gray-200 dark:text-primary-500 dark:after:border-gray-700 sm:after:inline-block sm:after:content-[''] md:w-full xl:after:mx-10">
-                            <span className="flex items-center after:mx-2 after:text-gray-200 after:content-['/'] dark:after:text-gray-500 sm:after:hidden">
+                    <ol class="items-center flex w-full max-w-2xl text-center text-sm font-medium text-gray-500 dark:text-gray-400 sm:text-base">
+                        <li class="after:border-1 flex items-center text-primary-700 after:mx-6 after:hidden after:h-1 after:w-full after:border-b after:border-gray-200 sm:after:inline-block sm:after:content-[''] md:w-full xl:after:mx-10">
+                            <span class="flex items-center after:mx-2 after:text-gray-200 after:content-['/'] dark:after:text-gray-500 sm:after:hidden">
                                 <svg
-                                    className="me-2 h-4 w-4 sm:h-5 sm:w-5"
+                                    class="me-2 h-4 w-4 sm:h-5 sm:w-5"
                                     aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    width={24}
-                                    height={24}
+                                    width="24"
+                                    height="24"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                 >
                                     <path
                                         stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
                                         d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                     />
                                 </svg>
-                                Panier
+                                Choix
                             </span>
                         </li>
-                        <li className="after:border-1 flex items-center text-primary-700 after:mx-6 after:hidden after:h-1 after:w-full after:border-b after:border-gray-200 dark:text-primary-500 dark:after:border-gray-700 sm:after:inline-block sm:after:content-[''] md:w-full xl:after:mx-10">
-                            <span className="flex items-center after:mx-2 after:text-gray-200 after:content-['/'] dark:after:text-gray-500 sm:after:hidden">
+
+                        <li
+                            class={`after:border-1 flex items-center ${
+                                currentStep == 2 && "text-primary-700"
+                            } after:mx-6 after:hidden after:h-1 after:w-full after:border-b after:border-gray-200 sm:after:inline-block sm:after:content-[''] md:w-full xl:after:mx-10`}
+                        >
+                            <span class="flex items-center after:mx-2 after:text-gray-200 after:content-['/'] dark:after:text-gray-500 sm:after:hidden">
                                 <svg
-                                    className="me-2 h-4 w-4 sm:h-5 sm:w-5"
+                                    class="me-2 h-4 w-4 sm:h-5 sm:w-5"
                                     aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    width={24}
-                                    height={24}
+                                    width="24"
+                                    height="24"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                 >
                                     <path
                                         stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
                                         d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                     />
                                 </svg>
                                 Paiement
                             </span>
                         </li>
-                        <li className="flex shrink-0 items-center">
+
+                        <li class="flex shrink-0 items-center">
                             <svg
-                                className="me-2 h-4 w-4 sm:h-5 sm:w-5"
+                                class="me-2 h-4 w-4 sm:h-5 sm:w-5"
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
-                                width={24}
-                                height={24}
+                                width="24"
+                                height="24"
                                 fill="none"
                                 viewBox="0 0 24 24"
                             >
                                 <path
                                     stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
                                     d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                 />
                             </svg>
-                            Validation
+                            Confirmation
                         </li>
                     </ol>
                     <div className="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
-                        <div className="min-w-0 flex-1 space-y-8">
-                            <div className="space-y-4">
-                                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Informations personnelles
-                                </h2>
-                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <div>
+                        {currentStep === 1 && (
+                            <div className="min-w-0 flex-1 space-y-8">
+                                <div className="space-y-4">
+                                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                                        Informations personnelles
+                                    </h2>
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                         <div>
-                                            {auth.user.data.firstname}{" "}
-                                            {auth.user.data.lastname}
-                                        </div>
-                                        <div>{auth.user.data.address_1},</div>
-                                        {!!auth.user.data.address_2 && (
                                             <div>
-                                                {auth.user.data.address_2},
+                                                {auth.user.data.firstname}{" "}
+                                                {auth.user.data.lastname}
                                             </div>
-                                        )}
-                                        <div>
-                                            {auth.user.data.postal_code}{" "}
-                                            {auth.user.data.city}
+                                            <div>
+                                                {auth.user.data.address_1},
+                                            </div>
+                                            {!!auth.user.data.address_2 && (
+                                                <div>
+                                                    {auth.user.data.address_2},
+                                                </div>
+                                            )}
+                                            <div>
+                                                {auth.user.data.postal_code}{" "}
+                                                {auth.user.data.city}
+                                            </div>
+                                            <div>{auth.user.data.region}</div>
+                                            <div>{auth.user.data.country}</div>
                                         </div>
-                                        <div>{auth.user.data.region}</div>
-                                        <div>{auth.user.data.country}</div>
                                     </div>
                                 </div>
+                                <TransportationModes
+                                    transportation_modes={transportation_modes}
+                                    setSelectedTransportationMode={
+                                        setSelectedTransportationMode
+                                    }
+                                    selectedTransportationMode={
+                                        selectedTransportationMode
+                                    }
+                                    package_transportations={
+                                        apackage.transportations
+                                    }
+                                />
+
+                                <LodgingOptions
+                                    lodgingOptions={apackage.lodgings}
+                                    selectedLodgingOption={
+                                        selectedLodgingOption
+                                    }
+                                    setSelectedLodgingOption={
+                                        setSelectedLodgingOption
+                                    }
+                                />
                             </div>
-                            <div className="space-y-4">
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Choix du mode de transports
-                                </h3>
-                                <div className="grid grid-cols-4 gap-4 justify-center items-center">
-                                    {transportation_modes.map(
-                                        (transportation_mode) => {
-                                            const Icon =
-                                                iconConfig[
-                                                    transportation_mode.name
-                                                ] || (() => <span></span>);
-                                            console.log(
-                                                selectedTransportationMode,
-                                                transportation_mode.id,
-                                                transportation_mode.id ===
-                                                    selectedTransportationMode
-                                            );
-                                            return (
-                                                <div
-                                                    key={transportation_mode.id}
-                                                    onClick={() =>
-                                                        handleSelectTransportationMode(
-                                                            transportation_mode.id
-                                                        )
-                                                    }
-                                                    className={`rounded-lg border-2 p-4 flex flex-col items-center justify-center ${
-                                                        selectedTransportationMode ===
-                                                        transportation_mode.id
-                                                            ? "border-blue-500"
-                                                            : "border-gray-200 "
-                                                    } ${
-                                                        apackage.transportations.some(
-                                                            (element) =>
-                                                                element.transportation_mode_id ===
-                                                                transportation_mode.id
-                                                        )
-                                                            ? "bg-gray-50"
-                                                            : "bg-gray-300 cursor-not-allowed"
-                                                    }`}
-                                                >
-                                                    <div className="flex flex-col items-center justify-center space-y-2">
-                                                        <div className="text-4xl text-black">
-                                                            <Icon />
-                                                        </div>
-                                                        <p className="text-black font-medium">
-                                                            {
-                                                                transportation_mode.name
-                                                            }
-                                                        </p>
-                                                    </div>
+                        )}
+
+                        {currentStep === 2 && (
+                            <div className="min-w-0 flex-1 space-y-8">
+                                <div className="space-y-4">
+                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                                        Méthodes de paiement
+                                    </h3>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div
+                                            className={`rounded-lg border ${
+                                                chosenPaymentMethod ===
+                                                paymentMethods.CREDIT_CARD
+                                                    ? "border-blue-500"
+                                                    : "border-gray-200"
+                                            } bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800`}
+                                        >
+                                            <div className="flex items-start">
+                                                <div className="flex h-5 items-center">
+                                                    <input
+                                                        id="pay-with-card"
+                                                        type="radio"
+                                                        name="payment_method"
+                                                        value={
+                                                            paymentMethods.CREDIT_CARD
+                                                        }
+                                                        checked={
+                                                            chosenPaymentMethod ===
+                                                            paymentMethods.CREDIT_CARD
+                                                        }
+                                                        onChange={(e) =>
+                                                            setChosenPaymentMethod(
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className="h-4 w-4 border-gray-300 bg-white text-primary-600"
+                                                    />
                                                 </div>
-                                            );
-                                        }
+                                                <div className="ms-4 text-sm flex mt-1">
+                                                    <label
+                                                        htmlFor="pay-with-card"
+                                                        className="font-medium leading-none text-gray-900 dark:text-white"
+                                                    >
+                                                        Carte bancaire
+                                                    </label>
+                                                    <img
+                                                        src="https://mythslegendscollection.com/wp-content/uploads/2020/04/visa-mastercard-american-express-png-6.png"
+                                                        className="-mt-1 ml-2 w-24"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            className={`rounded-lg border ${
+                                                chosenPaymentMethod ===
+                                                paymentMethods.BANK_ACCOUNT
+                                                    ? "border-blue-500"
+                                                    : "border-gray-200"
+                                            } bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800`}
+                                        >
+                                            <div className="flex items-start">
+                                                <div className="flex h-5 items-center">
+                                                    <input
+                                                        id="pay-with-bank"
+                                                        type="radio"
+                                                        name="payment_method"
+                                                        value={
+                                                            paymentMethods.BANK_ACCOUNT
+                                                        }
+                                                        checked={
+                                                            chosenPaymentMethod ===
+                                                            paymentMethods.BANK_ACCOUNT
+                                                        }
+                                                        onChange={(e) =>
+                                                            setChosenPaymentMethod(
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className="h-4 w-4 border-gray-300 bg-white text-primary-600"
+                                                    />
+                                                </div>
+                                                <div className="ms-4 text-sm flex mt-1 space-x-2">
+                                                    <label
+                                                        htmlFor="pay-with-bank"
+                                                        className="font-medium leading-none text-gray-900 dark:text-white"
+                                                    >
+                                                        Compte bancaire
+                                                    </label>
+                                                    <CiBank
+                                                        size={20}
+                                                        className="-mt-1 text-yellow-700"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {errors.payment_method && (
+                                        <div className="text-red-600 text-sm font-semibold mt-2">
+                                            {errors.payment_method}
+                                        </div>
+                                    )}
+
+                                    {chosenPaymentMethod ===
+                                        paymentMethods.CREDIT_CARD && (
+                                        <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+                                            <div className="mb-6 grid grid-cols-2 gap-4">
+                                                <div className="col-span-2 sm:col-span-1">
+                                                    <label
+                                                        htmlFor="full_name"
+                                                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                                    >
+                                                        Nom complet (comme
+                                                        indiqué sur la carte)*
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="full_name"
+                                                        value={data.full_name}
+                                                        onChange={(e) =>
+                                                            handleInputChange(
+                                                                "full_name",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className={`block w-full rounded-lg border p-2.5 text-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500 ${
+                                                            errors.full_name
+                                                                ? "border-red-600"
+                                                                : "border-gray-300"
+                                                        }`}
+                                                        placeholder="Bonnie Green"
+                                                    />
+                                                    {errors.full_name && (
+                                                        <div className="text-red-600 text-sm font-semibold">
+                                                            {errors.full_name}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="col-span-2 sm:col-span-1">
+                                                    <label
+                                                        htmlFor="card_number"
+                                                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                                    >
+                                                        Numéro de carte*
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="card_number"
+                                                        value={data.card_number}
+                                                        onChange={(e) =>
+                                                            handleInputChange(
+                                                                "card_number",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className={`block w-full rounded-lg border p-2.5 text-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500 ${
+                                                            errors.card_number
+                                                                ? "border-red-600"
+                                                                : "border-gray-300"
+                                                        }`}
+                                                        placeholder="xxxx-xxxx-xxxx-xxxx"
+                                                    />
+                                                    {errors.card_number && (
+                                                        <div className="text-red-600 text-sm font-semibold">
+                                                            {errors.card_number}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        htmlFor="card_expiration"
+                                                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                                    >
+                                                        Date d'expiration*
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="card_expiration"
+                                                        value={
+                                                            data.card_expiration
+                                                        }
+                                                        onChange={(e) =>
+                                                            handleInputChange(
+                                                                "card_expiration",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className={`block w-full rounded-lg border p-2.5 text-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500 ${
+                                                            errors.card_expiration
+                                                                ? "border-red-600"
+                                                                : "border-gray-300"
+                                                        }`}
+                                                        placeholder="11/24"
+                                                    />
+                                                    {errors.card_expiration && (
+                                                        <div className="text-red-600 text-sm font-semibold">
+                                                            {
+                                                                errors.card_expiration
+                                                            }
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        htmlFor="cvv"
+                                                        className="mb-2 flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-white"
+                                                    >
+                                                        CVV*
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        id="cvv"
+                                                        value={data.cvv}
+                                                        onChange={(e) =>
+                                                            handleInputChange(
+                                                                "cvv",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className={`block w-full rounded-lg border p-2.5 text-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500 ${
+                                                            errors.cvv
+                                                                ? "border-red-600"
+                                                                : "border-gray-300"
+                                                        }`}
+                                                        placeholder="•••"
+                                                    />
+                                                    {errors.cvv && (
+                                                        <div className="text-red-600 text-sm font-semibold">
+                                                            {errors.cvv}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {chosenPaymentMethod ===
+                                        paymentMethods.BANK_ACCOUNT && (
+                                        <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+                                            <p className="pb-2 mb-4 text-black">
+                                                * Merci de saisir vos
+                                                coordonnées bancaires BIC/IBAN,
+                                                pour le prélèvement automatique
+                                            </p>
+                                            <div className="mb-6 grid grid-cols-2 gap-4">
+                                                <div className="col-span-2 sm:col-span-1">
+                                                    <label
+                                                        htmlFor="bic"
+                                                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                                    >
+                                                        BIC
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="bic"
+                                                        value={data.bic}
+                                                        onChange={(e) =>
+                                                            handleInputChange(
+                                                                "bic",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className={`block w-full rounded-lg border p-2.5 text-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500 ${
+                                                            errors.bic
+                                                                ? "border-red-600"
+                                                                : "border-gray-300"
+                                                        }`}
+                                                    />
+                                                    {errors.bic && (
+                                                        <div className="text-red-600 text-sm font-semibold">
+                                                            {errors.bic}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="col-span-2">
+                                                    <label
+                                                        htmlFor="iban"
+                                                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                                    >
+                                                        IBAN
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="iban"
+                                                        value={data.iban}
+                                                        onChange={(e) =>
+                                                            handleInputChange(
+                                                                "iban",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className={`block w-full rounded-lg border p-2.5 text-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500 ${
+                                                            errors.iban
+                                                                ? "border-red-600"
+                                                                : "border-gray-300"
+                                                        }`}
+                                                    />
+                                                    {errors.iban && (
+                                                        <div className="text-red-600 text-sm font-semibold">
+                                                            {errors.iban}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
                             </div>
-                            <div className="space-y-4">
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Choix de l'hébergement
-                                </h3>
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                                        <div className="flex items-start">
-                                            <div className="flex h-5 items-center">
-                                                <input
-                                                    id="credit-card"
-                                                    aria-describedby="credit-card-text"
-                                                    type="radio"
-                                                    name="payment-method"
-                                                    defaultValue=""
-                                                    className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
-                                                    defaultChecked=""
-                                                />
-                                            </div>
-                                            <div className="ms-4 text-sm">
-                                                <label
-                                                    htmlFor="credit-card"
-                                                    className="font-medium leading-none text-gray-900 dark:text-white"
-                                                >
-                                                    {" "}
-                                                    Credit Card{" "}
-                                                </label>
-                                                <p
-                                                    id="credit-card-text"
-                                                    className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400"
-                                                >
-                                                    Pay with your credit card
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4 flex items-center gap-2">
-                                            <button
-                                                type="button"
-                                                className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                                            >
-                                                Delete
-                                            </button>
-                                            <div className="h-3 w-px shrink-0 bg-gray-200 dark:bg-gray-700" />
-                                            <button
-                                                type="button"
-                                                className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                                            >
-                                                Edit
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="space-y-4">
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Payment
-                                </h3>
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                                        <div className="flex items-start">
-                                            <div className="flex h-5 items-center">
-                                                <input
-                                                    id="credit-card"
-                                                    aria-describedby="credit-card-text"
-                                                    type="radio"
-                                                    name="payment-method"
-                                                    defaultValue=""
-                                                    className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
-                                                    defaultChecked=""
-                                                />
-                                            </div>
-                                            <div className="ms-4 text-sm">
-                                                <label
-                                                    htmlFor="credit-card"
-                                                    className="font-medium leading-none text-gray-900 dark:text-white"
-                                                >
-                                                    {" "}
-                                                    Credit Card{" "}
-                                                </label>
-                                                <p
-                                                    id="credit-card-text"
-                                                    className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400"
-                                                >
-                                                    Pay with your credit card
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4 flex items-center gap-2">
-                                            <button
-                                                type="button"
-                                                className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                                            >
-                                                Delete
-                                            </button>
-                                            <div className="h-3 w-px shrink-0 bg-gray-200 dark:bg-gray-700" />
-                                            <button
-                                                type="button"
-                                                className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                                            >
-                                                Edit
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                                        <div className="flex items-start">
-                                            <div className="flex h-5 items-center">
-                                                <input
-                                                    id="pay-on-delivery"
-                                                    aria-describedby="pay-on-delivery-text"
-                                                    type="radio"
-                                                    name="payment-method"
-                                                    defaultValue=""
-                                                    className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
-                                                />
-                                            </div>
-                                            <div className="ms-4 text-sm">
-                                                <label
-                                                    htmlFor="pay-on-delivery"
-                                                    className="font-medium leading-none text-gray-900 dark:text-white"
-                                                >
-                                                    {" "}
-                                                    Payment on delivery{" "}
-                                                </label>
-                                                <p
-                                                    id="pay-on-delivery-text"
-                                                    className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400"
-                                                >
-                                                    +$15 payment processing fee
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4 flex items-center gap-2">
-                                            <button
-                                                type="button"
-                                                className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                                            >
-                                                Delete
-                                            </button>
-                                            <div className="h-3 w-px shrink-0 bg-gray-200 dark:bg-gray-700" />
-                                            <button
-                                                type="button"
-                                                className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                                            >
-                                                Edit
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                                        <div className="flex items-start">
-                                            <div className="flex h-5 items-center">
-                                                <input
-                                                    id="paypal-2"
-                                                    aria-describedby="paypal-text"
-                                                    type="radio"
-                                                    name="payment-method"
-                                                    defaultValue=""
-                                                    className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
-                                                />
-                                            </div>
-                                            <div className="ms-4 text-sm">
-                                                <label
-                                                    htmlFor="paypal-2"
-                                                    className="font-medium leading-none text-gray-900 dark:text-white"
-                                                >
-                                                    {" "}
-                                                    Paypal account{" "}
-                                                </label>
-                                                <p
-                                                    id="paypal-text"
-                                                    className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400"
-                                                >
-                                                    Connect to your account
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4 flex items-center gap-2">
-                                            <button
-                                                type="button"
-                                                className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                                            >
-                                                Delete
-                                            </button>
-                                            <div className="h-3 w-px shrink-0 bg-gray-200 dark:bg-gray-700" />
-                                            <button
-                                                type="button"
-                                                className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                                            >
-                                                Edit
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="space-y-4">
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Delivery Methods
-                                </h3>
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                                        <div className="flex items-start">
-                                            <div className="flex h-5 items-center">
-                                                <input
-                                                    id="dhl"
-                                                    aria-describedby="dhl-text"
-                                                    type="radio"
-                                                    name="delivery-method"
-                                                    defaultValue=""
-                                                    className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
-                                                    defaultChecked=""
-                                                />
-                                            </div>
-                                            <div className="ms-4 text-sm">
-                                                <label
-                                                    htmlFor="dhl"
-                                                    className="font-medium leading-none text-gray-900 dark:text-white"
-                                                >
-                                                    {" "}
-                                                    $15 - DHL Fast Delivery{" "}
-                                                </label>
-                                                <p
-                                                    id="dhl-text"
-                                                    className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400"
-                                                >
-                                                    Get it by Tommorow
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                                        <div className="flex items-start">
-                                            <div className="flex h-5 items-center">
-                                                <input
-                                                    id="fedex"
-                                                    aria-describedby="fedex-text"
-                                                    type="radio"
-                                                    name="delivery-method"
-                                                    defaultValue=""
-                                                    className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
-                                                />
-                                            </div>
-                                            <div className="ms-4 text-sm">
-                                                <label
-                                                    htmlFor="fedex"
-                                                    className="font-medium leading-none text-gray-900 dark:text-white"
-                                                >
-                                                    {" "}
-                                                    Free Delivery - FedEx{" "}
-                                                </label>
-                                                <p
-                                                    id="fedex-text"
-                                                    className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400"
-                                                >
-                                                    Get it by Friday, 13 Dec
-                                                    2023
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                                        <div className="flex items-start">
-                                            <div className="flex h-5 items-center">
-                                                <input
-                                                    id="express"
-                                                    aria-describedby="express-text"
-                                                    type="radio"
-                                                    name="delivery-method"
-                                                    defaultValue=""
-                                                    className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
-                                                />
-                                            </div>
-                                            <div className="ms-4 text-sm">
-                                                <label
-                                                    htmlFor="express"
-                                                    className="font-medium leading-none text-gray-900 dark:text-white"
-                                                >
-                                                    {" "}
-                                                    $49 - Express Delivery{" "}
-                                                </label>
-                                                <p
-                                                    id="express-text"
-                                                    className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400"
-                                                >
-                                                    Get it today
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        )}
+
+                        {/* Sidebar with totals and button */}
                         <div className="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
                             <div className="flow-root">
                                 <div className="-my-3 divide-y divide-gray-200 dark:divide-gray-800">
                                     <dl className="flex items-center justify-between gap-4 py-3">
                                         <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                                            Subtotal
+                                            Prix unitaire
                                         </dt>
                                         <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                            $8,094.00
+                                            <MoneyFormat money={amountTTC} />
                                         </dd>
                                     </dl>
                                     <dl className="flex items-center justify-between gap-4 py-3">
                                         <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                                            Savings
+                                            Quantité
                                         </dt>
                                         <dd className="text-base font-medium text-green-500">
-                                            0
+                                            {nbPersons}
                                         </dd>
                                     </dl>
                                     <dl className="flex items-center justify-between gap-4 py-3">
                                         <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                                            Store Pickup
+                                            Taxes
                                         </dt>
                                         <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                            $99
-                                        </dd>
-                                    </dl>
-                                    <dl className="flex items-center justify-between gap-4 py-3">
-                                        <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                                            Tax
-                                        </dt>
-                                        <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                            $199
+                                            Prix TTC
                                         </dd>
                                     </dl>
                                     <dl className="flex items-center justify-between gap-4 py-3">
@@ -517,30 +681,40 @@ function BookingMake({ apackage, transportation_modes }) {
                                             Total
                                         </dt>
                                         <dd className="text-base font-bold text-gray-900 dark:text-white">
-                                            $8,392.00
+                                            <MoneyFormat
+                                                money={nbPersons * amountTTC}
+                                            />
                                         </dd>
                                     </dl>
                                 </div>
                             </div>
                             <div className="space-y-3">
-                                <button
-                                    type="submit"
-                                    className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                                >
-                                    Proceed to Payment
-                                </button>
-                                <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                    One or more items in your cart require an
-                                    account.{" "}
-                                    <a
-                                        href="#"
-                                        title=""
-                                        className="font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"
+                                {currentStep === 1 && (
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={handleNextStep}
+                                            className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none"
+                                        >
+                                            Procéder au paiement
+                                        </button>
+
+                                        {showError && (
+                                            <div className="text-red-600 text-sm font-semibold">
+                                                {showError}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                                {currentStep === 2 && (
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none"
                                     >
-                                        Sign in or create an account now.
-                                    </a>
-                                    .
-                                </p>
+                                        Payer
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
