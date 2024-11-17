@@ -104,7 +104,7 @@ class BookingController extends Controller
         }
     }
 
-    public function view_invoice()
+    public function view_booking_invoice()
     {
         $id = request()->id;
 
@@ -153,5 +153,50 @@ class BookingController extends Controller
         return response()->json([
             'message' => "Aucun paiement n'a été trouvé pour cette réservation !",
         ], 404);
+    }
+
+    public function view_payment_invoice()
+    {
+        $id = request()->id;
+
+        $payment = Payment::where('id', $id)->with('primaryInvoice')->first();
+
+        if ($payment->primaryInvoice) {
+            $pdfContent = Storage::disk('invoice')->get($payment->primaryInvoice->file_name);
+            $base64Pdf = base64_encode($pdfContent);
+
+            return response()->json([
+                'exists' => true,
+                'fileContent' => $base64Pdf,
+            ]);
+        }
+
+        $payment = $payment->load(
+                'paymentable',
+                'booking.client.city.region.country',
+                'booking.client.user',
+                'booking.package.city.region.country'
+            )->toArray();
+
+            $pdf = Pdf::loadView('invoice', ['payment' => $payment]);
+            $pdfContent = $pdf->output();
+            $fileName = 'invoice_' . uniqid() . '.pdf';
+
+            Storage::disk('invoice')->put($fileName, $pdfContent);
+
+            Invoice::create([
+                'file_name' => $fileName,
+                'mime_type' => 'application/pdf',
+                'size' => strlen($pdfContent),
+                'storage_driver' => 'invoice',
+                'payment_id' => $id,
+            ]);
+
+            $base64Pdf = base64_encode($pdfContent);
+
+            return response()->json([
+                'exists' => false,
+                'fileContent' => $base64Pdf,
+            ]);
     }
 }

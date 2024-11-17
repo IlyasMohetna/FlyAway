@@ -89,7 +89,7 @@ const PaymentList = ({ data, total, currentPage, lastPage, sort, search }) => {
         }));
 
         axios
-            .post(route("client.package.booking.invoice.show"), { id: id })
+            .post(route("client.dashboard.payment.invoice.show"), { id: id })
             .then((response) => {
                 const { fileContent } = response.data;
 
