@@ -241,13 +241,21 @@ const BookingList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                             </td>
                                             <td className="whitespace-nowrap py-3 px-4">
                                                 <div className="space-x-2 flex">
-                                                    <button
-                                                        type="button"
+                                                    <Link
+                                                        href={route(
+                                                            "landing.package.show",
+                                                            {
+                                                                id: item.package
+                                                                    .id,
+                                                            }
+                                                        )}
+                                                        target="_blank"
                                                         className="px-3 py-2 space-x-2 flex text-xs font-medium text-center text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg outline-none"
+                                                        as="button"
                                                     >
                                                         <FaEye className="mt-0.5" />
                                                         <b>Forfait</b>
-                                                    </button>
+                                                    </Link>
                                                     <button
                                                         type="button"
                                                         disabled={
