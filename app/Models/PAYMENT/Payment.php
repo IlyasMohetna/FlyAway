@@ -20,4 +20,9 @@ class Payment extends Model
     {
         return $this->belongsTo(Booking::class, 'booking_id', 'id');
     }
+
+    public function primaryInvoice()
+    {
+        return $this->hasOne(Invoice::class,'payment_id','id');
+    }
 }

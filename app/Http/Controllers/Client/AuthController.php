@@ -29,7 +29,7 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-        $followUrl = session()->get('followUrl', route('client.dashboard.show'));
+        $followUrl = session()->get('followUrl', route('client.dashboard.bookings.show'));
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

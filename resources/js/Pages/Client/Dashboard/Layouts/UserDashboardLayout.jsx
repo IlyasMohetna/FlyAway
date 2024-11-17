@@ -1,4 +1,3 @@
-import { usePage, Link } from "@inertiajs/react";
 import {
     Disclosure,
     DisclosureButton,
@@ -8,16 +7,32 @@ import {
     MenuItem,
     MenuItems,
 } from "@headlessui/react";
+import React, { useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import NavigationLink from "../Components/Dashboard/Header/NavigationLink";
+import { Link, usePage } from "@inertiajs/react";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
 
 const UserDashboardLayout = ({ children, title }) => {
-    const { auth } = usePage().props;
+    const { auth, currentRoute } = usePage().props;
+    const { flash } = usePage().props;
+
+    useEffect(() => {
+        if (flash.success) {
+            toast.success(flash.success);
+        }
+        if (flash.error) {
+            toast.error(flash.error);
+        }
+    }, [flash]);
 
     return (
         <>
+            <ToastContainer />
             <div className="min-h-full">
                 <Disclosure as="nav" className="bg-gray-800">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -31,36 +46,42 @@ const UserDashboardLayout = ({ children, title }) => {
                                 </div>
                                 <div>
                                     <div className="ml-10 flex items-baseline space-x-4">
-                                        <Link
-                                            href="#"
-                                            className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+                                        <NavigationLink
+                                            href="/reservations"
+                                            active={
+                                                currentRoute === "reservations"
+                                            }
                                         >
                                             Mes réservations
-                                        </Link>
-                                        <Link
-                                            href="#"
-                                            className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                                        </NavigationLink>
+                                        <NavigationLink
+                                            href="/fidelite"
+                                            active={currentRoute === "fidelite"}
                                         >
                                             Programme de fidélité
-                                        </Link>
-                                        <Link
-                                            href="#"
-                                            className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                                        </NavigationLink>
+                                        <NavigationLink
+                                            href="/evenements"
+                                            active={
+                                                currentRoute === "evenements"
+                                            }
                                         >
                                             Mes évenements à venir
-                                        </Link>
-                                        <Link
-                                            href="#"
-                                            className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                                        </NavigationLink>
+                                        <NavigationLink
+                                            href="/factures"
+                                            active={currentRoute === "factures"}
                                         >
                                             Mes factures
-                                        </Link>
-                                        <Link
-                                            href="#"
-                                            className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                                        </NavigationLink>
+                                        <NavigationLink
+                                            href="/paiements"
+                                            active={
+                                                currentRoute === "paiements"
+                                            }
                                         >
                                             Mes paiements
-                                        </Link>
+                                        </NavigationLink>
                                     </div>
                                 </div>
                             </div>
@@ -144,9 +165,7 @@ const UserDashboardLayout = ({ children, title }) => {
                     </div>
                 </header>
                 <main>
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        {children}
-                    </div>
+                    <div className="mx-auto px-4">{children}</div>
                 </main>
             </div>
         </>

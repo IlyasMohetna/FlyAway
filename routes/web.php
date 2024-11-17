@@ -37,6 +37,3 @@ Route::group(['prefix' => 'client'], function () {
 });
 
 require __DIR__ . '/select.php';
-
-
-Route::get('/invoice/', [BookingController::class, 'generateInvoice']);
