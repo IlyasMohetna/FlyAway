@@ -6,7 +6,7 @@ use App\Http\Controllers\PackageController;
 Route::group(['prefix' => 'package'], function () {
     Route::get("/", [PackageController::class, "index"])->name("package.index");
     Route::post("/store", [PackageController::class, "store"])->name("package.store");
-    // // Type
+
     Route::get("/type", [PackageController::class, "type"])->name("package.type");
     Route::post("/type", [PackageController::class, "type_store"])->name("package.type.store");
     Route::delete("/type/{id}", [PackageController::class, "type_delete"])->name("package.type.delete");
