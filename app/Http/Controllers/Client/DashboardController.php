@@ -38,7 +38,6 @@ class DashboardController extends Controller
         ]);
     }
 
-
     public function payments_list()
     {
         $query = Payment::query();

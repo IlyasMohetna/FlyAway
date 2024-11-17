@@ -2,13 +2,16 @@
 import React, { useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { FaUserCircle } from "react-icons/fa";
+import { router } from "@inertiajs/react";
 
 const Header = () => {
     const { auth } = usePage().props; // assuming auth user data is passed from Inertia
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const handleLogout = () => {
-        // post(route("logout")); // Adjust route as needed
+        router.visit(route("admin.logout.action"), {
+            method: "post",
+        });
     };
 
     return (
