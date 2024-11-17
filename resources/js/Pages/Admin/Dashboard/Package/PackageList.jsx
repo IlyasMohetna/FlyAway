@@ -7,12 +7,15 @@ import AddButton from "../../../../Components/Buttons/AddButton";
 import AddPackageModal from "./Components/AddPackageModal";
 import { MdPublic } from "react-icons/md";
 import { MdPublicOff } from "react-icons/md";
+import HandlePackageAccess from "./Components/HandlePackageAccess";
 
 const PackageList = ({ data, total, currentPage, lastPage, sort, search }) => {
     const [sortField, setSortField] = useState(sort.field);
     const [sortOrder, setSortOrder] = useState(sort.order);
     const [searchQuery, setSearchQuery] = useState(search);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isAccessModalOpen, setIsAccessModalOpen] = useState(false);
+    const [selectedPackageId, setSelectedPackageId] = useState(false);
 
     const handleSort = (field) => {
         const order = sortOrder === "asc" ? "desc" : "asc";
@@ -61,6 +64,11 @@ const PackageList = ({ data, total, currentPage, lastPage, sort, search }) => {
             );
         }
         return pageNumbers;
+    };
+
+    const openPackageAccessModal = (id) => {
+        setSelectedPackageId(id);
+        setIsAccessModalOpen(true);
     };
 
     return (
@@ -181,23 +189,25 @@ const PackageList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                             </td>
                                             <td className="whitespace-nowrap py-3 px-4">
                                                 <div>
-                                                    <Link
-                                                        as="button"
-                                                        href={route(
-                                                            "lodging.rooms.index",
-                                                            {
-                                                                lodging_id:
-                                                                    item.id,
-                                                            }
-                                                        )}
-                                                    >
+                                                    {item.public ? (
                                                         <button
                                                             type="button"
-                                                            class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
+                                                            class="focus:outline-none cursor-not-allowed text-white bg-purple-200  font-medium rounded-lg text-sm px-5 py-2.5 mb-2 "
                                                         >
                                                             Gérer l'accès
                                                         </button>
-                                                    </Link>
+                                                    ) : (
+                                                        <button
+                                                            class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 mb-2"
+                                                            onClick={() =>
+                                                                openPackageAccessModal(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                        >
+                                                            Gérer l'accès
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </td>
                                         </tr>
@@ -244,6 +254,11 @@ const PackageList = ({ data, total, currentPage, lastPage, sort, search }) => {
             <AddPackageModal
                 open={isAddModalOpen}
                 setOpen={setIsAddModalOpen}
+            />
+            <HandlePackageAccess
+                open={isAccessModalOpen}
+                setOpen={setIsAccessModalOpen}
+                packageId={selectedPackageId}
             />
         </>
     );

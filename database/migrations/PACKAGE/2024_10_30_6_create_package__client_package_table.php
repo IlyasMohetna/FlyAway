@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('package__client_package', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_client')->foreign()->references('id')->on('client__client');
+            $table->foreignId('client_id')->foreign()->references('id')->on('client__client');
             $table->foreignId('package_id')->foreign()->references('id')->on('package__package');
             $table->timestamps();
             $table->softDeletes();

@@ -45,4 +45,9 @@ class Package extends Model
     {
         return $this->hasMany(PackageLodging::class, 'package_id', 'id');
     }
+
+    public function linked()
+    {
+        return $this->hasMany(ClientPackage::class, 'package_id', 'id');
+    }
 }

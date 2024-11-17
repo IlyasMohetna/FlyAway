@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Models\Client\Client;
 use App\Models\PACKAGE\Package;
 use Illuminate\Support\Facades\DB;
 use App\Models\LODGING\LodgingType;
 use App\Models\PACKAGE\PackageType;
+use App\Models\PACKAGE\ClientPackage;
 use App\Models\PACKAGE\ItineraryStep;
 use App\Models\PACKAGE\PackageGallery;
 use App\Models\PACKAGE\PackageLodging;
@@ -163,8 +165,6 @@ class PackageController extends Controller
         }
     }
 
-
-
     //---------- Package transport options
     public function transportation_index()
     {
@@ -217,4 +217,89 @@ class PackageController extends Controller
             return redirect()->route('package.transport')->with(['error'=> 'Une erreur est survenue !']);
         }
     }
+
+    //--------- Package User Management
+    public function linked_users($id)
+    {
+        $package = Package::with('linked.client')->find($id);
+
+        if (!$package) {
+            return response()->json(['message' => 'Package not found'], 404);
+        }
+
+        $linkedUsers = $package->linked->map(function ($linked) {
+            return [
+                'id' => $linked->client->id,
+                'firstname' => $linked->client->user->firstname,
+                'lastname' => $linked->client->user->lastname,
+            ];
+        });
+
+        return response()->json($linkedUsers);
+    }
+
+    public function link_user($id)
+    {
+        DB::beginTransaction();
+        try {
+            ClientPackage::create([
+                'client_id' => request()->user_id,
+                'package_id' => $id
+            ]);
+            DB::commit();
+            return response()->json(['message' => 'User successfully linked to package'], 200);
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to link user to package'], 500);
+        }
+    }
+
+    public function unlink_user($id)
+    {
+        DB::beginTransaction();
+        try {
+            ClientPackage::where('client_id', request()->user_id)
+                ->where('package_id', $id)
+                ->delete();
+
+            DB::commit();
+            return response()->json(['message' => 'User successfully unlinked from package'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to unlink user from package'], 500);
+        }
+    }
+
+    public function search_client(Request $request)
+    {
+        $searchTerm = $request->input('search');
+
+        if (!empty($searchTerm)) {
+            $clients = Client::with('user')
+                ->whereHas('user', function($query) use ($searchTerm) {
+                    $query->where('firstname', 'like', "%{$searchTerm}%")
+                        ->orWhere('lastname', 'like', "%{$searchTerm}%");
+                })
+                ->select('id', 'user_id')
+                ->limit(10)
+                ->get();
+        } else {
+            $clients = Client::with('user')
+                ->select('id', 'user_id')
+                ->limit(10)
+                ->get();
+        }
+
+        $filteredClients = $clients->map(function($client) {
+            return [
+                'id' => $client->id,
+                'firstname' => $client->user->firstname,
+                'lastname' => $client->user->lastname,
+            ];
+        });
+
+        return response()->json($filteredClients);
+    }
+
 }
