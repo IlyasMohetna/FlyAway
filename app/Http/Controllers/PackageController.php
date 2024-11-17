@@ -27,6 +27,8 @@ class PackageController extends Controller
             $sortField = request()->input('sort.field', 'id');
             $sortOrder = request()->input('sort.order', 'asc');
             $query->orderBy($sortField, $sortOrder);
+        }else{
+            $query->orderBy('created_at', 'desc');
         }
 
         if (request()->filled('search')) {
@@ -58,6 +60,7 @@ class PackageController extends Controller
                 'duration' => $request->duration,
                 'description' => $request->description,
                 'public' => $request->public,
+                'fidelity_points' => $request->fidelity_points,
                 'package_type_id' => $request->package_type_id,
                 'destination_id' => $request->destination_id
             ]);
@@ -74,7 +77,6 @@ class PackageController extends Controller
                 ]);
             }
 
-            // Rattacher le forfait aux options de logements
             foreach($request->lodging_options as $lodging_option) {
                 PackageLodging::create([
                     'lodging_mode_id' => $lodging_option,
@@ -82,7 +84,6 @@ class PackageController extends Controller
                 ]);
             }
 
-            // Rattacher le forfait aux options de trannsports
             foreach($request->transportation_options as $transportation_option) {
                     PackageTransport::create([
                         'transportation_mode_id' => $transportation_option,
@@ -91,16 +92,19 @@ class PackageController extends Controller
             }
 
             foreach($request->itinerary_days as $day) {
-                foreach($day['steps'] as $rank => $step){
-                    ItineraryStep::create([
-                        'title' => $step['title'],
-                        'description' => $step['description'],
-                        'day' => $day['day'],
-                        'rank' => $rank+1,
-                        'package_id' => $package->id
-                    ]);
+                if(isset($day['steps'])){
+                    foreach($day['steps'] as $rank => $step){
+                        ItineraryStep::create([
+                            'title' => $step['title'],
+                            'description' => $step['description'],
+                            'day' => $day['day'],
+                            'rank' => $rank+1,
+                            'package_id' => $package->id
+                        ]);
+                    }
                 }
             }
+
 
             DB::commit();
 

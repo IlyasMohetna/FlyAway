@@ -48,7 +48,8 @@ export default function AddPackageDetailModal({ open, setOpen }) {
     });
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        public: "",
+        public: 0,
+        fidelity_points: 0,
         title: "",
         amount_ht: "",
         amount_ttc: "",
@@ -98,6 +99,7 @@ export default function AddPackageDetailModal({ open, setOpen }) {
 
             const formData = new FormData();
             formData.append("public", data.public);
+            formData.append("fidelity_points", data.fidelity_points);
             formData.append("title", data.title);
             formData.append("amount_ht", data.amount_ht);
             formData.append("amount_ttc", data.amount_ttc);
@@ -195,6 +197,29 @@ export default function AddPackageDetailModal({ open, setOpen }) {
                                         </Switch>
                                         <Label text={"Annonce public"} />
                                     </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4 mb-3">
+                                    <InputLabeled
+                                        label="Point de fidélité"
+                                        id="fidelity_points"
+                                        name="fidelity_points"
+                                        type="number"
+                                        min="0"
+                                        value={data.fidelity_points}
+                                        onChange={(e) => {
+                                            setData(
+                                                "fidelity_points",
+                                                e.target.value
+                                            );
+                                            removeClientError(
+                                                "fidelity_points"
+                                            );
+                                        }}
+                                        error={
+                                            clientErrors.fidelity_points ||
+                                            errors.fidelity_points
+                                        }
+                                    />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 mb-3">
                                     <InputLabeled
