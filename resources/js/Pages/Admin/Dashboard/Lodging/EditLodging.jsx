@@ -7,6 +7,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Label from "../../../../Components/Form/Labels/Label";
 import StarRatingSelect from "./Components/Form/StarRatingSelect";
+import EditableDynamicSelect from "./EditableDynamicSelect";
 
 function EditLodging({ lodging, lodging_attributs, categories }) {
     const {
@@ -169,20 +170,19 @@ function EditLodging({ lodging, lodging_attributs, categories }) {
                                     </div>
 
                                     <div>
-                                        <DynamicSelect
+                                        <EditableDynamicSelect
                                             label="Type du logement"
                                             name="type_lodging_id"
-                                            dataKey="type_lodging_id"
-                                            data={data}
-                                            handleInputChange={
-                                                handleInputChange
-                                            }
+                                            selectedValue={data.type_lodging_id}
                                             fetchRoute={route(
                                                 "lodging.type.select"
                                             )}
+                                            handleInputChange={
+                                                handleInputChange
+                                            }
                                             errors={serverErrors}
                                             noOptionsMessage="Veuillez choisir un type du logement !"
-                                            placeholder="Selectionner une option"
+                                            placeholder="Sélectionner une option"
                                             defaultOption={{
                                                 value: lodging.type.id,
                                                 label: lodging.type.name,
@@ -252,17 +252,18 @@ function EditLodging({ lodging, lodging_attributs, categories }) {
                                         </div>
 
                                         <div>
-                                            <DynamicSelect
+                                            <EditableDynamicSelect
                                                 label="Ville réelle"
                                                 name="real_city_id"
-                                                dataKey="real_city_id"
-                                                data={data}
-                                                handleInputChange={
-                                                    handleInputChange
+                                                selectedValue={
+                                                    data.real_city_id
                                                 }
                                                 fetchRoute={route(
                                                     "select.city"
                                                 )}
+                                                handleInputChange={
+                                                    handleInputChange
+                                                }
                                                 errors={serverErrors}
                                                 noOptionsMessage="Veuillez sélectionner une ville !"
                                                 placeholder="Sélectionner une option"
@@ -275,17 +276,18 @@ function EditLodging({ lodging, lodging_attributs, categories }) {
                                         </div>
 
                                         <div>
-                                            <DynamicSelect
+                                            <EditableDynamicSelect
                                                 label="Ville de rattachement"
                                                 name="link_city_id"
-                                                dataKey="link_city_id"
-                                                data={data}
-                                                handleInputChange={
-                                                    handleInputChange
+                                                selectedValue={
+                                                    data.link_city_id
                                                 }
                                                 fetchRoute={route(
                                                     "select.city"
                                                 )}
+                                                handleInputChange={
+                                                    handleInputChange
+                                                }
                                                 errors={serverErrors}
                                                 noOptionsMessage="Veuillez sélectionner une ville !"
                                                 placeholder="Sélectionner une option"
