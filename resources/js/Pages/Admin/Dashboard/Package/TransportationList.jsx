@@ -26,7 +26,7 @@ const TransportationList = ({
         const order = sortOrder === "asc" ? "desc" : "asc";
         setSortField(field);
         setSortOrder(order);
-        router.get(route("lodging.index"), {
+        router.get(route("package.transport"), {
             sort: { field, order },
             search: searchQuery,
             page: currentPage,
@@ -35,7 +35,7 @@ const TransportationList = ({
 
     const handleSearch = (e) => {
         e.preventDefault();
-        router.get(route("lodging.index"), {
+        router.get(route("package.transport"), {
             search: searchQuery,
             sort: { field: sortField, order: sortOrder },
         });
@@ -43,7 +43,7 @@ const TransportationList = ({
 
     const handlePageChange = (page) => {
         if (page > 0 && page <= lastPage) {
-            router.get(route("package.type"), {
+            router.get(route("package.transport"), {
                 page,
                 sort: { field: sortField, order: sortOrder },
                 search: searchQuery,

@@ -15,8 +15,6 @@ Route::group(['prefix' => 'package'], function () {
     Route::post("/transport", [PackageController::class, "transportation_store"])->name("package.transport.store");
     Route::delete("/transport/{id}", [PackageController::class, "transportation_delete"])->name("package.transport.delete");
 
-
-
     // // Attribut
     // Route::get("/attribut", [LodgingController::class, "attribut_categories"])->name("lodging.attribut");
     // Route::get("/attribut/{categorie}", [LodgingController::class, "attribut_by_categorie"])->name("lodging.attribut.data");
