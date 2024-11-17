@@ -53,10 +53,10 @@ const UserDashboardLayout = ({ children, title }) => {
                                 <div>
                                     <div className="ml-10 flex items-baseline space-x-4">
                                         <NavigationLink
-                                            href="/reservations"
-                                            active={
-                                                currentRoute === "reservations"
-                                            }
+                                            href={route(
+                                                "client.dashboard.bookings.show"
+                                            )}
+                                            active={currentRoute === ""}
                                         >
                                             Mes réservations
                                         </NavigationLink>
@@ -67,23 +67,14 @@ const UserDashboardLayout = ({ children, title }) => {
                                             Programme de fidélité
                                         </NavigationLink>
                                         <NavigationLink
-                                            href="/evenements"
+                                            href={route(
+                                                "client.dashboard.payments.show"
+                                            )}
                                             active={
-                                                currentRoute === "evenements"
-                                            }
-                                        >
-                                            Mes évenements à venir
-                                        </NavigationLink>
-                                        <NavigationLink
-                                            href="/factures"
-                                            active={currentRoute === "factures"}
-                                        >
-                                            Mes factures
-                                        </NavigationLink>
-                                        <NavigationLink
-                                            href="/paiements"
-                                            active={
-                                                currentRoute === "paiements"
+                                                currentRoute ===
+                                                route(
+                                                    "client.dashboard.payments.show"
+                                                )
                                             }
                                         >
                                             Mes paiements
