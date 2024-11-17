@@ -7,7 +7,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Label from "../../../../Components/Form/Labels/Label";
 import StarRatingSelect from "./Components/Form/StarRatingSelect";
-import EditableDynamicSelect from "./EditableDynamicSelect";
+import EditableDynamicSelect from "../../../../Components/Form/Select/EditableDynamicSelect";
 
 function EditLodging({ lodging, lodging_attributs, categories }) {
     const {
