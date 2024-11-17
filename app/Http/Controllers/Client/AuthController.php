@@ -95,4 +95,12 @@ class AuthController extends Controller
             return Redirect::back()->with('error', 'An error occurred. Please try again.');
         }
     }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('client.login.show');
+    }
 }

@@ -11,7 +11,7 @@ import React, { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NavigationLink from "../Components/Dashboard/Header/NavigationLink";
-import { Link, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -29,6 +29,12 @@ const UserDashboardLayout = ({ children, title }) => {
             toast.error(flash.error);
         }
     }, [flash]);
+
+    const handleLogout = () => {
+        router.visit(route("client.logout.action"), {
+            method: "post",
+        });
+    };
 
     return (
         <>
@@ -130,7 +136,7 @@ const UserDashboardLayout = ({ children, title }) => {
                                                     href="#"
                                                     className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                                                 >
-                                                    Your Profile
+                                                    Mon profile
                                                 </Link>
                                             </MenuItem>
                                             <MenuItem>
@@ -138,16 +144,16 @@ const UserDashboardLayout = ({ children, title }) => {
                                                     href="#"
                                                     className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                                                 >
-                                                    Settings
+                                                    Paramètre
                                                 </Link>
                                             </MenuItem>
                                             <MenuItem>
-                                                <Link
-                                                    href="#"
-                                                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                                                <button
+                                                    onClick={handleLogout}
+                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                                                 >
-                                                    Sign out
-                                                </Link>
+                                                    Se déconnecter
+                                                </button>
                                             </MenuItem>
                                         </MenuItems>
                                     </Menu>
