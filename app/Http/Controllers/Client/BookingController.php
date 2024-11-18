@@ -15,6 +15,7 @@ use App\Models\PAYMENT\CreditCard;
 use Illuminate\Support\Facades\DB;
 use App\Models\PAYMENT\BankAccount;
 use App\Http\Controllers\Controller;
+use App\Models\Client\ClientFidelity;
 use Illuminate\Support\Facades\Storage;
 use App\Models\PACKAGE\TransportationMode;
 
@@ -92,6 +93,14 @@ class BookingController extends Controller
                 'address' => auth()->user()->client->address_1,
                 'phone' => auth()->user()->client->phone,
             ];
+
+            //-------- Client Fidelity
+            ClientFidelity::create([
+                'point' => ($package->fidelity_points * $request->nbPersons),
+                'subject' => 'Reservation du forfait : '.$package->title,
+                'client_id' => auth()->user()->client->id,
+                'transaction_type_id' => 1
+            ]);
 
             return Inertia::render('Landing/Booking/BookingSuccess', [
                 'success' => $success

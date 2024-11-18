@@ -733,6 +733,17 @@ function BookingMake({ apackage, transportation_modes }) {
                                             />
                                         </dd>
                                     </dl>
+                                    <br></br>
+                                    <dl className="flex items-center justify-between gap-4 py-3">
+                                        <dt className="text-base font-bold text-gray-900 dark:text-white">
+                                            Points de fidélité
+                                        </dt>
+                                        <dd className="text-base font-bold text-gray-900 dark:text-white">
+                                            {apackage.fidelity_points *
+                                                nbPersons}{" "}
+                                            points
+                                        </dd>
+                                    </dl>
                                 </div>
                             </div>
                             <div className="space-y-3">
