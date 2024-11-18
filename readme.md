@@ -1,143 +1,136 @@
-# FlyAway
-
-**FlyAway** (Mondeo): A project for managing a travel agency.
+# **FlyAway** : Projet de gestion d'agence de voyages
 
 ---
 
-## Installation Guide
+## Guide d'installation
 
-### Prerequisites
+### **Pré-requis**
 
-Ensure the following are installed on your system:
+Assurez-vous que les éléments suivants sont installés sur votre système :
 
 -   PHP >= 7.3
 -   Composer
 -   Node.js & npm/yarn
--   MySQL or any other supported database
+-   MySQL ou tout autre système de base de données pris en charge
 
 ---
 
-### Installation Steps
+### **Étapes d'installation**
 
-1. **Clone the repository**:
+1. **Cloner le dépôt :**
 
     ```bash
     git clone https://github.com/IlyasMohetna/FlyAway.git
     cd FlyAway
     ```
 
-2. **Create a new database in MySQL**:
+2. **Créer une nouvelle base de données MySQL :**
 
-    - Open your MySQL client or GUI tool.
-    - Run the following command to create a new database:
+    - Ouvrez votre client MySQL ou outil GUI.
+    - Exécutez la commande suivante pour créer une base de données :
         ```sql
         CREATE DATABASE flyaway;
         ```
 
-3. **Configure environment variables**:
+3. **Configurer les variables d'environnement :**
 
-    - Copy the `.env.example` file to `.env`:
-        ```bash
-        cp .env.example .env
-        ```
-    - Open the `.env` file and update the following fields with your database details:
+    - Ouvrez le fichier `.env` et mettez à jour les champs suivants avec vos informations de base de données :
         ```env
-        DB_CONNECTION=mysql --> Modify to adpat to your database
-        DB_HOST=127.0.0.1 --> Modify to adpat to your database
-        DB_PORT=3306 --> Modify to adpat to your database
-        DB_DATABASE=flyaway --> Modify to adpat to your database
-        DB_USERNAME=flyaway_user --> Modify to adpat to your database
-        DB_PASSWORD=securepassword --> Modify to adpat to your database
+        DB_CONNECTION=mysql
+        DB_HOST=127.0.0.1
+        DB_PORT=3306
+        DB_DATABASE=flyaway
+        DB_USERNAME=votre_nom_utilisateur
+        DB_PASSWORD=votre_mot_de_passe
         ```
 
-4. **Install PHP dependencies**:
+4. **Installer les dépendances PHP :**
 
     ```bash
     composer install
     ```
 
-5. **Install JavaScript dependencies**:
+5. **Installer les dépendances JavaScript :**
 
     ```bash
     npm install
     ```
 
-6. **Generate the application key**:
+6. **Générer la clé de l'application :**
 
     ```bash
     php artisan key:generate
     ```
 
-7. **Run database migrations**:
+7. **Exécuter les migrations de la base de données :**
 
     ```bash
-    php artisan migrate
+    php artisan migrate:all
     ```
 
-8. **Run database seeders (if available)**:
+8. **Exécuter les seeders pour remplir la base de données (optionnel) :**
 
     ```bash
     php artisan db:seed
     ```
 
-9. **Create a symbolic link for storage**:
+9. **Créer un lien symbolique pour le stockage :**
 
     ```bash
     php artisan storage:link
     ```
 
-10. **Compile the assets**:
-    npm run dev
+10. **Compiler les assets :**
 
-    ```
-
-    ```
-
-11. **Start the development server**:
     ```bash
-    php artisan serve
+    npm run dev
+    ```
+
+11. **Lancer le serveur de développement :**
+
+    ```bash
+    php artisan serve --port=2024
     ```
 
 ---
 
-## Common Errors and Troubleshooting
+## **Liens pour tester l'application**
 
-### Error during migrations:
-
--   **Message**: `Migration failed for: [folder]`
--   **Solution**: Ensure that your database is properly configured in the `.env` file. Check for syntax errors or missing configurations in your migration files.
-
-### Error during `npm install`:
-
--   **Message**: `npm ERR! code ELIFECYCLE`
--   **Solution**: Ensure that you have the correct version of Node.js and npm/yarn installed. Delete the `node_modules` folder and run the install command again.
-
-### Error while running artisan commands:
-
--   **Message**: `Class [class-name] not found`
--   **Solution**: Ensure that the class exists and is correctly namespaced. Run `composer dump-autoload` to refresh the autoloader.
-
-### Error during asset compilation:
-
--   **Message**: `Module build failed`
--   **Solution**: Ensure that all dependencies are correctly installed. Check for errors in your `webpack` or build configuration files.
-
-### General application error:
-
--   **Message**: `Une erreur est survenue !`
--   **Solution**: Check the application logs in `storage/logs/laravel.log` for detailed error messages. Ensure that the environment is correctly set in the `.env` file.
-
-### Database connection error:
-
--   **Message**: `SQLSTATE[HY000] [1045] Access denied for user`
--   **Solution**: Verify your database credentials in the `.env` file. Ensure that the MySQL service is running and accessible.
+-   **Dashboard client** : [http://localhost:2024/client/login](http://localhost:2024/client/login)
+-   **Dashboard admin** : [http://localhost:2024/admin/login](http://localhost:2024/admin/login)
+-   **Recherche** : [http://localhost:2024/package/search](http://localhost:2024/package/search)
 
 ---
 
-## Additional Resources
+## **Identifiants par défaut**
 
--   [Laravel Documentation](https://laravel.com/docs)
--   [Composer Documentation](https://getcomposer.org/doc/)
--   [Node.js Documentation](https://nodejs.org/en/docs/)
+### **Admin :**
 
-If you encounter issues not covered in this guide, please refer to the issue tracker or submit a new issue.
+-   Email : `admin@test.com`
+-   Mot de passe : `12345678`
+
+Pour se connecter comme administrateur avec d'autres comptes, utilisez un email d'administrateur trouvé dans la base de données et le mot de passe associé.
+
+### **Client :**
+
+-   Email : Sur la table `users`
+-   Mot de passe pour tous les comptes clients : `password`
+
+---
+
+## **Erreurs courantes et dépannage**
+
+### **Erreur de connexion à la base de données :**
+
+-   **Message :** `SQLSTATE[HY000] [1045] Access denied for user`
+-   **Solution :** Vérifiez les identifiants de connexion dans le fichier `.env`. Assurez-vous que le service MySQL est en cours d'exécution et accessible.
+
+---
+
+## **Ressources supplémentaires**
+
+-   [Documentation Laravel](https://laravel.com/docs)
+-   [Documentation Composer](https://getcomposer.org/doc/)
+-   [Documentation Node.js](https://nodejs.org/en/docs/)
+
+---
