@@ -5,6 +5,7 @@ import Footer from "../Components/Landing/Footer";
 import MultiRangeSlider from "./Landing/Components/MultiRangeSlider";
 import DynamicSelect from "./Admin/Dashboard/Lodging/Components/Form/DynamicSelect";
 import SearchTypeIconCards from "../Components/Landing/SearchTypeIconCards";
+import { Link } from "@inertiajs/react";
 
 const Home = ({
     min_amount,
@@ -66,12 +67,12 @@ const Home = ({
                                 le meilleur budget !
                             </p>
                             <div className="mt-6">
-                                <a
-                                    href=""
+                                <Link
+                                    href={route("landing.package.search.index")}
                                     className="py-2 px-5 inline-block tracking-wide align-middle duration-500 text-base text-center bg-red-500 text-white rounded-md"
                                 >
                                     Voir tout les forfaits
-                                </a>
+                                </Link>
                             </div>
                         </div>
                         <div className="lg:col-span-6">
