@@ -7,7 +7,19 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="{{ route('temp.handle.upload') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('temp.handle.upload.countries') }}" method="post" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="json_file">
+        <input type="submit" value="Upload a file">
+    </form>
+    <br><br>
+    <form action="{{ route('temp.handle.upload.states') }}" method="post" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="json_file">
+        <input type="submit" value="Upload a file">
+    </form>
+    <br><br>
+    <form action="{{ route('temp.handle.upload.cities') }}" method="post" enctype="multipart/form-data">
         @csrf
         <input type="file" name="json_file">
         <input type="submit" value="Upload a file">
