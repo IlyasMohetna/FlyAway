@@ -13,10 +13,6 @@ import "react-toastify/dist/ReactToastify.css";
 import NavigationLink from "../Components/Dashboard/Header/NavigationLink";
 import { Link, router, usePage } from "@inertiajs/react";
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(" ");
-}
-
 const UserDashboardLayout = ({ children, title }) => {
     const { auth, currentRoute } = usePage().props;
     const { flash } = usePage().props;
