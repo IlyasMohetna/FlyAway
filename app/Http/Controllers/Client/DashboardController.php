@@ -13,7 +13,7 @@ class DashboardController extends Controller
     public function bookings_list()
     {
         $query = Booking::query()->where('client_id', auth()->user()->client->id);
-        $query->with('lodging', 'transportation','package');
+        $query->with('lodging', 'transportation','package.steps');
         $query->orderBy('created_at', 'desc');
 
         if (request()->filled('search')) {
@@ -22,8 +22,17 @@ class DashboardController extends Controller
 
         $data = $query->paginate(10);
 
+        $bookings = $data->map(function ($booking) {
+            if ($booking->package && $booking->package->steps) {
+                $booking->package->grouped_steps = $booking->package->steps->groupBy('day');
+            } else {
+                $booking->package->grouped_steps = collect([]);
+            }
+            return $booking;
+        });
+
         return Inertia::render('Client/Dashboard/Booking/BookingList', [
-            'data' => $data->items(),
+            'data' => $bookings,
             'total' => $data->total(),
             'currentPage' => $data->currentPage(),
             'lastPage' => $data->lastPage(),

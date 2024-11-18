@@ -12,12 +12,16 @@ import ButtonSpinner from "../../../../Components/Spinners/ButtonSpinner";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import IitineraryModal from "./IitineraryModal";
 
 const BookingList = ({ data, total, currentPage, lastPage, sort, search }) => {
     const [sortField, setSortField] = useState(sort.field);
     const [sortOrder, setSortOrder] = useState(sort.order);
     const [searchQuery, setSearchQuery] = useState(search);
     const [loadingInvoices, setLoadingInvoices] = useState({});
+    const [isItineraryModalOpen, setIsItineraryModalOpen] = useState(false);
+    const [selectedDays, setSelectedDays] = useState([]);
+    const [selectedLodging, SetselectedLodging] = useState([]);
 
     const handleSort = (field) => {
         const order = sortOrder === "asc" ? "desc" : "asc";
@@ -115,6 +119,16 @@ const BookingList = ({ data, total, currentPage, lastPage, sort, search }) => {
             });
     };
 
+    const showItinerary = (id, groupedSteps, lodging) => {
+        const days = Object.keys(groupedSteps).map((day) => ({
+            day: parseInt(day),
+            steps: groupedSteps[day],
+        }));
+        setSelectedDays(days);
+        SetselectedLodging(lodging);
+        setIsItineraryModalOpen(true);
+    };
+
     return (
         <div className="container mx-auto p-6">
             <div className="pt-4 p-6">
@@ -182,11 +196,9 @@ const BookingList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                             </td>
                                             <td className="whitespace-nowrap py-3 px-4">
                                                 <p className="text-black dark:text-bodytext text-sm">
-                                                    {item.start_date ? (
+                                                    {item.end_date ? (
                                                         <DateFormat
-                                                            date={
-                                                                item.start_date
-                                                            }
+                                                            date={item.end_date}
                                                         />
                                                     ) : (
                                                         "-"
@@ -283,6 +295,14 @@ const BookingList = ({ data, total, currentPage, lastPage, sort, search }) => {
                                                     </button>
                                                     <button
                                                         type="button"
+                                                        onClick={() =>
+                                                            showItinerary(
+                                                                item.id,
+                                                                item.package
+                                                                    .grouped_steps,
+                                                                item.lodging
+                                                            )
+                                                        }
                                                         className="px-3 py-2 space-x-2 flex text-xs font-medium text-center text-white bg-rose-600 hover:bg-rose-700 rounded-lg outline-none"
                                                     >
                                                         <MdOutlineTravelExplore className="mt-0.5" />
@@ -331,6 +351,13 @@ const BookingList = ({ data, total, currentPage, lastPage, sort, search }) => {
                     </div>
                 </div>
             </div>
+
+            <IitineraryModal
+                open={isItineraryModalOpen}
+                setOpen={setIsItineraryModalOpen}
+                days={selectedDays}
+                lodging={selectedLodging}
+            />
         </div>
     );
 };
