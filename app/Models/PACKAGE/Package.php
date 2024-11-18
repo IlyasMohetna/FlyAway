@@ -35,4 +35,24 @@ class Package extends Model
     {
         return $this->hasMany(ItineraryStep::class, 'package_id', 'id');
     }
+
+    public function transportations()
+    {
+        return $this->hasMany(PackageTransport::class, 'package_id', 'id');
+    }
+
+    public function lodgings()
+    {
+        return $this->hasMany(PackageLodging::class, 'package_id', 'id');
+    }
+
+    public function linked()
+    {
+        return $this->hasMany(ClientPackage::class, 'package_id', 'id');
+    }
+
+    public function clientPackages()
+    {
+        return $this->hasMany(ClientPackage::class,'package_id', 'id');
+    }
 }

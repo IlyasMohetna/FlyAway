@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Models\Client\Client;
 use App\Models\PACKAGE\Package;
 use Illuminate\Support\Facades\DB;
 use App\Models\LODGING\LodgingType;
 use App\Models\PACKAGE\PackageType;
+use App\Models\PACKAGE\ClientPackage;
 use App\Models\PACKAGE\ItineraryStep;
 use App\Models\PACKAGE\PackageGallery;
 use App\Models\PACKAGE\PackageLodging;
@@ -25,6 +27,8 @@ class PackageController extends Controller
             $sortField = request()->input('sort.field', 'id');
             $sortOrder = request()->input('sort.order', 'asc');
             $query->orderBy($sortField, $sortOrder);
+        }else{
+            $query->orderBy('created_at', 'desc');
         }
 
         if (request()->filled('search')) {
@@ -56,6 +60,7 @@ class PackageController extends Controller
                 'duration' => $request->duration,
                 'description' => $request->description,
                 'public' => $request->public,
+                'fidelity_points' => $request->fidelity_points,
                 'package_type_id' => $request->package_type_id,
                 'destination_id' => $request->destination_id
             ]);
@@ -72,7 +77,6 @@ class PackageController extends Controller
                 ]);
             }
 
-            // Rattacher le forfait aux options de logements
             foreach($request->lodging_options as $lodging_option) {
                 PackageLodging::create([
                     'lodging_mode_id' => $lodging_option,
@@ -80,7 +84,6 @@ class PackageController extends Controller
                 ]);
             }
 
-            // Rattacher le forfait aux options de trannsports
             foreach($request->transportation_options as $transportation_option) {
                     PackageTransport::create([
                         'transportation_mode_id' => $transportation_option,
@@ -89,16 +92,19 @@ class PackageController extends Controller
             }
 
             foreach($request->itinerary_days as $day) {
-                foreach($day['steps'] as $rank => $step){
-                    ItineraryStep::create([
-                        'title' => $step['title'],
-                        'description' => $step['description'],
-                        'day' => $day['day'],
-                        'rank' => $rank+1,
-                        'package_id' => $package->id
-                    ]);
+                if(isset($day['steps'])){
+                    foreach($day['steps'] as $rank => $step){
+                        ItineraryStep::create([
+                            'title' => $step['title'],
+                            'description' => $step['description'],
+                            'day' => $day['day'],
+                            'rank' => $rank+1,
+                            'package_id' => $package->id
+                        ]);
+                    }
                 }
             }
+
 
             DB::commit();
 
@@ -163,8 +169,6 @@ class PackageController extends Controller
         }
     }
 
-
-
     //---------- Package transport options
     public function transportation_index()
     {
@@ -217,4 +221,89 @@ class PackageController extends Controller
             return redirect()->route('package.transport')->with(['error'=> 'Une erreur est survenue !']);
         }
     }
+
+    //--------- Package User Management
+    public function linked_users($id)
+    {
+        $package = Package::with('linked.client')->find($id);
+
+        if (!$package) {
+            return response()->json(['message' => 'Package not found'], 404);
+        }
+
+        $linkedUsers = $package->linked->map(function ($linked) {
+            return [
+                'id' => $linked->client->id,
+                'firstname' => $linked->client->user->firstname,
+                'lastname' => $linked->client->user->lastname,
+            ];
+        });
+
+        return response()->json($linkedUsers);
+    }
+
+    public function link_user($id)
+    {
+        DB::beginTransaction();
+        try {
+            ClientPackage::create([
+                'client_id' => request()->user_id,
+                'package_id' => $id
+            ]);
+            DB::commit();
+            return response()->json(['message' => 'User successfully linked to package'], 200);
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to link user to package'], 500);
+        }
+    }
+
+    public function unlink_user($id)
+    {
+        DB::beginTransaction();
+        try {
+            ClientPackage::where('client_id', request()->user_id)
+                ->where('package_id', $id)
+                ->delete();
+
+            DB::commit();
+            return response()->json(['message' => 'User successfully unlinked from package'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to unlink user from package'], 500);
+        }
+    }
+
+    public function search_client(Request $request)
+    {
+        $searchTerm = $request->input('search');
+
+        if (!empty($searchTerm)) {
+            $clients = Client::with('user')
+                ->whereHas('user', function($query) use ($searchTerm) {
+                    $query->where('firstname', 'like', "%{$searchTerm}%")
+                        ->orWhere('lastname', 'like', "%{$searchTerm}%");
+                })
+                ->select('id', 'user_id')
+                ->limit(10)
+                ->get();
+        } else {
+            $clients = Client::with('user')
+                ->select('id', 'user_id')
+                ->limit(10)
+                ->get();
+        }
+
+        $filteredClients = $clients->map(function($client) {
+            return [
+                'id' => $client->id,
+                'firstname' => $client->user->firstname,
+                'lastname' => $client->user->lastname,
+            ];
+        });
+
+        return response()->json($filteredClients);
+    }
+
 }

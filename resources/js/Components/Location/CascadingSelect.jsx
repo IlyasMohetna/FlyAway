@@ -68,7 +68,11 @@ function CascadingSelect({
         }),
         menu: (base) => ({
             ...base,
-            zIndex: 9999,
+            zIndex: 1050,
+        }),
+        menuPortal: (base) => ({
+            ...base,
+            zIndex: 1050,
         }),
     });
 
@@ -76,7 +80,7 @@ function CascadingSelect({
         <div className="space-y-6">
             {/* Country Select */}
             <div className="mt-6">
-                <Label text={"Country"} />
+                <Label text={"Pays"} />
                 <Select
                     options={countries.map((country) => ({
                         value: country.id,
@@ -130,7 +134,7 @@ function CascadingSelect({
 
             {/* City Select */}
             <div>
-                <Label text={"City"} />
+                <Label text={"Ville"} />
                 <Select
                     options={cities}
                     value={

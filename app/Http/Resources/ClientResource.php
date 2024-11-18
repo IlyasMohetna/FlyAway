@@ -23,6 +23,7 @@ class ClientResource extends JsonResource
             'address_1' => $this->client->address_1,
             'address_2' => $this->client->address_2,
             'city' => $this->client->city->name,
+            'postal_code' => $this->client->city->postal_code,
             'region' => $this->client->city->region->name,
             'country' => $this->client->city->region->country->name
         ];

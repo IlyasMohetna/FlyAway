@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Client\Auth;
+namespace App\Http\Controllers\Client;
 use Exception;
 use App\Models\User;
 use Inertia\Inertia;
@@ -29,15 +29,25 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-        $comebackUrl = session()->get('comebackUrl', route('client.dashboard.show'));
+        $followUrl = session()->get('followUrl', route('client.dashboard.bookings.show'));
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         Auth::logout();
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended($comebackUrl);
+            $user = Auth::user();
+
+            if($user->client){
+                $request->session()->regenerate();
+                return redirect()->intended($followUrl);
+            }
+
+            Auth::logout();
+
+            return back()->withErrors([
+                'general' => 'Seuls les clients peuvent se connecter ici.',
+            ])->onlyInput('email');
         }
 
         return back()->withErrors([
@@ -63,8 +73,6 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            Auth::login($user);
-
             Client::create([
                 'user_id' => $user->id,
                 'phone' => $request->phone,
@@ -73,9 +81,11 @@ class AuthController extends Controller
                 'city_id' => $request->city_id,
             ]);
 
+
+            Auth::login($user);
             DB::commit();
 
-            return Redirect::route('client.dashboard.show')->with([
+            return Redirect::route('client.dashboard.bookings.show')->with([
                 'success' => "Votre compte a été créer avec succès"
             ]);
 
@@ -84,5 +94,13 @@ class AuthController extends Controller
             Log::error('Registration failed: ' . $e->getMessage());
             return Redirect::back()->with('error', 'An error occurred. Please try again.');
         }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('client.login.show');
     }
 }

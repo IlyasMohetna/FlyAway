@@ -19,7 +19,7 @@ const TypeList = ({ data, total, currentPage, lastPage, sort, search }) => {
         const order = sortOrder === "asc" ? "desc" : "asc";
         setSortField(field);
         setSortOrder(order);
-        router.get(route("lodging.index"), {
+        router.get(route("lodging.type"), {
             sort: { field, order },
             search: searchQuery,
             page: currentPage,
@@ -28,7 +28,7 @@ const TypeList = ({ data, total, currentPage, lastPage, sort, search }) => {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        router.get(route("lodging.index"), {
+        router.get(route("lodging.type"), {
             search: searchQuery,
             sort: { field: sortField, order: sortOrder },
         });
@@ -36,7 +36,7 @@ const TypeList = ({ data, total, currentPage, lastPage, sort, search }) => {
 
     const handlePageChange = (page) => {
         if (page > 0 && page <= lastPage) {
-            router.get(route("lodging.index"), {
+            router.get(route("lodging.type"), {
                 page,
                 sort: { field: sortField, order: sortOrder },
                 search: searchQuery,

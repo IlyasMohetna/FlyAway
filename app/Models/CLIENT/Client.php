@@ -1,13 +1,15 @@
 <?php
 namespace App\Models\Client;
 
-use App\Models\CONFIG\City;
 use App\Models\User;
+use App\Models\CONFIG\City;
+use App\Models\PACKAGE\ClientPackage;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Client extends Model
 {
+    use HasFactory;
 	protected $table = 'client__client';
 	protected $guarded = [];
 
@@ -23,4 +25,9 @@ class Client extends Model
 	public function city(){
 		return $this->belongsTo(City::class, 'city_id');
 	}
+
+    public function packages()
+    {
+        return $this->hasMany(ClientPackage::class, 'client_id', 'id');
+    }
 }

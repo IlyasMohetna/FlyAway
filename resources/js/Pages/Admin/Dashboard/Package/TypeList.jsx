@@ -20,7 +20,7 @@ const TypeList = ({ data, total, currentPage, lastPage, sort, search }) => {
         const order = sortOrder === "asc" ? "desc" : "asc";
         setSortField(field);
         setSortOrder(order);
-        router.get(route("lodging.index"), {
+        router.get(route("package.type"), {
             sort: { field, order },
             search: searchQuery,
             page: currentPage,
@@ -29,7 +29,7 @@ const TypeList = ({ data, total, currentPage, lastPage, sort, search }) => {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        router.get(route("lodging.index"), {
+        router.get(route("package.type"), {
             search: searchQuery,
             sort: { field: sortField, order: sortOrder },
         });

@@ -145,7 +145,7 @@ function Register() {
                         <form onSubmit={handleNext} autoComplete="off">
                             {step === 1 && (
                                 <>
-                                    <div className="mb-4 md:flex md:justify-around">
+                                    <div className="grid grid-cols-2">
                                         <div className="mb-4 md:mr-2 md:mb-0">
                                             <InputLabeled
                                                 label="Prénom"

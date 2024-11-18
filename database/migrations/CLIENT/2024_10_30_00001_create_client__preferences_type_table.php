@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('client__preferences_type', function (Blueprint $table) {
             $table->id();
-            $table->string('nom', 50);
+            $table->string('name', 50);
+            $table->string('icon', 50);
+            $table->string('library', 50);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -25,7 +25,9 @@ export default function Header() {
                                 <>
                                     <Link
                                         as="button"
-                                        href={route("client.dashboard.show")}
+                                        href={route(
+                                            "client.dashboard.bookings.show"
+                                        )}
                                     >
                                         <PrimaryButton label={"Mon compte"} />
                                     </Link>

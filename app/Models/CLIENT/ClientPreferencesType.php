@@ -8,17 +8,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-
-/**
- * Class ClientPreferencesType
- * 
- * @property int $id
- * @property string $nom
- * 
- * @property Collection|ClientClientPreference[] $client_client_preferences
- *
- * @package App\Models
- */
 class ClientPreferencesType extends Model
 {
 	protected $table = 'client__preferences_type';

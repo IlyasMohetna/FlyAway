@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('facture_statut', function (Blueprint $table) {
+        Schema::create('payment__payment_status', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('nom');
+            $table->string('name');
+            $table->timestamps();
+            $table->softDeletes();
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('facture_statut');
+        Schema::dropIfExists('payment__payment_status');
     }
 };
