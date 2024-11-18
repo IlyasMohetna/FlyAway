@@ -61,10 +61,12 @@ const UserDashboardLayout = ({ children, title }) => {
                                             Mes réservations
                                         </NavigationLink>
                                         <NavigationLink
-                                            href="/fidelite"
+                                            href={route(
+                                                "client.dashboard.fidelity.show"
+                                            )}
                                             active={currentRoute === "fidelite"}
                                         >
-                                            Programme de fidélité
+                                            Ma balance fidélité
                                         </NavigationLink>
                                         <NavigationLink
                                             href={route(
