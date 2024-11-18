@@ -15,7 +15,7 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
-        User::factory(1000)->create()->each(function ($user) {
+        User::factory(20)->create()->each(function ($user) {
             Client::factory()->create([
                 'user_id' => $user->id,
                 'city_id' => City::inRandomOrder()->first()->id,

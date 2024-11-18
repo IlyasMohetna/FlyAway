@@ -5,7 +5,7 @@ import Footer from "../Components/Landing/Footer";
 import MultiRangeSlider from "./Landing/Components/MultiRangeSlider";
 import DynamicSelect from "./Admin/Dashboard/Lodging/Components/Form/DynamicSelect";
 import SearchTypeIconCards from "../Components/Landing/SearchTypeIconCards";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 
 const Home = ({
     min_amount,
@@ -52,7 +52,7 @@ const Home = ({
                 data-speed="0.5"
             >
                 <div className="absolute inset-0 bg-slate-900/40" />
-                <div className="container relative">
+                <div className="container relative pl-16">
                     <div className="grid lg:grid-cols-12 md:grid-cols-2 mt-10 items-center gap-6">
                         <div className="lg:col-span-5">
                             <h5 className="text-3xl font-dancing text-white">
@@ -85,7 +85,6 @@ const Home = ({
                                         <SearchTypeIconCards />
                                         <form onSubmit={handleSearch}>
                                             <div className="grid grid-cols-1 gap-6">
-                                                {/* City Selection */}
                                                 <div>
                                                     <DynamicSelect
                                                         label="Destination"
@@ -110,7 +109,6 @@ const Home = ({
                                                     />
                                                 </div>
 
-                                                {/* Package Types */}
                                                 <div>
                                                     <h3 className="font-medium text-gray-700 mb-2">
                                                         Types de forfaits
@@ -148,7 +146,6 @@ const Home = ({
                                                     </ul>
                                                 </div>
 
-                                                {/* Price Range */}
                                                 <div>
                                                     <MultiRangeSlider
                                                         min={min_amount}
@@ -162,7 +159,6 @@ const Home = ({
                                                     />
                                                 </div>
 
-                                                {/* Duration Range */}
                                                 <div>
                                                     <MultiRangeSlider
                                                         min={min_duration}
@@ -178,7 +174,8 @@ const Home = ({
 
                                                 <div>
                                                     <button
-                                                        type="submit"
+                                                        type="button"
+                                                        onClick={handleSearch}
                                                         className="py-1 px-5 h-10 inline-block tracking-wide align-middle duration-500 text-base text-center bg-red-500 text-white rounded-md w-full cursor-pointer"
                                                     >
                                                         Rechercher

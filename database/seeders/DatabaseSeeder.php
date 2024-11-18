@@ -16,5 +16,17 @@ class DatabaseSeeder extends Seeder
         $this->call(ConfigCountryTableSeeder::class);
         $this->call(ConfigRegionTableSeeder::class);
         $this->call(ConfigCityTableSeeder::class);
+        //----------------------------------------------
+        $this->call(EmployePostTableSeeder::class);
+        $this->call(AdminTableSeeder::class);
+
+        //----------------------------------------------
+        $this->call(ClientSeeder::class);
+
+        $this->call(LodgingRoomStatusTableSeeder::class);
+        $this->call(LodgingTypeTableSeeder::class);
+        $this->call(PackagePackageTypeTableSeeder::class);
+        $this->call(PackageTransportationModesTableSeeder::class);
+        $this->call(PaymentPaymentStatusTableSeeder::class);
     }
 }

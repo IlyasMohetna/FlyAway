@@ -3,6 +3,13 @@ import React, { useState } from "react";
 const ItineraryPreview = ({ days }) => {
     const [activeDay, setActiveDay] = useState(null);
 
+    // Normalize `days` to always be an array of day data objects.
+    const normalizedDays = Array.isArray(days)
+        ? days
+        : typeof days === "object" && days !== null
+        ? Object.values(days).flat()
+        : [];
+
     const toggleDay = (index) => {
         setActiveDay(activeDay === index ? null : index);
     };
@@ -15,7 +22,7 @@ const ItineraryPreview = ({ days }) => {
                 margin: "auto",
             }}
         >
-            {days.map((dayData, index) => {
+            {normalizedDays.map((dayData, index) => {
                 const { day, steps } = dayData;
 
                 return (

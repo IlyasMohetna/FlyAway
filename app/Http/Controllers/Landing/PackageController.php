@@ -20,7 +20,7 @@ class PackageController extends Controller
         $query->where(function ($q) {
             $q->where('public', true);
 
-            if (auth()->check()) {
+            if (auth()->check() && auth()->user()->client) {
                 $q->orWhereHas('clientPackages', function ($subQuery) {
                     $subQuery->where('client_id', auth()->user()->client->id);
                 });
