@@ -5,10 +5,11 @@ use App\Models\User;
 use App\Models\CONFIG\City;
 use App\Models\PACKAGE\ClientPackage;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Client extends Model
 {
+    use HasFactory;
 	protected $table = 'client__client';
 	protected $guarded = [];
 
