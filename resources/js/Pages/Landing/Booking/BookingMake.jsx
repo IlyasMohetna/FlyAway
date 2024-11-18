@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import MoneyFormat from "../../../Components/Format/MoneyFormat";
 import ButtonSpinner from "../../../Components/Spinners/ButtonSpinner";
 import { Player, Controls } from "@lottiefiles/react-lottie-player";
+import Header from "../Components/Header";
 
 function BookingMake({ apackage, transportation_modes }) {
     const { props, url } = usePage();
@@ -222,6 +223,7 @@ function BookingMake({ apackage, transportation_modes }) {
 
     return (
         <>
+            <Header />
             <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
                 <form
                     onSubmit={handlePaymentSubmit}
