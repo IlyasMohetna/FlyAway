@@ -53,9 +53,28 @@ function BookingMake({ apackage, transportation_modes }) {
     const creditCardSchema = Yup.object().shape({
         full_name: Yup.string().required("Le nom complet est requis."),
         card_number: Yup.string()
-            .matches(
-                /^\d{16}$/,
-                "Le numéro de carte doit comporter 16 chiffres."
+            .test(
+                "valid-card-number",
+                "Le numéro de carte est invalide.",
+                (value) => {
+                    if (!value) return false;
+                    const sanitized = value.replace(/\s+/g, ""); // Remove spaces if any
+                    if (!/^\d{13,19}$/.test(sanitized)) return false; // Basic check: length and numeric
+
+                    // Luhn Algorithm
+                    let sum = 0;
+                    let shouldDouble = false;
+                    for (let i = sanitized.length - 1; i >= 0; i--) {
+                        let digit = parseInt(sanitized.charAt(i), 10);
+                        if (shouldDouble) {
+                            digit *= 2;
+                            if (digit > 9) digit -= 9;
+                        }
+                        sum += digit;
+                        shouldDouble = !shouldDouble;
+                    }
+                    return sum % 10 === 0;
+                }
             )
             .required("Le numéro de carte est requis."),
         card_expiration: Yup.string()
