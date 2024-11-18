@@ -4,11 +4,19 @@ import { Link, router } from "@inertiajs/react";
 import DateTimeFormat from "../../../../Components/Date/DateTimeFormat";
 import MoneyFormat from "../../../../Components/Format/MoneyFormat";
 import AddButton from "../../../../Components/Buttons/AddButton";
-// import AddPackageModal from "./Components/AddPackageModal";
 import { MdPublic } from "react-icons/md";
 import { MdPublicOff } from "react-icons/md";
+import AddClientModal from "./Components/AddClientModal";
 
-const ClientList = ({ data, total, currentPage, lastPage, sort, search }) => {
+const ClientList = ({
+    countries,
+    data,
+    total,
+    currentPage,
+    lastPage,
+    sort,
+    search,
+}) => {
     const [sortField, setSortField] = useState(sort.field);
     const [sortOrder, setSortOrder] = useState(sort.order);
     const [searchQuery, setSearchQuery] = useState(search);
@@ -252,10 +260,11 @@ const ClientList = ({ data, total, currentPage, lastPage, sort, search }) => {
                     </div>
                 </div>
             </div>
-            {/* <AddPackageModal
+            <AddClientModal
                 open={isAddModalOpen}
                 setOpen={setIsAddModalOpen}
-            /> */}
+                countries={countries}
+            />
         </>
     );
 };
