@@ -1,0 +1,23 @@
+# Use the full Node.js image to avoid missing libraries
+FROM node:18
+
+# Set the working directory inside the container
+WORKDIR /usr/src/app
+
+# Copy the package.json and package-lock.json files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --legacy-peer-deps
+
+# Copy all application files into the container
+COPY . .
+
+# Build the React assets for production
+RUN npm run build
+
+# Expose the application port
+EXPOSE 3000
+
+# Command to run the production preview server
+CMD ["npm", "run", "start"]
