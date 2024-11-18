@@ -7,8 +7,8 @@ import { Head, useForm } from "@inertiajs/react";
 function Login() {
     const [isLoading] = useState(false);
     const { data, setData, errors, post } = useForm({
-        email: "johndoe@example.com",
-        password: "secret",
+        email: "",
+        password: "",
         remember: true,
     });
 

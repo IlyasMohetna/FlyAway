@@ -28,5 +28,8 @@ class DatabaseSeeder extends Seeder
         $this->call(PackagePackageTypeTableSeeder::class);
         $this->call(PackageTransportationModesTableSeeder::class);
         $this->call(PaymentPaymentStatusTableSeeder::class);
+        $this->call(ClientFidelityTransactionTypeTableSeeder::class);
+        $this->call(LodgingAttributCategoriesTableSeeder::class);
+        $this->call(LodgingAttributTermsTableSeeder::class);
     }
 }
