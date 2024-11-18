@@ -2,9 +2,45 @@ import { useState, useEffect } from "react";
 import "../../css/landing.css";
 import NavigationBar from "../Components/Landing/NavigationBar";
 import Footer from "../Components/Landing/Footer";
+import MultiRangeSlider from "./Landing/Components/MultiRangeSlider";
+import DynamicSelect from "./Admin/Dashboard/Lodging/Components/Form/DynamicSelect";
 import SearchTypeIconCards from "../Components/Landing/SearchTypeIconCards";
 
-const Home = () => {
+const Home = ({
+    min_amount,
+    max_amount,
+    min_duration,
+    max_duration,
+    package_types,
+}) => {
+    const [destinationId, setDestinationId] = useState("");
+    const [packageTypes, setPackageTypes] = useState([]);
+    const [amountRange, setAmountRange] = useState([min_amount, max_amount]);
+    const [durationRange, setDurationRange] = useState([
+        min_duration,
+        max_duration,
+    ]);
+
+    const handlePackageTypeChange = (typeId) => {
+        const updatedTypes = packageTypes.includes(typeId)
+            ? packageTypes.filter((id) => id !== typeId)
+            : [...packageTypes, typeId];
+        setPackageTypes(updatedTypes);
+    };
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+
+        router.get(route("landing.package.search.index"), {
+            destination_id: destinationId,
+            "package_types[]": packageTypes,
+            "amount_range[0]": amountRange[0],
+            "amount_range[1]": amountRange[1],
+            "duration_range[0]": durationRange[0],
+            "duration_range[1]": durationRange[1],
+        });
+    };
+
     return (
         <>
             <NavigationBar />
@@ -46,90 +82,109 @@ const Home = () => {
                                 <form>
                                     <div className="grid grid-cols-1 gap-3">
                                         <SearchTypeIconCards />
-                                        <div>
-                                            <label className="form-label font-medium text-slate-900 dark:text-white">
-                                                Search:
-                                            </label>
-                                            <div className="relative mt-2">
-                                                <i
-                                                    data-feather="search"
-                                                    className="size-[18px] absolute top-[10px] start-3"
-                                                />
-                                                <input
-                                                    name="name"
-                                                    type="text"
-                                                    id="job-keyword"
-                                                    className="w-full py-2 px-3 ps-10 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0"
-                                                    placeholder="Search"
-                                                />
+                                        <form onSubmit={handleSearch}>
+                                            <div className="grid grid-cols-1 gap-6">
+                                                {/* City Selection */}
+                                                <div>
+                                                    <DynamicSelect
+                                                        label="Destination"
+                                                        name="destination_id"
+                                                        selectedValue={
+                                                            destinationId
+                                                        }
+                                                        handleInputChange={(
+                                                            name,
+                                                            value
+                                                        ) =>
+                                                            setDestinationId(
+                                                                value
+                                                            )
+                                                        }
+                                                        fetchRoute={route(
+                                                            "select.city"
+                                                        )}
+                                                        errors={{}}
+                                                        noOptionsMessage="Veuillez sélectionner une destination !"
+                                                        placeholder="Sélectionner une option"
+                                                    />
+                                                </div>
+
+                                                {/* Package Types */}
+                                                <div>
+                                                    <h3 className="font-medium text-gray-700 mb-2">
+                                                        Types de forfaits
+                                                    </h3>
+                                                    <ul>
+                                                        {package_types.map(
+                                                            (type) => (
+                                                                <li
+                                                                    key={
+                                                                        type.id
+                                                                    }
+                                                                >
+                                                                    <label className="flex items-center space-x-2">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={packageTypes.includes(
+                                                                                type.id
+                                                                            )}
+                                                                            onChange={() =>
+                                                                                handlePackageTypeChange(
+                                                                                    type.id
+                                                                                )
+                                                                            }
+                                                                            className="text-blue-500 rounded"
+                                                                        />
+                                                                        <span>
+                                                                            {
+                                                                                type.name
+                                                                            }
+                                                                        </span>
+                                                                    </label>
+                                                                </li>
+                                                            )
+                                                        )}
+                                                    </ul>
+                                                </div>
+
+                                                {/* Price Range */}
+                                                <div>
+                                                    <MultiRangeSlider
+                                                        min={min_amount}
+                                                        max={max_amount}
+                                                        label="Prix"
+                                                        unit="€"
+                                                        value={amountRange}
+                                                        onChange={
+                                                            setAmountRange
+                                                        }
+                                                    />
+                                                </div>
+
+                                                {/* Duration Range */}
+                                                <div>
+                                                    <MultiRangeSlider
+                                                        min={min_duration}
+                                                        max={max_duration}
+                                                        label="Durée (Jours)"
+                                                        unit=""
+                                                        value={durationRange}
+                                                        onChange={
+                                                            setDurationRange
+                                                        }
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <button
+                                                        type="submit"
+                                                        className="py-1 px-5 h-10 inline-block tracking-wide align-middle duration-500 text-base text-center bg-red-500 text-white rounded-md w-full cursor-pointer"
+                                                    >
+                                                        Rechercher
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <label className="form-label font-medium text-slate-900 dark:text-white">
-                                                Select Your Date:
-                                            </label>
-                                            <div className="relative mt-2">
-                                                <i
-                                                    data-feather="calendar"
-                                                    className="size-[18px] absolute top-[10px] start-3"
-                                                />
-                                                <input
-                                                    name="name"
-                                                    type="text"
-                                                    id="job-keyword"
-                                                    className="w-full py-2 px-3 ps-10 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 start"
-                                                    placeholder="Select Your Date"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label className="form-label font-medium text-slate-900 dark:text-white">
-                                                Select Your Date:
-                                            </label>
-                                            <div className="relative mt-2">
-                                                <i
-                                                    data-feather="calendar"
-                                                    className="size-[18px] absolute top-[10px] start-3"
-                                                />
-                                                <input
-                                                    name="name"
-                                                    type="text"
-                                                    id="job-keyword"
-                                                    className="w-full py-2 px-3 ps-10 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0 end"
-                                                    placeholder="Select Your Date"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label className="form-label font-medium text-slate-900 dark:text-white">
-                                                No. of Person:
-                                            </label>
-                                            <div className="relative mt-2">
-                                                <i
-                                                    data-feather="users"
-                                                    className="size-[18px] absolute top-[10px] start-3"
-                                                />
-                                                <select className="form-select w-full py-2 px-3 ps-10 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded-md outline-none border border-gray-100 dark:border-gray-800 focus:ring-0">
-                                                    <option defaultValue>
-                                                        No. of person
-                                                    </option>
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="">
-                                            <input
-                                                type="submit"
-                                                id="search-buy"
-                                                name="search"
-                                                className="py-1 px-5 h-10 inline-block tracking-wide align-middle duration-500 text-base text-center bg-red-500 text-white rounded-md w-full cursor-pointer"
-                                                defaultValue="Search"
-                                            />
-                                        </div>
+                                        </form>
                                     </div>
                                 </form>
                             </div>
