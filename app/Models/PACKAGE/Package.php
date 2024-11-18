@@ -50,4 +50,9 @@ class Package extends Model
     {
         return $this->hasMany(ClientPackage::class, 'package_id', 'id');
     }
+
+    public function clientPackages()
+    {
+        return $this->hasMany(ClientPackage::class,'package_id', 'id');
+    }
 }

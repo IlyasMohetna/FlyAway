@@ -17,6 +17,16 @@ class PackageController extends Controller
 
         $query->with('thumbnail');
 
+        $query->where(function ($q) {
+            $q->where('public', true);
+
+            if (auth()->check()) {
+                $q->orWhereHas('clientPackages', function ($subQuery) {
+                    $subQuery->where('client_id', auth()->user()->client->id);
+                });
+            }
+        });
+
         // Handle sorting
         if ($request->has('sort')) {
             $sortField = $request->input('sort.field', 'id');

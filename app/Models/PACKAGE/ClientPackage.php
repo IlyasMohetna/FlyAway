@@ -15,4 +15,9 @@ class ClientPackage extends Model
     {
         return $this->hasOne(Client::class,'id','client_id');
     }
+
+    public function package()
+    {
+        return $this->hasOne(Package::class,'id','package_id');
+    }
 }
