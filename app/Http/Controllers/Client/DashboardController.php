@@ -13,11 +13,7 @@ class DashboardController extends Controller
     {
         $query = Booking::query()->where('client_id', auth()->user()->client->id);
         $query->with('lodging', 'transportation','package');
-        if(request()->has("sort")){
-            $sortField = request()->input('sort.field', 'id');
-            $sortOrder = request()->input('sort.order', 'asc');
-            $query->orderBy($sortField, $sortOrder);
-        }
+        $query->orderBy('created_at', 'desc');
 
         if (request()->filled('search')) {
             $query->where('column_name', 'like', '%' . request()->input('search') . '%');
@@ -45,11 +41,8 @@ class DashboardController extends Controller
             $query->where('client_id', auth()->user()->client->id);
         });
         $query->with('paymentable', 'primaryInvoice');
-        if(request()->has("sort")){
-            $sortField = request()->input('sort.field', 'id');
-            $sortOrder = request()->input('sort.order', 'asc');
-            $query->orderBy($sortField, $sortOrder);
-        }
+        $query->orderBy('created_at', 'desc');
+
 
         if (request()->filled('search')) {
             $query->where('column_name', 'like', '%' . request()->input('search') . '%');
