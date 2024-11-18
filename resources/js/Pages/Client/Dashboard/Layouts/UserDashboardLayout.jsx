@@ -133,14 +133,6 @@ const UserDashboardLayout = ({ children, title }) => {
                                                 </Link>
                                             </MenuItem>
                                             <MenuItem>
-                                                <Link
-                                                    href="#"
-                                                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                                                >
-                                                    Paramètre
-                                                </Link>
-                                            </MenuItem>
-                                            <MenuItem>
                                                 <button
                                                     onClick={handleLogout}
                                                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
