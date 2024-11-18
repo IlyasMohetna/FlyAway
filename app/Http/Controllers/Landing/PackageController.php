@@ -52,7 +52,7 @@ class PackageController extends Controller
             $query->whereBetween('duration', [$durationRange[0], $durationRange[1]]);
         }
 
-        $packages = $query->paginate(2);
+        $packages = $query->paginate(3);
 
         $min_amount = Package::min("amount_ttc");
         $max_amount = Package::max("amount_ttc");
@@ -83,7 +83,7 @@ class PackageController extends Controller
     {
         $package = Package::with(['city.region.country', 'gallery', 'type', 'steps'])->find($id);
         $steps = $package->steps->groupBy('day');
-        
+
         return Inertia::render('Landing/Package/PackageView', [
             'apackage' => $package,
             'steps' => $steps,
