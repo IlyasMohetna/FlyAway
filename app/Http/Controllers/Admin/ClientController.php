@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use Inertia\Inertia;
-use App\Http\Controllers\Controller;
 use App\Models\Client\Client;
+use App\Http\Controllers\Controller;
 
 class ClientController extends Controller
 {
@@ -35,5 +36,16 @@ class ClientController extends Controller
             ],
             'search' => request()->input('search', ''),
         ]);
+    }
+
+    public function toggle_active($id)
+    {
+        try{
+            User::where('id', $id)->update(['active' => request()->active]);
+            return response()->json(['message' => 'User active status updated successfully.']);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'User not found for the given client.'], 404);
+
+        }
     }
 }
