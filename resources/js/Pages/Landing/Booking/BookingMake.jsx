@@ -91,7 +91,7 @@ function BookingMake({ apackage, transportation_modes }) {
                 : new Date().toISOString().split("T")[0],
             transportation_mode: "",
             lodging_option: "",
-            payment_method: "",
+            payment_method: chosenPaymentMethod,
             full_name: "",
             card_number: "",
             card_expiration: "",

@@ -73,8 +73,6 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            Auth::login($user);
-
             Client::create([
                 'user_id' => $user->id,
                 'phone' => $request->phone,
@@ -83,9 +81,11 @@ class AuthController extends Controller
                 'city_id' => $request->city_id,
             ]);
 
+
+            Auth::login($user);
             DB::commit();
 
-            return Redirect::route('client.dashboard.show')->with([
+            return Redirect::route('client.dashboard.bookings.show')->with([
                 'success' => "Votre compte a été créer avec succès"
             ]);
 

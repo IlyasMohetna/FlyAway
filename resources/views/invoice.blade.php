@@ -184,9 +184,7 @@ use Illuminate\Support\Number;
                     @if(!empty($payment['booking']['client']['address_2']))
                     {{ $payment['booking']['client']['address_2'] }}<br>
                     @endif
-                    {{ $payment['booking']['client']['city']['postal_code'] }} {{ $payment['booking']['client']['city']['name'] }}<br>
-                    {{ $payment['booking']['client']['city']['region']['name'] }}<br>
-                    {{ $payment['booking']['client']['city']['region']['country']['name'] }}<br>
+                    {{ $payment['booking']['client']['city']['postal_code'] }} {{ $payment['booking']['client']['city']['name'] }}, {{ $payment['booking']['client']['city']['region']['name'] }}, {{ $payment['booking']['client']['city']['region']['country']['name'] }}<br>
                 </td>
             </tr>
         </table>
@@ -241,12 +239,10 @@ use Illuminate\Support\Number;
             </tr>
         </table>
 
-        <!-- Notes -->
         <div class="notes">
             Merci pour votre achat. En cas de question, veuillez nous contacter.
         </div>
 
-        <!-- Footer -->
         <div class="footer">
             &copy; 2024 FlyAway. Tous droits réservés.
         </div>

@@ -11,7 +11,7 @@ class DashboardController extends Controller
 {
     public function bookings_list()
     {
-        $query = Booking::query();
+        $query = Booking::query()->where('client_id', auth()->user()->client->id);
         $query->with('lodging', 'transportation','package');
         if(request()->has("sort")){
             $sortField = request()->input('sort.field', 'id');
