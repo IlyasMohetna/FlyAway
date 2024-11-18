@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('config__region', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 100);
             $table->foreignId('country_id')->foreign()->references('id')->on('config__country');
             $table->timestamps();
             $table->softDeletes();

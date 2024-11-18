@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('config__city', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
+            $table->string('name', 100);
             $table->string('postal_code', 15);
             $table->decimal('latitude');
             $table->decimal('longitude');
             $table->foreignId('region_id')->foreign()->references('id')->on('config__region');
-            $table->string('wikiData', 25);
+            $table->string('wikiData', 25)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

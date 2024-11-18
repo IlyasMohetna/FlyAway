@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('config__country', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
+            $table->string('name', 100);
             $table->string('iso2', 2);
             $table->string('iso3', 3);
             $table->string('logo');

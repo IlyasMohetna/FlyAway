@@ -32,7 +32,7 @@ class MigrateAll extends Command
 
         $this->info("Migrated: default");
 
-        $folders = ['CONFIG', 'EMPLOYE', 'CLIENT', 'FLIGHT', 'LODGING', 'PACKAGE', 'BUS', 'CAR', 'TRAIN'];
+        $folders = ['CONFIG', 'EMPLOYE', 'CLIENT', 'FLIGHT', 'LODGING', 'PACKAGE', 'BUS', 'CAR', 'TRAIN', 'PAYMENT'];
 
         foreach ($folders as $folder) {
             $this->line("<fg=cyan>Migrating: $folder</>");
